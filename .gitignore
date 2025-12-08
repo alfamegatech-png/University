@@ -1,2 +1,22 @@
 ﻿.vs/
 obj/
+## Build Folders
+bin/
+obj/
+
+## VS files
+*.user
+*.suo
+*.cache
+*.vscode/
+
+## Logs
+*.log
+
+## Publish
+publish/
+out/
+
+## Temp
+*.tmp
+*.temp
