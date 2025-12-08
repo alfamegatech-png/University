@@ -122,7 +122,7 @@
                     toolbar: [
                         'ExcelExport', 'Search',
                         { type: 'Separator' },
-                        { text: 'Edit', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
                         { type: 'Separator' },
                         { text: 'Change Password', tooltipText: 'Change Password', id: 'ChangePasswordCustom' },
                         { text: 'Change Avatar', tooltipText: 'Change Avatar', id: 'ChangeAvatarCustom' },

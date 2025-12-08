@@ -236,21 +236,19 @@
                     showColumnMenu: true,
                     gridLines: 'Horizontal',
                     columns: [
-                        { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'systemWarehouse', headerText: 'System Warehouse', width: 200, minWidth: 200, textAlign: 'Center', type: 'boolean', displayAsCheckBox: true },
-                        { field: 'description', headerText: 'Description', width: 400, minWidth: 400 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { type: 'checkbox', width: 60 }, // مربع اختيار
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false }, // المفتاح الأساسي، مخفي
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 }, // الاسم
+                        { field: 'systemWarehouse', headerText: 'مستودع نظامي', width: 200, minWidth: 200, textAlign: 'Center', type: 'boolean', displayAsCheckBox: true }, // مستودع نظامي (صح/خطأ)
+                        { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 }, // الوصف
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' } // تاريخ الإنشاء
                     ],
                     toolbar: [
                         'ExcelExport', 'Search',
                         { type: 'Separator' },
-                        { text: 'Add', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'Edit', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'Delete', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
                     ],
                     beforeDataBound: () => { },
