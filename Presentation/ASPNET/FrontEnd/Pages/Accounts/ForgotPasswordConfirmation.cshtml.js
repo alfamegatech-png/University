@@ -42,8 +42,8 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Password Reset Failed',
-                            text: response.data.message ?? 'Please check your data.',
-                            confirmButtonText: 'Try Again'
+                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
                 } else {
@@ -51,7 +51,7 @@
                         icon: 'error',
                         title: 'Password Reset Failed',
                         text: 'Email or code is missing in the URL query string.',
-                        confirmButtonText: 'Try Again'
+                        confirmButtonText: 'حاول مرة أخرى'
                     });
                 }
 

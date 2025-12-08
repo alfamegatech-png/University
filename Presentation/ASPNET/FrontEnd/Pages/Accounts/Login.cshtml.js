@@ -67,13 +67,13 @@
                         icon: 'error',
                         title: 'Login Failed',
                         text: response.data.message || 'Please check your credentials.',
-                        confirmButtonText: 'Try Again'
+                        confirmButtonText: 'حاول مرة أخرى'
                     });
                 }
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'An Error Occurred',
+                    title: 'حدث خطأ',
                     text: error.response?.data?.message || 'Please try again.',
                     confirmButtonText: 'OK'
                 });

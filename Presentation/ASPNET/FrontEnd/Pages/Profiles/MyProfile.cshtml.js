@@ -226,8 +226,8 @@
                         mainGrid.refresh();
                         Swal.fire({
                             icon: 'success',
-                            title: 'Save Successful',
-                            text: 'Form will be closed...',
+                            title: 'تم الحفظ',
+                            text: 'الاغلاق من هنا...',
                             timer: 2000,
                             showConfirmButton: false
                         });
@@ -238,15 +238,15 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Save Failed',
-                            text: response.data.message ?? 'Please check your data.',
-                            confirmButtonText: 'Try Again'
+                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
                 } catch (error) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'An Error Occurred',
-                        text: error.response?.data?.message ?? 'Please try again.',
+                        title: 'حدث خطأ',
+                        text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
                         confirmButtonText: 'OK'
                     });
                 } finally {
@@ -299,8 +299,8 @@
                     if (response.data.code === 200) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Save Successful',
-                            text: 'Form will be closed...',
+                            title: 'تم الحفظ',
+                            text: 'الاغلاق من هنا...',
                             timer: 2000,
                             showConfirmButton: false
                         });
@@ -311,15 +311,15 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Save Failed',
-                            text: response.data.message ?? 'Please check your data.',
-                            confirmButtonText: 'Try Again'
+                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
                 } catch (error) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'An Error Occurred',
-                        text: error.response?.data?.message ?? 'Please try again.',
+                        title: 'حدث خطأ',
+                        text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
                         confirmButtonText: 'OK'
                     });
                 } finally {

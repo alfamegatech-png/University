@@ -39,14 +39,14 @@
                         icon: 'error',
                         title: 'Logout Failed',
                         text: response.data.message ?? 'Logout Failed.',
-                        confirmButtonText: 'Try Again'
+                        confirmButtonText: 'حاول مرة أخرى'
                     });
                 }
 
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'An Error Occurred',
+                    title: 'حدث خطأ',
                     text: error.response?.data?.message || 'Please try again.',
                     confirmButtonText: 'OK'
                 });

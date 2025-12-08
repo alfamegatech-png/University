@@ -364,7 +364,7 @@
 
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Save Successful',
+                                title: 'تم الحفظ',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -372,8 +372,8 @@
                         } else {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Delete Successful',
-                                text: 'Form will be closed...',
+                                title: 'تم الحذف',
+                                text: 'الاغلاق من هنا...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -386,17 +386,17 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-                            title: state.deleteMode ? 'Delete Failed' : 'Save Failed',
-                            text: response.data.message ?? 'Please check your data.',
-                            confirmButtonText: 'Try Again'
+    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
 
                 } catch (error) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'An Error Occurred',
-                        text: error.response?.data?.message ?? 'Please try again.',
+                        title: 'حدث خطأ',
+                        text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
                         confirmButtonText: 'OK'
                     });
                 } finally {
@@ -705,7 +705,7 @@
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Save Successful',
+                                        title: 'تم الحفظ',
                                         timer: 2000,
                                         showConfirmButton: false
                                     });
@@ -713,15 +713,15 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Save Failed',
-                                        text: response.data.message ?? 'Please check your data.',
-                                        confirmButtonText: 'Try Again'
+                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
                             } catch (error) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'An Error Occurred',
-                                    text: error.response?.data?.message ?? 'Please try again.',
+                                    title: 'حدث خطأ',
+                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
                                     confirmButtonText: 'OK'
                                 });
                             }
@@ -742,15 +742,15 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Update Failed',
-                                        text: response.data.message ?? 'Please check your data.',
-                                        confirmButtonText: 'Try Again'
+                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
                             } catch (error) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'An Error Occurred',
-                                    text: error.response?.data?.message ?? 'Please try again.',
+                                    title: 'حدث خطأ',
+                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
                                     confirmButtonText: 'OK'
                                 });
                             }
@@ -763,7 +763,7 @@
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Delete Successful',
+                                        title: 'تم الحذف',
                                         timer: 2000,
                                         showConfirmButton: false
                                     });
@@ -771,15 +771,15 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Delete Failed',
-                                        text: response.data.message ?? 'Please check your data.',
-                                        confirmButtonText: 'Try Again'
+                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
                             } catch (error) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'An Error Occurred',
-                                    text: error.response?.data?.message ?? 'Please try again.',
+                                    title: 'حدث خطأ',
+                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
                                     confirmButtonText: 'OK'
                                 });
                             }

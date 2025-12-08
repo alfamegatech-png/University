@@ -59,15 +59,15 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Reset Password Failed',
-                        text: response.data.message ?? 'Please check your data.',
-                        confirmButtonText: 'Try Again'
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                        confirmButtonText: 'حاول مرة أخرى'
                     });
                 }
 
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'An Error Occurred',
+                    title: 'حدث خطأ',
                     text: error.response?.data?.message || 'Please try again.',
                     confirmButtonText: 'OK'
                 });
