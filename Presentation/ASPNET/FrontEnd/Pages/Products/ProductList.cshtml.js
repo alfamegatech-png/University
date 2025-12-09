@@ -40,22 +40,22 @@
             let isValid = true;
 
             if (!state.name) {
-                state.errors.name = 'Name is required.';
+                state.errors.name = 'الاسم مطلوب.';
                 isValid = false;
             }
             if (!state.unitPrice) {
-                state.errors.unitPrice = 'Unit price is required.';
+                state.errors.unitPrice = 'سعر الوحدة مطلوب.';
                 isValid = false;
             } else if (!/^\d+(\.\d{1,2})?$/.test(state.unitPrice)) {
-                state.errors.unitPrice = 'Unit price must be a numeric value with up to two decimal places.';
+                state.errors.unitPrice = 'سعر الوحدة يجب أن يكون رقمًا بصيغة تصل إلى منزلتين عشريتين.';
                 isValid = false;
             }
             if (!state.productGroupId) {
-                state.errors.productGroupId = 'ProductGroup is required.';
+                state.errors.productGroupId = 'مجموعة المنتج مطلوبة.';
                 isValid = false;
             }
             if (!state.unitMeasureId) {
-                state.errors.unitMeasureId = 'UnitMeasure is required.';
+                state.errors.unitMeasureId = 'وحدة القياس مطلوبة.';
                 isValid = false;
             }
 
@@ -161,7 +161,7 @@
                     productGroupListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.productGroupListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Product Group',
+                        placeholder: 'اختر مجموعة المنتج',
                         popupHeight: '200px',
                         change: (e) => {
                             state.productGroupId = e.value;
@@ -169,7 +169,7 @@
                     });
                     productGroupListLookup.obj.appendTo(productGroupIdRef.value);
                 } else {
-                    console.error('ProductGroup list lookup data is not available or invalid.');
+                    console.error('بيانات قائمة مجموعة المنتجات غير متوفرة أو غير صالحة.');
                 }
             },
             refresh: () => {
@@ -186,7 +186,7 @@
                     unitMeasureListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.unitMeasureListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Unit Measure',
+                        placeholder: 'اختر وحدة القياس',
                         popupHeight: '200px',
                         change: (e) => {
                             state.unitMeasureId = e.value;
@@ -194,7 +194,7 @@
                     });
                     unitMeasureListLookup.obj.appendTo(unitMeasureIdRef.value);
                 } else {
-                    console.error('UnitMeasure list lookup data is not available or invalid.');
+                    console.error('بيانات قائمة وحدات القياس غير متوفرة أو غير صالحة.');
                 }
             },
             refresh: () => {
@@ -208,7 +208,7 @@
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name',
+                    placeholder: 'أدخل الاسم',
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -223,7 +223,7 @@
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                     readonly: true
                 });
                 numberText.obj.appendTo(numberRef.value);
@@ -240,7 +240,7 @@
             create: () => {
                 unitPriceNumber.obj = new ej.inputs.NumericTextBox({
                     format: 'n2',
-                    placeholder: 'Enter Unit Price',
+                    placeholder: 'أدخل سعر الوحدة',
                     min: 0,
                     step: 0.01,
                     validateDecimalOnType: true
@@ -314,7 +314,7 @@
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Product';
+                            state.mainTitle = 'تعديل المنتج';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             state.name = response?.data?.content?.data.name ?? '';
@@ -327,7 +327,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: state.deleteMode ? 'تم الحذف' : 'تم الحفظ',
-                                text: 'الاغلاق من هنا...',
+                                text: 'سيتم الإغلاق تلقائياً...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -339,7 +339,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'تم الحذف',
-                                text: 'الاغلاق من هنا...',
+                                text: 'سيتم الإغلاق تلقائياً...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -352,8 +352,8 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -363,7 +363,7 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'حسناً'
                     });
                 } finally {
                     state.isSubmitting = false;
@@ -394,8 +394,6 @@
 
             } catch (e) {
                 console.error('page init error:', e);
-            } finally {
-                
             }
         });
 
@@ -430,22 +428,22 @@
                     columns: [
                         { type: 'checkbox', width: 60 },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id', isPrimaryKey: true, headerText: 'معرف', visible: false
                         },
-                        { field: 'number', headerText: 'Number', width: 200, minWidth: 200 },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'productGroupName', headerText: 'Product Group', width: 150, minWidth: 150 },
-                        { field: 'unitPrice', headerText: 'Unit Price', width: 150, minWidth: 150, format: 'N2' },
-                        { field: 'unitMeasureName', headerText: 'Unit Measure', width: 150, minWidth: 150 },
-                        { field: 'physical', headerText: 'Physical Product', width: 200, minWidth: 200, textAlign: 'Center', type: 'boolean', displayAsCheckBox: true },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'number', headerText: 'الرقم', width: 200, minWidth: 200 },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'productGroupName', headerText: 'مجموعة المنتج', width: 150, minWidth: 150 },
+                        { field: 'unitPrice', headerText: 'سعر الوحدة', width: 150, minWidth: 150, format: 'N2' },
+                        { field: 'unitMeasureName', headerText: 'وحدة القياس', width: 150, minWidth: 150 },
+                        { field: 'physical', headerText: 'منتج مادي', width: 200, minWidth: 200, textAlign: 'Center', type: 'boolean', displayAsCheckBox: true },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
                         'ExcelExport', 'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
                     ],
                     beforeDataBound: () => { },
@@ -480,7 +478,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Product';
+                            state.mainTitle = 'إضافة منتج';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -489,7 +487,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Product';
+                                state.mainTitle = 'تعديل المنتج';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';
@@ -506,7 +504,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Product?';
+                                state.mainTitle = 'حذف المنتج؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';

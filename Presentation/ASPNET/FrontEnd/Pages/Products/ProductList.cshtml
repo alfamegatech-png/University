@@ -1,6 +1,6 @@
 ﻿@page
 @{
-    ViewData["Title"] = "Product List";
+    ViewData["Title"] = "قائمة المنتجات";
 }
 
 <div id="app" v-cloak>
@@ -17,7 +17,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ state.mainTitle }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" v-model="state.id" id="Id" name="Id" />
@@ -26,48 +26,48 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Main Info</h5>
+                                        <h5>المعلومات الرئيسية</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="Name">Name</label>
+                                                <label for="Name">الاسم</label>
                                                 <input ref="nameRef" v-model="state.name">
                                                 <label class="text-danger">{{ state.errors.name }}</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="Number">Number</label>
+                                                <label for="Number">الرقم</label>
                                                 <input ref="numberRef" v-model="state.number" readonly>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="UnitPrice">Unit Price</label>
+                                                <label for="UnitPrice">سعر الوحدة</label>
                                                 <input ref="unitPriceRef" v-model="state.unitPrice">
                                                 <label class="text-danger">{{ state.errors.unitPrice }}</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="UnitMeasureId">Unit Measure</label>
+                                                <label for="UnitMeasureId">وحدة القياس</label>
                                                 <div ref="unitMeasureIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.unitMeasureId }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="ProductGroupId">Product Group</label>
+                                                <label for="ProductGroupId">مجموعة المنتج</label>
                                                 <div ref="productGroupIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.productGroupId }}</label>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-check mt-4">
                                                     <input v-model="state.physical" id="Physical" name="Physical" type="checkbox" class="form-check-input">
-                                                    <label for="Physical" class="form-check-label">Is Physical Product?</label>
+                                                    <label for="Physical" class="form-check-label">هل المنتج مادي؟</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-12">
-                                                <label for="Description">Description</label>
+                                                <label for="Description">الوصف</label>
                                                 <textarea v-model="state.description" id="Description" name="Description" class="form-control" rows="3"></textarea>
                                             </div>
                                         </div>
@@ -78,7 +78,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
                     <button type="button"
                             id="MainSaveButton"
                             class="btn"
@@ -86,8 +86,8 @@
                             v-on:click="handler.handleSubmit"
                             v-bind:disabled="state.isSubmitting">
                         <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
-                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'Delete' : 'Save' }}</span>
-                        <span v-else>{{ state.deleteMode ? 'Deleting...' : 'Saving...' }}</span>
+                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'حذف' : 'حفظ' }}</span>
+                        <span v-else>{{ state.deleteMode ? 'جارٍ الحذف...' : 'جارٍ الحفظ...' }}</span>
                     </button>
                 </div>
             </div>
