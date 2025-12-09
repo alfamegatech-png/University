@@ -21,7 +21,7 @@
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name',
+                    placeholder: 'ادخل الاسم',
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -46,7 +46,7 @@
             let isValid = true;
 
             if (!state.name) {
-                state.errors.name = 'Name is required.';
+                state.errors.name = 'الاسم مطلوب.';
                 isValid = false;
             }
 
@@ -134,15 +134,15 @@
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Unit Measure';
+                            state.mainTitle = 'تعديل وحدة قياس';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.name = response?.data?.content?.data.name ?? '';
                             state.description = response?.data?.content?.data.description ?? '';
 
                             Swal.fire({
                                 icon: 'success',
-                                title: state.deleteMode ? 'تم الحذف' : 'تم الحفظ',
-                                text: 'الاغلاق من هنا...',
+                                title: 'تم الحفظ',
+                                text: 'الإغلاق من هنا...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -154,7 +154,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'تم الحذف',
-                                text: 'الاغلاق من هنا...',
+                                text: 'الإغلاق من هنا...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -167,8 +167,8 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -178,7 +178,7 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'موافق'
                     });
                 } finally {
                     state.isSubmitting = false;
@@ -202,8 +202,6 @@
 
             } catch (e) {
                 console.error('page init error:', e);
-            } finally {
-                
             }
         });
 
@@ -234,13 +232,12 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'description', headerText: 'Description', width: 400, minWidth: 400 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'الرقم', visible: false },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
+
                     toolbar: [
                         'ExcelExport', 'Search',
                         { type: 'Separator' },
@@ -281,7 +278,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Unit Measure';
+                            state.mainTitle = 'إضافة وحدة قياس';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -290,7 +287,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Unit Measure';
+                                state.mainTitle = 'تعديل وحدة قياس';
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
@@ -302,7 +299,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Unit Measure?';
+                                state.mainTitle = 'حذف وحدة قياس؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
