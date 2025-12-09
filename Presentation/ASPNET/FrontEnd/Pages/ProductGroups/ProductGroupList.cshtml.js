@@ -21,7 +21,7 @@
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name',
+                    placeholder: 'أدخل الاسم',
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -46,7 +46,7 @@
             let isValid = true;
 
             if (!state.name) {
-                state.errors.name = 'Name is required.';
+                state.errors.name = 'الاسم مطلوب.';
                 isValid = false;
             }
 
@@ -134,7 +134,7 @@
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Product Group';
+                            state.mainTitle = 'تعديل مجموعة المنتجات';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.name = response?.data?.content?.data.name ?? '';
                             state.description = response?.data?.content?.data.description ?? '';
@@ -142,7 +142,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: state.deleteMode ? 'تم الحذف' : 'تم الحفظ',
-                                text: 'الاغلاق من هنا...',
+                                text: 'سيتم الإغلاق تلقائيًا...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -154,7 +154,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'تم الحذف',
-                                text: 'الاغلاق من هنا...',
+                                text: 'سيتم الإغلاق تلقائيًا...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -167,8 +167,8 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -178,7 +178,7 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'حسنًا'
                     });
                 } finally {
                     state.isSubmitting = false;
@@ -201,9 +201,9 @@
                 });
 
             } catch (e) {
-                console.error('page init error:', e);
+                console.error('خطأ أثناء تهيئة الصفحة:', e);
             } finally {
-                
+
             }
         });
 
@@ -235,18 +235,18 @@
                     columns: [
                         { type: 'checkbox', width: 60 },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id', isPrimaryKey: true, headerText: 'الرقم', visible: false
                         },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'description', headerText: 'Description', width: 400, minWidth: 400 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
                         'ExcelExport', 'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
                     ],
                     beforeDataBound: () => { },
@@ -281,7 +281,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Product Group';
+                            state.mainTitle = 'إضافة مجموعة منتجات';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -290,7 +290,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Product Group';
+                                state.mainTitle = 'تعديل مجموعة المنتجات';
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
@@ -302,7 +302,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Product Group?';
+                                state.mainTitle = 'حذف مجموعة المنتجات؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
