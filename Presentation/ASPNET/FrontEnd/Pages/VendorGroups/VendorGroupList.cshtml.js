@@ -1,4 +1,46 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان عمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            "Save": "ظحف",
+            "Close": "اغلاق",
+            'ExcelExport':'تصدير إكسل',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي ",
+            "AddVendorGroup":"اضافة مجموعة موردين"
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -71,7 +113,7 @@
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name',
+                    placeholder: 'ادخل الاسم',
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -100,7 +142,7 @@
 
                     // name validation
                     if (!state.name) {
-                        state.errors.name = 'Name is required.';
+                        state.errors.name = 'مطلوب ادخال الاسم.';
                         isValid = false;
                     }
 
@@ -160,8 +202,13 @@
 
         const mainGrid = {
             obj: null,
+         
+
             create: async (dataSource) => {
+
                 mainGrid.obj = new ej.grids.Grid({
+                    locale: 'ar',
+                    enableRtl: true,
                     height: '240px',
                     dataSource: dataSource,
                     allowFiltering: true,
@@ -184,18 +231,22 @@
                         {
                             field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
                         },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'description', headerText: 'Description', width: 400, minWidth: 400 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الانشاء', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'ExcelExport' },
+                        'Search', // لا تغير هذا النص، هذا خاص بالبحث
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة جديد', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
                     ],
+
+
+
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], false);
@@ -222,13 +273,13 @@
                         }
                     },
                     toolbarClick: async (args) => {
-                        if (args.item.id === 'MainGrid_excelexport') {
+                        if (args.item.id === 'ExcelExport') {
                             mainGrid.obj.excelExport();
                         }
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Vendor Group';
+                            state.mainTitle = 'إضافة مجموعة موردين';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -237,7 +288,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Vendor Group';
+                                state.mainTitle = 'تعديل مجموعة موردين';
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
@@ -249,7 +300,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Vendor Group?';
+                                state.mainTitle = 'حذف مجموعة الموردين?';
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
