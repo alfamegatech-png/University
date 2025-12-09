@@ -1,6 +1,6 @@
 ﻿@page
 @{
-    ViewData["Title"] = "Purchase Order List";
+    ViewData["Title"] = "قائمة أوامر الشراء";
 }
 
 <div id="app" v-cloak>
@@ -18,6 +18,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">{{ state.mainTitle }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <!-- إغلاق -->
                 </div>
                 <div class="modal-body">
                     <input type="hidden" v-model="state.id" id="Id" name="Id" />
@@ -26,42 +27,42 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Main Info</h5>
+                                        <h5>البيانات الرئيسية</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="OrderDate">Order Date</label>
+                                                <label for="OrderDate">تاريخ الطلب</label>
                                                 <input ref="orderDateRef" />
                                                 <label class="text-danger">{{ state.errors.orderDate }}</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="Number">Number</label>
+                                                <label for="Number">الرقم</label>
                                                 <input ref="numberRef" v-model="state.number" readonly>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="VendorId">Vendor</label>
+                                                <label for="VendorId">المورّد</label>
                                                 <div ref="vendorIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.vendorId }}</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="TaxId">Tax</label>
+                                                <label for="TaxId">الضريبة</label>
                                                 <div ref="taxIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.taxId }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="OrderStatus">Order Status</label>
+                                                <label for="OrderStatus">حالة الطلب</label>
                                                 <div ref="orderStatusRef"></div>
                                                 <label class="text-danger">{{ state.errors.orderStatus }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-12">
-                                                <label for="Description">Description</label>
+                                                <label for="Description">الوصف</label>
                                                 <textarea class="form-control" rows="3" v-model="state.description"></textarea>
                                                 <label class="text-danger">{{ state.errors.description }}</label>
                                             </div>
@@ -71,12 +72,13 @@
                             </div>
                         </div>
                     </form>
+
                     <div id="ComplexDiv" :style="{ display: state.showComplexDiv ? 'block' : 'none' }">
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Purchase Order Item</h5>
+                                        <h5>عناصر أمر الشراء</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
@@ -90,25 +92,26 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row mt-4">
                             <div class="col-md-12">
                                 <div class="card shadow-sm">
                                     <div class="card-header text-white">
-                                        <h5 class="mb-0">Payment Summary</h5>
+                                        <h5 class="mb-0">ملخص الدفع</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row justify-content-end">
                                             <div class="col-md-6">
                                                 <div class="d-flex justify-content-between py-2 border-bottom">
-                                                    <span class="fw-bold">Subtotal</span>
+                                                    <span class="fw-bold">الإجمالي قبل الضريبة</span>
                                                     <span id="SubTotalAmount">{{ state.subTotalAmount }}</span>
                                                 </div>
                                                 <div class="d-flex justify-content-between py-2 border-bottom">
-                                                    <span class="fw-bold">Tax</span>
+                                                    <span class="fw-bold">الضريبة</span>
                                                     <span id="TaxAmount">{{ state.taxAmount }}</span>
                                                 </div>
                                                 <div class="d-flex justify-content-between py-2">
-                                                    <span class="fw-bold">Total Amount</span>
+                                                    <span class="fw-bold">الإجمالي الكلي</span>
                                                     <span id="TotalAmount" class="fw-bold text-success">{{ state.totalAmount }}</span>
                                                 </div>
                                             </div>
@@ -120,7 +123,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
                     <button type="button"
                             id="MainSaveButton"
                             class="btn"
@@ -128,8 +131,14 @@
                             v-on:click="handler.handleSubmit"
                             v-bind:disabled="state.isSubmitting">
                         <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
-                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'Delete' : 'Save' }}</span>
-                        <span v-else>{{ state.deleteMode ? 'Deleting...' : 'Saving...' }}</span>
+
+                        <span v-if="!state.isSubmitting">
+                            {{ state.deleteMode ? 'حذف' : 'حفظ' }}
+                        </span>
+
+                        <span v-else>
+                            {{ state.deleteMode ? 'جاري الحذف...' : 'جاري الحفظ...' }}
+                        </span>
                     </button>
                 </div>
             </div>
