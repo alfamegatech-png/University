@@ -1,4 +1,45 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -588,43 +629,43 @@
                     let isValid = true;
 
                     if (!state.name) {
-                        state.errors.name = 'Name is required.';
+                        state.errors.name = 'الاسم مطلوب';
                         isValid = false;
                     }
                     if (!state.vendorGroupId) {
-                        state.errors.vendorGroupId = 'Vendor Group is required.';
+                        state.errors.vendorGroupId = 'مجموعة الموردين مطلوب ادخالها';
                         isValid = false;
                     }
                     if (!state.vendorCategoryId) {
-                        state.errors.vendorCategoryId = 'Vendor Category is required.';
+                        state.errors.vendorCategoryId = 'تصنيف الموردين مطلوبة';
                         isValid = false;
                     }
                     if (!state.street) {
-                        state.errors.street = 'Street is required.';
+                        state.errors.street = 'اسم الشارع مطلوب';
                         isValid = false;
                     }
                     if (!state.city) {
-                        state.errors.city = 'City is required.';
+                        state.errors.city = 'المدينة مطلوبة';
                         isValid = false;
                     }
                     if (!state.state) {
-                        state.errors.state = 'State is required.';
+                        state.errors.state = 'الولاية / المحافظة';
                         isValid = false;
                     }
                     if (!state.zipCode) {
-                        state.errors.zipCode = 'Zip Code is required.';
+                        state.errors.zipCode = 'الرمز البريدي مطلوب';
                         isValid = false;
                     }
                     if (!state.country) {
-                        state.errors.country = 'Country is required.';
+                        state.errors.country = 'المدينة مطلوبة';
                         isValid = false;
                     }
                     if (!state.phoneNumber) {
-                        state.errors.phoneNumber = 'Phone Number is required.';
+                        state.errors.phoneNumber = 'رقم التليفون مطلوب';
                         isValid = false;
                     }
                     if (!state.emailAddress) {
-                        state.errors.emailAddress = 'Email Address is required.';
+                        state.errors.emailAddress = 'الايميل مطلوب';
                         isValid = false;
                     }
 
@@ -751,6 +792,8 @@
             obj: null,
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
+                    locale: 'ar',
+                    enableRtl: true,
                     height: '240px',
                     dataSource: dataSource,
                     allowFiltering: true,
@@ -771,27 +814,28 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'vendorGroupName', headerText: 'Group', width: 200, minWidth: 200 },
-                        { field: 'vendorCategoryName', headerText: 'Category', width: 200, minWidth: 200 },
-                        { field: 'street', headerText: 'Street', width: 200, minWidth: 200 },
-                        { field: 'phoneNumber', headerText: 'Phone', width: 200, minWidth: 200 },
-                        { field: 'emailAddress', headerText: 'Email', width: 200, minWidth: 200 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
+                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'vendorGroupName', headerText: 'مجموعة الموردين', width: 200, minWidth: 200 },
+                        { field: 'vendorCategoryName', headerText: 'تصنيف الموردين', width: 200, minWidth: 200 },
+                        { field: 'street', headerText: 'الشارع', width: 200, minWidth: 200 },
+                        { field: 'phoneNumber', headerText: 'رقم الهاتف', width: 200, minWidth: 200 },
+                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 200, minWidth: 200 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+                        'Search', // لا تغير هذا النص، هذا خاص بالبحث
+                        { text: 'بحث', tooltipText: 'بحث', id: 'Search' },
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'Manage Contact', tooltipText: 'Manage Contact', id: 'ManageContactCustom' },
+                        { text: 'إدارة جهة الاتصال', tooltipText: 'إدارة جهة الاتصال', id: 'ManageContactCustom' },
                     ],
+
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'ManageContactCustom'], false);
@@ -824,7 +868,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Vendor';
+                            state.mainTitle = 'اضافة مورد';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -833,7 +877,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Vendor';
+                                state.mainTitle = 'تعديل مورد';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';
@@ -863,7 +907,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Vendor?';
+                                state.mainTitle = 'حذف المورد?';
                                 state.id = selectedRecord.id ?? '';
                                 mainModal.obj.show();
                             }
@@ -933,18 +977,25 @@
                     columns: [
                         { type: 'checkbox', width: 60 },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false
                         },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'jobTitle', headerText: 'Job Title', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'phoneNumber', headerText: 'Phone', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'emailAddress', headerText: 'Email', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'description', headerText: 'Description', width: 400, minWidth: 400 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'jobTitle', headerText: 'المسمى الوظيفي', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'phoneNumber', headerText: 'رقم الهاتف', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Add', 'Edit', 'Delete', 'Update', 'Cancel', 'Search'
+                        'ExcelExport',
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        'Update',
+                        'Cancel',
+                        'Search'
                     ],
+
                     beforeDataBound: () => { },
                     dataBound: function () {
                         secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], false);
