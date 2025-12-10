@@ -206,7 +206,7 @@
         });
 
         Vue.onUnmounted(() => {
-            mainModalRef.value?.removeEventListener('hidden.bs.modal', resetFormState);
+            mainModalRef.value?.removeEventListener('hidden.bs.modal', resetFormState); e - gridpager
         });
 
         const mainGrid = {
