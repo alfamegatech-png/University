@@ -517,6 +517,8 @@ const App = {
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
@@ -555,7 +557,31 @@ const App = {
                         { type: 'Separator' },
                         { text: 'طباعة PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
                     ],
-
+                    beforeDataBound: () => { },
+                    dataBound: function () {
+                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
+                        mainGrid.obj.autoFitColumns(['number', 'orderDate', 'vendorName', 'orderStatusName', 'taxName', 'afterTaxAmount', 'createdAtUtc']);
+                    },
+                    excelExportComplete: () => { },
+                    rowSelected: () => {
+                        if (mainGrid.obj.getSelectedRecords().length == 1) {
+                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], true);
+                        } else {
+                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
+                        }
+                    },
+                    rowDeselected: () => {
+                        if (mainGrid.obj.getSelectedRecords().length == 1) {
+                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], true);
+                        } else {
+                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
+                        }
+                    },
+                    rowSelecting: () => {
+                        if (mainGrid.obj.getSelectedRecords().length) {
+                            mainGrid.obj.clearSelection();
+                        }
+                    },
                     toolbarClick: async (args) => {
                       
                       if (args.item.id === 'MainGrid_excelexport') {
