@@ -1,4 +1,46 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -41,23 +83,23 @@
             let isValid = true;
 
             if (!state.name) {
-                state.errors.name = 'Name is required.';
+                state.errors.name = 'الاسم مطلوب.';
                 isValid = false;
             }
             if (!state.jobTitle) {
-                state.errors.jobTitle = 'Job Title is required.';
+                state.errors.jobTitle = 'المسمى الوظيفي مطلوب.';
                 isValid = false;
             }
             if (!state.phoneNumber) {
-                state.errors.phoneNumber = 'Phone number is required.';
+                state.errors.phoneNumber = 'رقم الهاتف مطلوب.';
                 isValid = false;
             }
             if (!state.emailAddress) {
-                state.errors.emailAddress = 'Email address is required.';
+                state.errors.emailAddress = 'البريد الإلكتروني مطلوب.';
                 isValid = false;
             }
             if (!state.vendorId) {
-                state.errors.vendorId = 'Vendor is required.';
+                state.errors.vendorId = 'المورد مطلوب.';
                 isValid = false;
             }
 
@@ -149,7 +191,7 @@
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name'
+                    placeholder: 'أدخل الاسم'
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -160,12 +202,11 @@
             }
         };
 
-
         const numberText = {
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                     readonly: true
                 });
                 numberText.obj.appendTo(numberRef.value);
@@ -181,7 +222,7 @@
             obj: null,
             create: () => {
                 jobTitleText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Job Title'
+                    placeholder: 'أدخل المسمى الوظيفي'
                 });
                 jobTitleText.obj.appendTo(jobTitleRef.value);
             },
@@ -196,7 +237,7 @@
             obj: null,
             create: () => {
                 phoneNumberText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Phone Number'
+                    placeholder: 'أدخل رقم الهاتف'
                 });
                 phoneNumberText.obj.appendTo(phoneNumberRef.value);
             },
@@ -211,7 +252,7 @@
             obj: null,
             create: () => {
                 emailAddressText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Email Address'
+                    placeholder: 'أدخل البريد الإلكتروني'
                 });
                 emailAddressText.obj.appendTo(emailAddressRef.value);
             },
@@ -229,14 +270,14 @@
                     vendorListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.vendorListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Vendor',
+                        placeholder: 'اختر المورد',
                         change: (e) => {
                             state.vendorId = e.value;
                         }
                     });
                     vendorListLookup.obj.appendTo(vendorIdRef.value);
                 } else {
-                    console.error('Vendor list lookup data is not available or invalid.');
+                    console.error('بيانات قائمة الموردين غير متاحة أو غير صحيحة.');
                 }
             },
             refresh: () => {
@@ -246,45 +287,30 @@
             }
         };
 
-        Vue.watch(
-            () => state.name,
-            (newVal, oldVal) => {
-                state.errors.name = '';
-                nameText.refresh();
-            }
-        );
+        Vue.watch(() => state.name, () => {
+            state.errors.name = '';
+            nameText.refresh();
+        });
 
-        Vue.watch(
-            () => state.jobTitle,
-            (newVal, oldVal) => {
-                state.errors.jobTitle = '';
-                jobTitleText.refresh();
-            }
-        );
+        Vue.watch(() => state.jobTitle, () => {
+            state.errors.jobTitle = '';
+            jobTitleText.refresh();
+        });
 
-        Vue.watch(
-            () => state.phoneNumber,
-            (newVal, oldVal) => {
-                state.errors.phoneNumber = '';
-                phoneNumberText.refresh();
-            }
-        );
+        Vue.watch(() => state.phoneNumber, () => {
+            state.errors.phoneNumber = '';
+            phoneNumberText.refresh();
+        });
 
-        Vue.watch(
-            () => state.emailAddress,
-            (newVal, oldVal) => {
-                state.errors.emailAddress = '';
-                emailAddressText.refresh();
-            }
-        );
+        Vue.watch(() => state.emailAddress, () => {
+            state.errors.emailAddress = '';
+            emailAddressText.refresh();
+        });
 
-        Vue.watch(
-            () => state.vendorId,
-            (newVal, oldVal) => {
-                state.errors.vendorId = '';
-                vendorListLookup.refresh();
-            }
-        );
+        Vue.watch(() => state.vendorId, () => {
+            state.errors.vendorId = '';
+            vendorListLookup.refresh();
+        });
 
         const handler = {
             handleSubmit: async function () {
@@ -292,9 +318,7 @@
                     state.isSubmitting = true;
                     await new Promise(resolve => setTimeout(resolve, 300));
 
-                    if (!validateForm()) {
-                        return;
-                    }
+                    if (!validateForm()) return;
 
                     const response = state.id === ''
                         ? await services.createMainData(state.name, state.jobTitle, state.phoneNumber, state.emailAddress, state.description, state.vendorId, StorageManager.getUserId())
@@ -306,47 +330,24 @@
                         await methods.populateMainData();
                         mainGrid.refresh();
 
-                        if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Vendor Contact';
-                            state.id = response?.data?.content?.data.id ?? '';
-                            state.number = response?.data?.content?.data.number ?? '';
-                            state.name = response?.data?.content?.data.name ?? '';
-                            state.jobTitle = response?.data?.content?.data.jobTitle ?? '';
-                            state.phoneNumber = response?.data?.content?.data.phoneNumber ?? '';
-                            state.emailAddress = response?.data?.content?.data.emailAddress ?? '';
-                            state.description = response?.data?.content?.data.description ?? '';
-                            state.vendorId = response?.data?.content?.data.vendorId ?? '';
+                        const successMessage = state.deleteMode ? 'تم الحذف بنجاح' : 'تم الحفظ بنجاح';
+                        Swal.fire({
+                            icon: 'success',
+                            title: successMessage,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
 
-                            Swal.fire({
-                                icon: 'success',
-                                title: state.deleteMode ? 'تم الحذف' : 'تم الحفظ',
-                                text: 'الاغلاق من هنا...',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            setTimeout(() => {
-                                mainModal.obj.hide();
-                            }, 2000);
-
-                        } else {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                text: 'الاغلاق من هنا...',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            setTimeout(() => {
-                                mainModal.obj.hide();
-                                resetFormState();
-                            }, 2000);
-                        }
+                        setTimeout(() => {
+                            mainModal.obj.hide();
+                            if (state.deleteMode) resetFormState();
+                        }, 2000);
 
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -356,7 +357,7 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'موافق'
                     });
                 } finally {
                     state.isSubmitting = false;
@@ -378,16 +379,12 @@
                 jobTitleText.create();
                 phoneNumberText.create();
                 emailAddressText.create();
-
                 mainModal.create();
-                mainModalRef.value?.addEventListener('hidden.bs.modal', () => {
-                    resetFormState();
-                });
+
+                mainModalRef.value?.addEventListener('hidden.bs.modal', () => resetFormState());
 
             } catch (e) {
-                console.error('page init error:', e);
-            } finally {
-                
+                console.error('خطأ في تهيئة الصفحة:', e);
             }
         });
 
@@ -399,45 +396,45 @@
             obj: null,
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
+                    locale: 'ar',
+                    enableRtl: true,
                     height: '240px',
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
                     allowSelection: true,
                     allowGrouping: true,
-                    groupSettings: {
-                        columns: ['vendorName']
-                    },
+                    groupSettings: { columns: ['vendorName'] },
                     allowTextWrap: true,
                     allowResizing: true,
                     allowPaging: true,
                     allowExcelExport: true,
                     filterSettings: { type: 'CheckBox' },
                     sortSettings: { columns: [{ field: 'createdAtUtc', direction: 'Descending' }] },
-                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
+                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "الكل"] },
                     selectionSettings: { persistSelection: true, type: 'Single' },
                     autoFit: true,
                     showColumnMenu: true,
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'vendorName', headerText: 'Vendor', width: 150, minWidth: 150 },
-                        { field: 'jobTitle', headerText: 'Job Title', width: 150, minWidth: 150 },
-                        { field: 'phoneNumber', headerText: 'Phone', width: 150, minWidth: 150 },
-                        { field: 'emailAddress', headerText: 'Email', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
+                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'vendorName', headerText: 'المورد', width: 150, minWidth: 150 },
+                        { field: 'jobTitle', headerText: 'المسمى الوظيفي', width: 150, minWidth: 150 },
+                        { field: 'phoneNumber', headerText: 'الهاتف', width: 150, minWidth: 150 },
+                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 150, minWidth: 150 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_ExcelExport' },
+                        'Search',
+
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
                     ],
                     beforeDataBound: () => { },
@@ -447,32 +444,20 @@
                     },
                     excelExportComplete: () => { },
                     rowSelected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], true);
-                        } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], false);
-                        }
+                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], mainGrid.obj.getSelectedRecords().length === 1);
                     },
                     rowDeselected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], true);
-                        } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], false);
-                        }
+                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], mainGrid.obj.getSelectedRecords().length === 1);
                     },
                     rowSelecting: () => {
-                        if (mainGrid.obj.getSelectedRecords().length) {
-                            mainGrid.obj.clearSelection();
-                        }
+                        if (mainGrid.obj.getSelectedRecords().length) mainGrid.obj.clearSelection();
                     },
                     toolbarClick: async (args) => {
-                        if (args.item.id === 'MainGrid_excelexport') {
-                            mainGrid.obj.excelExport();
-                        }
+                        if (args.item.id === 'MainGrid_ExcelExport') mainGrid.obj.excelExport();
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Vendor Contact';
+                            state.mainTitle = 'إضافة جهة اتصال للمورد';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -481,7 +466,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Vendor Contact';
+                                state.mainTitle = 'تعديل جهة اتصال المورد';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';
@@ -498,7 +483,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Vendor Contact?';
+                                state.mainTitle = 'حذف جهة اتصال المورد؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';
@@ -523,10 +508,7 @@
         const mainModal = {
             obj: null,
             create: () => {
-                mainModal.obj = new bootstrap.Modal(mainModalRef.value, {
-                    backdrop: 'static',
-                    keyboard: false
-                });
+                mainModal.obj = new bootstrap.Modal(mainModalRef.value, { backdrop: 'static', keyboard: false });
             }
         };
 

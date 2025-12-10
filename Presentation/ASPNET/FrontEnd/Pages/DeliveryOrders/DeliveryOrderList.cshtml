@@ -17,41 +17,50 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ state.mainTitle }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                 </div>
+
                 <div class="modal-body">
                     <input type="hidden" v-model="state.id" id="Id" name="Id" />
+
                     <form>
                         <div class="row">
                             <div class="col-md-12">
+
                                 <div class="card">
                                     <div class="card-header">
                                         <h5>المعلومات الأساسية</h5>
                                     </div>
+
                                     <div class="card-body">
+
                                         <div class="row mb-2">
                                             <div class="col-md-6">
                                                 <label for="DeliveryDate">تاريخ التسليم</label>
                                                 <input ref="deliveryDateRef" />
                                                 <label class="text-danger">{{ state.errors.deliveryDate }}</label>
                                             </div>
+
                                             <div class="col-md-6">
                                                 <label for="Number">الرقم</label>
                                                 <input ref="numberRef" v-model="state.number" readonly>
                                             </div>
                                         </div>
+
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="SalesOrderId">طلب البيع</label>
+                                                <label for="SalesOrderId">Sales Order</label>
                                                 <div ref="salesOrderIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.salesOrderId }}</label>
                                             </div>
+
                                             <div class="col-md-6">
                                                 <label for="Status">الحالة</label>
                                                 <div ref="statusRef"></div>
                                                 <label class="text-danger">{{ state.errors.status }}</label>
                                             </div>
                                         </div>
+
                                         <div class="row mb-2">
                                             <div class="col-md-12">
                                                 <label for="Description">الوصف</label>
@@ -59,36 +68,40 @@
                                                 <label class="text-danger">{{ state.errors.description }}</label>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </form>
+
                     <div id="ComplexDiv" :style="{ display: state.showComplexDiv ? 'block' : 'none' }">
+
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>بنود التسليم</h5>
+                                        <h5>Delivery Item</h5>
                                     </div>
+
                                     <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="grid-container">
-                                                    <div ref="secondaryGridRef"></div>
-                                                </div>
-                                            </div>
+                                        <div class="grid-container">
+                                            <div ref="secondaryGridRef"></div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
+
                         <div class="row mt-4">
                             <div class="col-md-12">
                                 <div class="card shadow-sm">
                                     <div class="card-header text-white">
                                         <h5 class="mb-0">الملخص</h5>
                                     </div>
+
                                     <div class="card-body">
                                         <div class="row justify-content-end">
                                             <div class="col-md-6">
@@ -99,24 +112,29 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button"
                             id="MainSaveButton"
                             class="btn"
                             v-bind:class="state.deleteMode ? 'btn-danger' : 'btn-primary'"
                             v-on:click="handler.handleSubmit"
                             v-bind:disabled="state.isSubmitting">
+
                         <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
-                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'حذف' : 'حفظ' }}</span>
-                        <span v-else>{{ state.deleteMode ? 'جارٍ الحذف...' : 'جارٍ الحفظ...' }}</span>
+                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'Delete' : 'Save' }}</span>
+                        <span v-else>{{ state.deleteMode ? 'Deleting...' : 'Saving...' }}</span>
                     </button>
                 </div>
+
             </div>
         </div>
     </div>

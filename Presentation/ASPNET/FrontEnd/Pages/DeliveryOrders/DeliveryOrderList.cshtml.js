@@ -1,4 +1,47 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+
+
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -34,7 +77,6 @@
         const statusRef = Vue.ref(null);
         const numberRef = Vue.ref(null);
 
-
         const validateForm = function () {
             state.errors.deliveryDate = '';
             state.errors.salesOrderId = '';
@@ -43,15 +85,15 @@
             let isValid = true;
 
             if (!state.deliveryDate) {
-                state.errors.deliveryDate = 'Delivery date is required.';
+                state.errors.deliveryDate = 'تاريخ التسليم مطلوب.';
                 isValid = false;
             }
             if (!state.salesOrderId) {
-                state.errors.salesOrderId = 'Sales Order is required.';
+                state.errors.salesOrderId = 'أمر البيع مطلوب.';
                 isValid = false;
             }
             if (!state.status) {
-                state.errors.status = 'Status is required.';
+                state.errors.status = 'الحالة مطلوبة.';
                 isValid = false;
             }
 
@@ -78,7 +120,7 @@
             obj: null,
             create: () => {
                 orderDatePicker.obj = new ej.calendars.DatePicker({
-                    placeholder: 'Select Date',
+                    placeholder: 'اختر التاريخ',
                     format: 'yyyy-MM-dd',
                     value: state.deliveryDate ? new Date(state.deliveryDate) : null,
                     change: (e) => {
@@ -96,7 +138,7 @@
 
         Vue.watch(
             () => state.deliveryDate,
-            (newVal, oldVal) => {
+            () => {
                 orderDatePicker.refresh();
                 state.errors.deliveryDate = '';
             }
@@ -106,7 +148,7 @@
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                 });
                 numberText.obj.appendTo(numberRef.value);
             }
@@ -119,8 +161,8 @@
                     salesOrderListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.salesOrderListLookupData,
                         fields: { value: 'id', text: 'number' },
-                        placeholder: 'Select Sales Order',
-                        filterBarPlaceholder: 'Search',
+                        placeholder: 'اختر أمر البيع',
+                        filterBarPlaceholder: 'بحث',
                         sortOrder: 'Ascending',
                         allowFiltering: true,
                         filtering: (e) => {
@@ -138,17 +180,16 @@
                     salesOrderListLookup.obj.appendTo(salesOrderIdRef.value);
                 }
             },
-
             refresh: () => {
                 if (salesOrderListLookup.obj) {
-                    salesOrderListLookup.obj.value = state.salesOrderId
+                    salesOrderListLookup.obj.value = state.salesOrderId;
                 }
             },
         };
 
         Vue.watch(
             () => state.salesOrderId,
-            (newVal, oldVal) => {
+            () => {
                 salesOrderListLookup.refresh();
                 state.errors.salesOrderId = '';
             }
@@ -161,7 +202,7 @@
                     statusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.statusListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select Status',
+                        placeholder: 'اختر الحالة',
                         allowFiltering: false,
                         change: (e) => {
                             state.status = e.value;
@@ -170,7 +211,6 @@
                     statusListLookup.obj.appendTo(statusRef.value);
                 }
             },
-
             refresh: () => {
                 if (statusListLookup.obj) {
                     statusListLookup.obj.value = state.status
@@ -180,7 +220,7 @@
 
         Vue.watch(
             () => state.status,
-            (newVal, oldVal) => {
+            () => {
                 statusListLookup.refresh();
                 state.errors.status = '';
             }
@@ -225,6 +265,7 @@
                     throw error;
                 }
             },
+
             getSalesOrderListLookupData: async () => {
                 try {
                     const response = await AxiosManager.get('/SalesOrder/GetSalesOrderList', {});
@@ -233,6 +274,7 @@
                     throw error;
                 }
             },
+
             getDeliveryOrderStatusListLookupData: async () => {
                 try {
                     const response = await AxiosManager.get('/DeliveryOrder/GetDeliveryOrderStatusList', {});
@@ -241,6 +283,7 @@
                     throw error;
                 }
             },
+
             getSecondaryData: async (moduleId) => {
                 try {
                     const response = await AxiosManager.get('/InventoryTransaction/DeliveryOrderGetInvenTransList?moduleId=' + moduleId, {});
@@ -249,6 +292,7 @@
                     throw error;
                 }
             },
+
             createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/DeliveryOrderCreateInvenTrans', {
@@ -259,6 +303,7 @@
                     throw error;
                 }
             },
+
             updateSecondaryData: async (id, warehouseId, productId, movement, updatedById) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/DeliveryOrderUpdateInvenTrans', {
@@ -269,6 +314,7 @@
                     throw error;
                 }
             },
+
             deleteSecondaryData: async (id, deletedById) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/DeliveryOrderDeleteInvenTrans', {
@@ -279,6 +325,7 @@
                     throw error;
                 }
             },
+
             getProductListLookupData: async () => {
                 try {
                     const response = await AxiosManager.get('/Product/GetProductList', {});
@@ -287,6 +334,7 @@
                     throw error;
                 }
             },
+
             getWarehouseListLookupData: async () => {
                 try {
                     const response = await AxiosManager.get('/Warehouse/GetWarehouseList', {});
@@ -306,14 +354,17 @@
                     createdAtUtc: new Date(item.createdAtUtc)
                 }));
             },
+
             populateSalesOrderListLookupData: async () => {
                 const response = await services.getSalesOrderListLookupData();
                 state.salesOrderListLookupData = response?.data?.content?.data;
             },
+
             populateDeliveryOrderStatusListLookupData: async () => {
                 const response = await services.getDeliveryOrderStatusListLookupData();
                 state.statusListLookupData = response?.data?.content?.data;
             },
+
             populateProductListLookupData: async () => {
                 const response = await services.getProductListLookupData();
                 state.productListLookupData = response?.data?.content?.data
@@ -323,10 +374,12 @@
                         numberName: `${product.number} - ${product.name}`
                     })) || [];
             },
+
             populateWarehouseListLookupData: async () => {
                 const response = await services.getWarehouseListLookupData();
                 state.warehouseListLookupData = response?.data?.content?.data.filter(warehouse => warehouse.systemWarehouse === false) || [];
             },
+
             populateSecondaryData: async (deliveryOrderId) => {
                 try {
                     const response = await services.getSecondaryData(deliveryOrderId);
@@ -339,10 +392,12 @@
                     state.secondaryData = [];
                 }
             },
+
             refreshSummary: () => {
                 const totalMovement = state.secondaryData.reduce((sum, record) => sum + (record.movement ?? 0), 0);
                 state.totalMovementFormatted = NumberFormatManager.formatToLocale(totalMovement);
             },
+
             onMainModalHidden: () => {
                 state.errors.deliveryDate = '';
                 state.errors.salesOrderId = '';
@@ -367,11 +422,13 @@
                             : await services.updateMainData(state.id, state.deliveryDate, state.description, state.status, state.salesOrderId, StorageManager.getUserId());
 
                     if (response.data.code === 200) {
+
                         await methods.populateMainData();
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Delivery Order';
+
+                            state.mainTitle = 'تعديل أمر التسليم';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             await methods.populateSecondaryData(state.id);
@@ -386,13 +443,15 @@
                             });
 
                         } else {
+
                             Swal.fire({
                                 icon: 'success',
                                 title: 'تم الحذف',
-                                text: 'الاغلاق من هنا...',
+                                text: 'يرجى الإغلاق من هنا...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
+
                             setTimeout(() => {
                                 mainModal.obj.hide();
                                 resetFormState();
@@ -400,10 +459,11 @@
                         }
 
                     } else {
+
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -413,14 +473,13 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'موافق'
                     });
                 } finally {
                     state.isSubmitting = false;
                 }
             },
         };
-
 
         Vue.onMounted(async () => {
             try {
@@ -434,6 +493,7 @@
                 mainModalRef.value?.addEventListener('hidden.bs.modal', methods.onMainModalHidden());
                 await methods.populateSalesOrderListLookupData();
                 await methods.populateDeliveryOrderStatusListLookupData();
+
                 numberText.create();
                 orderDatePicker.create();
                 salesOrderListLookup.create();
@@ -445,8 +505,6 @@
 
             } catch (e) {
                 console.error('page init error:', e);
-            } finally {
-                
             }
         });
 
@@ -459,6 +517,8 @@
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
@@ -475,28 +535,32 @@
                     autoFit: true,
                     showColumnMenu: true,
                     gridLines: 'Horizontal',
+
                     columns: [
                         { type: 'checkbox', width: 60 },
                         { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
-                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+                        { field: 'number', headerText: 'الرقم', width: 150 },
                         { field: 'deliveryDate', headerText: 'تاريخ التسليم', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'salesOrderNumber', headerText: 'أمر البيع', width: 150, minWidth: 150 },
-                        { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
+                        { field: 'salesOrderNumber', headerText: 'أمر البيع', width: 150 },
+                        { field: 'statusName', headerText: 'الحالة', width: 150 },
                         { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
+
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+
+                        'Search',
                         { type: 'Separator' },
                         { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
                         { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
                         { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'طباعة PDF', tooltipText: 'طباعة PDF', id: 'PrintPDFCustom' },
+                        { text: 'طباعة PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
                     ],
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        mainGrid.obj.autoFitColumns(['number', 'deliveryDate', 'salesOrderNumber', 'statusName', 'createdAtUtc']);
+                        mainGrid.obj.autoFitColumns(['number', 'orderDate', 'vendorName', 'orderStatusName', 'taxName', 'afterTaxAmount', 'createdAtUtc']);
                     },
                     excelExportComplete: () => { },
                     rowSelected: () => {
@@ -519,10 +583,10 @@
                         }
                     },
                     toolbarClick: async (args) => {
-                        if (args.item.id === 'MainGrid_excelexport') {
-                            mainGrid.obj.excelExport();
-                        }
-
+                      
+                      if (args.item.id === 'MainGrid_excelexport') {
+                                mainGrid.obj.excelExport();
+                            }
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
                             state.mainTitle = 'إضافة أمر تسليم';
@@ -535,6 +599,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
+
                                 state.mainTitle = 'تعديل أمر التسليم';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
@@ -542,6 +607,7 @@
                                 state.description = selectedRecord.description ?? '';
                                 state.salesOrderId = selectedRecord.salesOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
+
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = true;
@@ -553,13 +619,15 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'هل تريد حذف أمر التسليم؟';
+
+                                state.mainTitle = 'حذف أمر التسليم؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.deliveryDate = selectedRecord.deliveryDate ? new Date(selectedRecord.deliveryDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.salesOrderId = selectedRecord.salesOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
+
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = false;
@@ -589,7 +657,14 @@
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
                     dataSource: dataSource,
-                    editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
+                    editSettings: {
+                        allowEditing: true,
+                        allowAdding: true,
+                        allowDeleting: true,
+                        showDeleteConfirmDialog: true,
+                        mode: 'Normal',
+                        allowEditOnDblClick: true
+                    },
                     allowFiltering: false,
                     allowSorting: true,
                     allowSelection: true,
@@ -598,160 +673,72 @@
                     allowResizing: true,
                     allowPaging: false,
                     allowExcelExport: true,
-                    filterSettings: { type: 'CheckBox' },
-                    sortSettings: { columns: [{ field: 'warehouseName', direction: 'Descending' }] },
-                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
-                    selectionSettings: { persistSelection: true, type: 'Single' },
-                    autoFit: false,
-                    showColumnMenu: false,
-                    gridLines: 'Horizontal',
+
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
+                        { field: 'id', isPrimaryKey: true, visible: false },
+
                         {
                             field: 'warehouseId',
-                            headerText: 'Warehouse',
+                            headerText: 'المستودع',
                             width: 250,
                             validationRules: { required: true },
-                            disableHtmlEncode: false,
-                            valueAccessor: (field, data, column) => {
+                            valueAccessor: (field, data) => {
                                 const warehouse = state.warehouseListLookupData.find(item => item.id === data[field]);
                                 return warehouse ? `${warehouse.name}` : '';
                             },
                             editType: 'dropdownedit',
-                            edit: {
-                                create: () => {
-                                    const warehouseElem = document.createElement('input');
-                                    return warehouseElem;
-                                },
-                                read: () => {
-                                    return warehouseObj.value;
-                                },
-                                destroy: function () {
-                                    warehouseObj.destroy();
-                                },
-                                write: function (args) {
-                                    warehouseObj = new ej.dropdowns.DropDownList({
-                                        dataSource: state.warehouseListLookupData,
-                                        fields: { value: 'id', text: 'name' },
-                                        value: args.rowData.warehouseId,
-                                        placeholder: 'Select a Warehouse',
-                                        floatLabelType: 'Never'
-                                    });
-                                    warehouseObj.appendTo(args.element);
-                                }
-                            }
                         },
+
                         {
                             field: 'productId',
-                            headerText: 'Product',
+                            headerText: 'المنتج',
                             width: 250,
                             validationRules: { required: true },
-                            disableHtmlEncode: false,
-                            valueAccessor: (field, data, column) => {
+                            valueAccessor: (field, data) => {
                                 const product = state.productListLookupData.find(item => item.id === data[field]);
                                 return product ? `${product.numberName}` : '';
                             },
                             editType: 'dropdownedit',
-                            edit: {
-                                create: () => {
-                                    const productElem = document.createElement('input');
-                                    return productElem;
-                                },
-                                read: () => {
-                                    return productObj.value;
-                                },
-                                destroy: function () {
-                                    productObj.destroy();
-                                },
-                                write: function (args) {
-                                    productObj = new ej.dropdowns.DropDownList({
-                                        dataSource: state.productListLookupData,
-                                        fields: { value: 'id', text: 'numberName' },
-                                        value: args.rowData.productId,
-                                        change: function (e) {
-                                            if (movementObj) {
-                                                movementObj.value = 1;
-                                            }
-                                        },
-                                        placeholder: 'Select a Product',
-                                        floatLabelType: 'Never'
-                                    });
-                                    productObj.appendTo(args.element);
-                                }
-                            }
                         },
+
                         {
                             field: 'movement',
-                            headerText: 'Movement',
-                            width: 200,
+                            headerText: 'الحركة',
+                            width: 150,
                             validationRules: {
                                 required: true,
                                 custom: [(args) => {
                                     return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
+                                }, 'يجب أن يكون الرقم أكبر من صفر']
                             },
-                            type: 'number', format: 'N2', textAlign: 'Right',
-                            edit: {
-                                create: () => {
-                                    const movementElem = document.createElement('input');
-                                    return movementElem;
-                                },
-                                read: () => {
-                                    return movementObj.value;
-                                },
-                                destroy: function () {
-                                    movementObj.destroy();
-                                },
-                                write: function (args) {
-                                    movementObj = new ej.inputs.NumericTextBox({
-                                        value: args.rowData.movement ?? 0,
-                                    });
-                                    movementObj.appendTo(args.element);
-                                }
-                            }
+                            type: 'number',
+                            format: 'N2',
+                            textAlign: 'Right',
                         },
                     ],
+
                     toolbar: [
                         'ExcelExport',
                         { type: 'Separator' },
                         'Add', 'Edit', 'Delete', 'Update', 'Cancel',
                     ],
-                    beforeDataBound: () => { },
-                    dataBound: function () { },
-                    excelExportComplete: () => { },
-                    rowSelected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
-                        }
-                    },
-                    rowDeselected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
-                        }
-                    },
-                    rowSelecting: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length) {
-                            secondaryGrid.obj.clearSelection();
-                        }
-                    },
-                    toolbarClick: (args) => {
-                        if (args.item.id === 'SecondaryGrid_excelexport') {
-                            secondaryGrid.obj.excelExport();
-                        }
-                    },
+
                     actionComplete: async (args) => {
+
                         if (args.requestType === 'save' && args.action === 'add') {
                             try {
-                                const response = await services.createSecondaryData(state.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
+                                const response = await services.createSecondaryData(
+                                    state.id,
+                                    args.data.warehouseId,
+                                    args.data.productId,
+                                    args.data.movement,
+                                    StorageManager.getUserId()
+                                );
+
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
+
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
@@ -762,54 +749,71 @@
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Save Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        title: 'فشل الحفظ',
+                                        text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
+
                             } catch (error) {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'حدث خطأ',
                                     text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'موافق'
                                 });
                             }
                         }
+
                         if (args.requestType === 'save' && args.action === 'edit') {
                             try {
-                                const response = await services.updateSecondaryData(args.data.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
+                                const response = await services.updateSecondaryData(
+                                    args.data.id,
+                                    args.data.warehouseId,
+                                    args.data.productId,
+                                    args.data.movement,
+                                    StorageManager.getUserId()
+                                );
+
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
+
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Update Successful',
+                                        title: 'تم التحديث',
                                         timer: 2000,
                                         showConfirmButton: false
                                     });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Update Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        title: 'فشل التحديث',
+                                        text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
+
                             } catch (error) {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'حدث خطأ',
                                     text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'موافق'
                                 });
                             }
                         }
+
                         if (args.requestType === 'delete') {
                             try {
-                                const response = await services.deleteSecondaryData(args.data[0].id, StorageManager.getUserId());
+                                const response = await services.deleteSecondaryData(
+                                    args.data[0].id,
+                                    StorageManager.getUserId()
+                                );
+
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
+
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
@@ -820,26 +824,29 @@
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Delete Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        title: 'فشل الحذف',
+                                        text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
+
                             } catch (error) {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'حدث خطأ',
                                     text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'موافق'
                                 });
                             }
                         }
+
                         methods.refreshSummary();
                     }
                 });
-                secondaryGrid.obj.appendTo(secondaryGridRef.value);
 
+                secondaryGrid.obj.appendTo(secondaryGridRef.value);
             },
+
             refresh: () => {
                 secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
             }
