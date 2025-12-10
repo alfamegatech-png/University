@@ -1,4 +1,46 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان عمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            "Save": "ظحف",
+            "Close": "اغلاق",
+            'ExcelExport': 'تصدير إكسل',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي ",
+            "AddVendorGroup": "اضافة مجموعة موردين"
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -17,6 +59,7 @@
         const mainModalRef = Vue.ref(null);
         const nameRef = Vue.ref(null);
 
+        // الخدمات (API)
         const services = {
             getMainData: async () => {
                 try {
@@ -58,6 +101,7 @@
             },
         };
 
+        // جلب البيانات
         const methods = {
             populateMainData: async () => {
                 const response = await services.getMainData();
@@ -68,11 +112,12 @@
             }
         };
 
+        // TextBox للاسم
         const nameText = {
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name',
+                    placeholder: 'أدخل الاسم',
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -85,12 +130,13 @@
 
         Vue.watch(
             () => state.name,
-            (newVal, oldVal) => {
-                state.errors.name = ''; 
+            () => {
+                state.errors.name = '';
                 nameText.refresh();
             }
         );
 
+        // حفظ / تعديل / حذف
         const handler = {
             handleSubmit: async function () {
                 try {
@@ -99,9 +145,9 @@
 
                     let isValid = true;
 
-                    // name validation
+                    // التحقق من الاسم
                     if (!state.name) {
-                        state.errors.name = 'Name is required.';
+                        state.errors.name = 'الاسم مطلوب.';
                         isValid = false;
                     }
 
@@ -120,19 +166,21 @@
                         Swal.fire({
                             icon: 'success',
                             title: state.deleteMode ? 'تم الحذف' : 'تم الحفظ',
-                            text: 'الاغلاق من هنا...',
+                            text: 'تمت العملية بنجاح.',
                             timer: 2000,
                             showConfirmButton: false
                         });
+
                         setTimeout(() => {
                             mainModal.obj.hide();
                             resetFormState();
                         }, 2000);
+
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -142,7 +190,7 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'موافق'
                     });
                 } finally {
                     state.isSubmitting = false;
@@ -150,6 +198,7 @@
             },
         };
 
+        // إعادة ضبط النموذج
         const resetFormState = () => {
             state.id = '';
             state.name = '';
@@ -159,63 +208,57 @@
             };
         };
 
+        // Grid الرئيسي
         const mainGrid = {
             obj: null,
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
+                    locale: 'ar',
+                    enableRtl: true,
                     height: '240px',
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
                     allowSelection: true,
-                    allowCategorying: true,
+                    allowGrouping: true,
                     allowTextWrap: true,
                     allowResizing: true,
                     allowPaging: true,
                     allowExcelExport: true,
                     filterSettings: { type: 'CheckBox' },
                     sortSettings: { columns: [{ field: 'createdAtUtc', direction: 'Descending' }] },
-                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
+                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "الكل"] },
                     selectionSettings: { persistSelection: true, type: 'Single' },
                     autoFit: true,
                     showColumnMenu: true,
                     gridLines: 'Horizontal',
+                   
+
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'description', headerText: 'Description', width: 400, minWidth: 400 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'description', headerText: 'الوصف', width: 350 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء', width: 180, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+                        'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
                     ],
-                    beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], false);
                         mainGrid.obj.autoFitColumns(['name', 'description', 'createdAtUtc']);
                     },
-                    excelExportComplete: () => { },
                     rowSelected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], true);
-                        } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], false);
-                        }
+                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], mainGrid.obj.getSelectedRecords().length === 1);
                     },
                     rowDeselected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], true);
-                        } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], false);
-                        }
+                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], mainGrid.obj.getSelectedRecords().length === 1);
                     },
                     rowSelecting: () => {
                         if (mainGrid.obj.getSelectedRecords().length) {
@@ -229,31 +272,31 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Customer Category';
+                            state.mainTitle = 'إضافة فئة العملاء';
                             resetFormState();
                             mainModal.obj.show();
                         }
 
                         if (args.item.id === 'EditCustom') {
-                            state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
-                                const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Customer Category';
-                                state.id = selectedRecord.id ?? '';
-                                state.name = selectedRecord.name ?? '';
-                                state.description = selectedRecord.description ?? '';
+                                const rec = mainGrid.obj.getSelectedRecords()[0];
+                                state.deleteMode = false;
+                                state.mainTitle = 'تعديل فئة العملاء';
+                                state.id = rec.id ?? '';
+                                state.name = rec.name ?? '';
+                                state.description = rec.description ?? '';
                                 mainModal.obj.show();
                             }
                         }
 
                         if (args.item.id === 'DeleteCustom') {
-                            state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
-                                const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Customer Category?';
-                                state.id = selectedRecord.id ?? '';
-                                state.name = selectedRecord.name ?? '';
-                                state.description = selectedRecord.description ?? '';
+                                const rec = mainGrid.obj.getSelectedRecords()[0];
+                                state.deleteMode = true;
+                                state.mainTitle = 'هل تريد حذف فئة العملاء؟';
+                                state.id = rec.id ?? '';
+                                state.name = rec.name ?? '';
+                                state.description = rec.description ?? '';
                                 mainModal.obj.show();
                             }
                         }
@@ -267,39 +310,29 @@
             }
         };
 
+        // المودال
         const mainModal = {
             obj: null,
             create: () => {
-                mainModal.obj = new bootstrap.Modal(mainModalRef.value, {
-                    backdrop: 'static',
-                    keyboard: false
-                });
+                mainModal.obj = new bootstrap.Modal(mainModalRef.value, { backdrop: 'static', keyboard: false });
             }
         };
 
+        // عند التحميل
         Vue.onMounted(async () => {
             try {
                 await SecurityManager.authorizePage(['CustomerCategories']);
                 await SecurityManager.validateToken();
-
                 await methods.populateMainData();
                 await mainGrid.create(state.mainData);
                 nameText.create();
                 mainModal.create();
             } catch (e) {
-                console.error('page init error:', e);
-            } finally {
-                
+                console.error('خطأ في تهيئة الصفحة:', e);
             }
         });
 
-        return {
-            mainGridRef,
-            mainModalRef,
-            nameRef,
-            state,
-            handler,
-        };
+        return { mainGridRef, mainModalRef, nameRef, state, handler };
     }
 };
 

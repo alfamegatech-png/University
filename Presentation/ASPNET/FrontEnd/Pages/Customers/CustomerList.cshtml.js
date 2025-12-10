@@ -1,4 +1,45 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان عمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            "Save": "ظحف",
+            "Close": "اغلاق",
+            'ExcelExport': 'تصدير إكسل',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي ",
+            "AddVendorGroup": "اضافة مجموعة موردين"
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -195,7 +236,7 @@
                     customerGroupListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.customerGroupListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Customer Group',
+                        placeholder: 'اختر مجموعة العملاء',
                         change: (e) => {
                             state.customerGroupId = e.value;
                         }
@@ -219,7 +260,7 @@
                     customerCategoryListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.customerCategoryListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Customer Category',
+                        placeholder: 'اختر فئة العملاء',
                         change: (e) => {
                             state.customerCategoryId = e.value;
                         }
@@ -235,12 +276,11 @@
                 }
             },
         };
-
         const nameText = {
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name',
+                    placeholder: 'أدخل الاسم',
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -255,7 +295,7 @@
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                     readonly: true
                 });
                 numberText.obj.appendTo(numberRef.value);
@@ -271,7 +311,7 @@
             obj: null,
             create: () => {
                 streetText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Street',
+                    placeholder: 'أدخل اسم الشارع',
                 });
                 streetText.obj.appendTo(streetRef.value);
             },
@@ -286,7 +326,7 @@
             obj: null,
             create: () => {
                 cityText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter City',
+                    placeholder: 'أدخل المدينة',
                 });
                 cityText.obj.appendTo(cityRef.value);
             },
@@ -301,7 +341,7 @@
             obj: null,
             create: () => {
                 stateText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter State',
+                    placeholder: 'أدخل المحافظة / الولاية',
                 });
                 stateText.obj.appendTo(stateRef.value);
             },
@@ -316,7 +356,7 @@
             obj: null,
             create: () => {
                 zipCodeText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Zip Code',
+                    placeholder: 'أدخل الرمز البريدي',
                 });
                 zipCodeText.obj.appendTo(zipCodeRef.value);
             },
@@ -331,7 +371,7 @@
             obj: null,
             create: () => {
                 countryText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Country',
+                    placeholder: 'أدخل الدولة',
                 });
                 countryText.obj.appendTo(countryRef.value);
             },
@@ -346,7 +386,7 @@
             obj: null,
             create: () => {
                 phoneNumberText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Phone Number',
+                    placeholder: 'أدخل رقم الهاتف',
                 });
                 phoneNumberText.obj.appendTo(phoneNumberRef.value);
             },
@@ -361,7 +401,7 @@
             obj: null,
             create: () => {
                 faxNumberText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Fax Number',
+                    placeholder: 'أدخل رقم الفاكس',
                 });
                 faxNumberText.obj.appendTo(faxNumberRef.value);
             },
@@ -376,7 +416,7 @@
             obj: null,
             create: () => {
                 emailAddressText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Email Address',
+                    placeholder: 'أدخل البريد الإلكتروني',
                 });
                 emailAddressText.obj.appendTo(emailAddressRef.value);
             },
@@ -391,7 +431,7 @@
             obj: null,
             create: () => {
                 websiteText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Website',
+                    placeholder: 'أدخل الموقع الإلكتروني',
                 });
                 websiteText.obj.appendTo(websiteRef.value);
             },
@@ -406,7 +446,7 @@
             obj: null,
             create: () => {
                 whatsAppText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter WhatsApp',
+                    placeholder: 'أدخل رقم واتساب',
                 });
                 whatsAppText.obj.appendTo(whatsAppRef.value);
             },
@@ -421,7 +461,7 @@
             obj: null,
             create: () => {
                 linkedInText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter LinkedIn',
+                    placeholder: 'أدخل رابط لينكدإن',
                 });
                 linkedInText.obj.appendTo(linkedInRef.value);
             },
@@ -436,7 +476,7 @@
             obj: null,
             create: () => {
                 facebookText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Facebook',
+                    placeholder: 'أدخل رابط فيسبوك',
                 });
                 facebookText.obj.appendTo(facebookRef.value);
             },
@@ -451,7 +491,7 @@
             obj: null,
             create: () => {
                 instagramText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Instagram',
+                    placeholder: 'أدخل رابط إنستغرام',
                 });
                 instagramText.obj.appendTo(instagramRef.value);
             },
@@ -466,7 +506,7 @@
             obj: null,
             create: () => {
                 twitterXText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Twitter/X',
+                    placeholder: 'أدخل رابط تويتر / X',
                 });
                 twitterXText.obj.appendTo(twitterXRef.value);
             },
@@ -481,7 +521,7 @@
             obj: null,
             create: () => {
                 tikTokText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter TikTok',
+                    placeholder: 'أدخل رابط تيك توك',
                 });
                 tikTokText.obj.appendTo(tikTokRef.value);
             },
@@ -491,6 +531,7 @@
                 }
             }
         };
+
 
         Vue.watch(
             () => state.name,
@@ -588,45 +629,46 @@
                     let isValid = true;
 
                     if (!state.name) {
-                        state.errors.name = 'Name is required.';
+                        state.errors.name = 'الاسم مطلوب.';
                         isValid = false;
                     }
                     if (!state.customerGroupId) {
-                        state.errors.customerGroupId = 'Customer Group is required.';
+                        state.errors.customerGroupId = 'مجموعة العملاء مطلوبة.';
                         isValid = false;
                     }
                     if (!state.customerCategoryId) {
-                        state.errors.customerCategoryId = 'Customer Category is required.';
+                        state.errors.customerCategoryId = 'فئة العميل مطلوبة.';
                         isValid = false;
                     }
                     if (!state.street) {
-                        state.errors.street = 'Street is required.';
+                        state.errors.street = 'اسم الشارع مطلوب.';
                         isValid = false;
                     }
                     if (!state.city) {
-                        state.errors.city = 'City is required.';
+                        state.errors.city = 'المدينة مطلوبة.';
                         isValid = false;
                     }
                     if (!state.state) {
-                        state.errors.state = 'State is required.';
+                        state.errors.state = 'المحافظة / الولاية مطلوبة.';
                         isValid = false;
                     }
                     if (!state.zipCode) {
-                        state.errors.zipCode = 'Zip Code is required.';
+                        state.errors.zipCode = 'الرمز البريدي مطلوب.';
                         isValid = false;
                     }
                     if (!state.country) {
-                        state.errors.country = 'Country is required.';
+                        state.errors.country = 'الدولة مطلوبة.';
                         isValid = false;
                     }
                     if (!state.phoneNumber) {
-                        state.errors.phoneNumber = 'Phone Number is required.';
+                        state.errors.phoneNumber = 'رقم الهاتف مطلوب.';
                         isValid = false;
                     }
                     if (!state.emailAddress) {
-                        state.errors.emailAddress = 'Email Address is required.';
+                        state.errors.emailAddress = 'البريد الإلكتروني مطلوب.';
                         isValid = false;
                     }
+
 
                     if (!isValid) return;
 
@@ -752,6 +794,8 @@
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
@@ -772,25 +816,27 @@
                     columns: [
                         { type: 'checkbox', width: 60 },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false
                         },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'customerGroupName', headerText: 'Group', width: 200, minWidth: 200 },
-                        { field: 'customerCategoryName', headerText: 'Category', width: 200, minWidth: 200 },
-                        { field: 'street', headerText: 'Street', width: 200, minWidth: 200 },
-                        { field: 'phoneNumber', headerText: 'Phone', width: 200, minWidth: 200 },
-                        { field: 'emailAddress', headerText: 'Email', width: 200, minWidth: 200 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'customerGroupName', headerText: 'المجموعة', width: 200, minWidth: 200 },
+                        { field: 'customerCategoryName', headerText: 'الفئة', width: 200, minWidth: 200 },
+                        { field: 'street', headerText: 'الشارع', width: 200, minWidth: 200 },
+                        { field: 'phoneNumber', headerText: 'الهاتف', width: 200, minWidth: 200 },
+                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 200, minWidth: 200 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء بالتوقيت العالمي', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
+
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+                         'Search',
                         { type: 'Separator' },
                         { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
                         { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
                         { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'Manage Contact', tooltipText: 'Manage Contact', id: 'ManageContactCustom' },
+                        { text: 'ادارة جهة الاتصال', tooltipText: 'Manage Contact', id: 'ManageContactCustom' },
                     ],
                     beforeDataBound: () => { },
                     dataBound: function () {
@@ -922,7 +968,14 @@
                     allowResizing: true,
                     allowPaging: true,
                     allowExcelExport: true,
-                    editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
+                    editSettings: {
+                        allowEditing: true,
+                        allowAdding: true,
+                        allowDeleting: true,
+                        showDeleteConfirmDialog: true,
+                        mode: 'Normal',
+                        allowEditOnDblClick: true
+                    },
                     filterSettings: { type: 'CheckBox' },
                     sortSettings: { columns: [{ field: 'createdAtUtc', direction: 'Descending' }] },
                     pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
@@ -932,93 +985,75 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'jobTitle', headerText: 'Job Title', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'phoneNumber', headerText: 'Phone', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'emailAddress', headerText: 'Email', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'description', headerText: 'Description', width: 400, minWidth: 400 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'jobTitle', headerText: 'المسمى الوظيفي', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'phoneNumber', headerText: 'رقم الهاتف', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء (UTC)', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Add', 'Edit', 'Delete', 'Update', 'Cancel', 'Search'
+                        'ExcelExport',
+                        'Add', // إضافة
+                        'Edit', // تعديل
+                        'Delete', // حذف
+                        'Update', // تحديث
+                        'Cancel', // إلغاء
+                        'Search'
                     ],
-                    beforeDataBound: () => { },
                     dataBound: function () {
+                        // تعطيل أزرار التعديل والحذف إذا لم يكن هناك صف محدد
                         secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], false);
-                        secondaryGrid.obj.autoFitColumns(['name', 'jobTitle', 'phoneNumber', 'emailAddress', 'description', 'createdAtUtc']);
                     },
-                    excelExportComplete: () => { },
-                    rowSelected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], false);
-                        }
+                    rowSelected: function () {
+                        const selected = secondaryGrid.obj.getSelectedRecords();
+                        secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], selected.length === 1);
                     },
-                    rowDeselected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], false);
-                        }
+                    rowDeselected: function () {
+                        const selected = secondaryGrid.obj.getSelectedRecords();
+                        secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], selected.length === 1);
                     },
-                    rowSelecting: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length) {
-                            secondaryGrid.obj.clearSelection();
-                        }
-                    },
-                    actionComplete: async (args) => {
-                        if (args.requestType === 'save' && args.action === 'add') {
-                            console.log(state);
-                            const response = await services.createSecondaryData(
-                                args.data.name, args.data.jobTitle, args.data.phoneNumber, args.data.emailAddress, args.data.description, state.id, StorageManager.getUserId()
-                            );
-                            await methods.populateSecondaryData(state.id);
-                            secondaryGrid.refresh();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحفظ',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                        }
-                        if (args.requestType === 'save' && args.action === 'edit') {
-                            const response = await services.updateSecondaryData(
-                                args.data.id, args.data.name, args.data.jobTitle, args.data.phoneNumber, args.data.emailAddress, args.data.description, state.id, StorageManager.getUserId()
-                            );
-                            await methods.populateSecondaryData(state.id);
-                            secondaryGrid.refresh();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Update Successful',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                        }
-                        if (args.requestType === 'delete') {
-                            const response = await services.deleteSecondaryData(
-                                args.data[0].id, StorageManager.getUserId()
-                            );
-                            await methods.populateSecondaryData(state.id);
-                            secondaryGrid.refresh();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
+                    actionComplete: async function (args) {
+                        try {
+                            if (args.requestType === 'save' && args.action === 'add') {
+                                await services.createSecondaryData(
+                                    args.data.name, args.data.jobTitle, args.data.phoneNumber, args.data.emailAddress, args.data.description,
+                                    state.id, StorageManager.getUserId()
+                                );
+                                await methods.populateSecondaryData(state.id);
+                                secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
+                                Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
+                            }
+                            if (args.requestType === 'save' && args.action === 'edit') {
+                                await services.updateSecondaryData(
+                                    args.data.id, args.data.name, args.data.jobTitle, args.data.phoneNumber, args.data.emailAddress, args.data.description,
+                                    state.id, StorageManager.getUserId()
+                                );
+                                await methods.populateSecondaryData(state.id);
+                                secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
+                                Swal.fire({ icon: 'success', title: 'تم التعديل', timer: 2000, showConfirmButton: false });
+                            }
+                            if (args.requestType === 'delete') {
+                                await services.deleteSecondaryData(args.data[0].id, StorageManager.getUserId());
+                                await methods.populateSecondaryData(state.id);
+                                secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
+                                Swal.fire({ icon: 'success', title: 'تم الحذف', timer: 2000, showConfirmButton: false });
+                            }
+                        } catch (e) {
+                            console.error('CRUD Error:', e);
+                            Swal.fire({ icon: 'error', title: 'حدث خطأ', text: e.message });
                         }
                     }
                 });
+
                 secondaryGrid.obj.appendTo(secondaryGridRef.value);
             },
             refresh: () => {
                 secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
             }
         };
+
 
         Vue.onMounted(async () => {
             try {

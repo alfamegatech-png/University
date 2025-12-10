@@ -1,4 +1,45 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -475,6 +516,8 @@
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
@@ -494,25 +537,24 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'orderDate', headerText: 'SO Date', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'customerName', headerText: 'Customer', width: 200, minWidth: 200 },
-                        { field: 'orderStatusName', headerText: 'Status', width: 150, minWidth: 150 },
-                        { field: 'taxName', headerText: 'Tax', width: 150, minWidth: 150 },
-                        { field: 'afterTaxAmount', headerText: 'Total Amount', width: 150, minWidth: 150, format: 'N2' },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'معرف', visible: false },
+                        { field: 'number', headerText: 'رقم الطلب', width: 150, minWidth: 150 },
+                        { field: 'orderDate', headerText: 'تاريخ الطلب', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'customerName', headerText: 'العميل', width: 200, minWidth: 200 },
+                        { field: 'orderStatusName', headerText: 'الحالة', width: 150, minWidth: 150 },
+                        { field: 'taxName', headerText: 'الضريبة', width: 150, minWidth: 150 },
+                        { field: 'afterTaxAmount', headerText: 'الإجمالي', width: 150, minWidth: 150, format: 'N2' },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء (UTC)', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+                        'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'Print PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
+                        { text: 'طباعة PDF', tooltipText: 'طباعة PDF', id: 'PrintPDFCustom' },
                     ],
                     beforeDataBound: () => { },
                     dataBound: function () {
@@ -546,7 +588,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Sales Order';
+                            state.mainTitle = 'إضافة طلب مبيعات';
                             resetFormState();
                             state.secondaryData = [];
                             secondaryGrid.refresh();
@@ -558,7 +600,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Sales Order';
+                                state.mainTitle = 'تعديل طلب المبيعات';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
@@ -580,7 +622,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Sales Order?';
+                                state.mainTitle = 'حذف طلب المبيعات؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
@@ -613,6 +655,7 @@
             }
         };
 
+        // ثانوي (Secondary Grid)
         const secondaryGrid = {
             obj: null,
             create: async (dataSource) => {
@@ -637,31 +680,18 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
+                        { field: 'id', isPrimaryKey: true, headerText: 'معرف', visible: false },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        {
-                            field: 'productId',
-                            headerText: 'Product',
-                            width: 250,
-                            validationRules: { required: true },
-                            disableHtmlEncode: false,
+                            field: 'productId', headerText: 'المنتج', width: 250, validationRules: { required: true }, disableHtmlEncode: false,
                             valueAccessor: (field, data, column) => {
                                 const product = state.productListLookupData.find(item => item.id === data[field]);
                                 return product ? `${product.name}` : '';
                             },
                             editType: 'dropdownedit',
                             edit: {
-                                create: () => {
-                                    let productElem = document.createElement('input');
-                                    return productElem;
-                                },
-                                read: () => {
-                                    return productObj.value;
-                                },
-                                destroy: () => {
-                                    productObj.destroy();
-                                },
+                                create: () => document.createElement('input'),
+                                read: () => productObj.value,
+                                destroy: () => productObj.destroy(),
                                 write: (args) => {
                                     productObj = new ej.dropdowns.DropDownList({
                                         dataSource: state.productListLookupData,
@@ -671,25 +701,16 @@
                                             const selectedProduct = state.productListLookupData.find(item => item.id === e.value);
                                             if (selectedProduct) {
                                                 args.rowData.productId = selectedProduct.id;
-                                                if (numberObj) {
-                                                    numberObj.value = selectedProduct.number;
-                                                }
-                                                if (priceObj) {
-                                                    priceObj.value = selectedProduct.unitPrice;
-                                                }
-                                                if (summaryObj) {
-                                                    summaryObj.value = selectedProduct.description;
-                                                }
+                                                if (numberObj) numberObj.value = selectedProduct.number;
+                                                if (priceObj) priceObj.value = selectedProduct.unitPrice;
+                                                if (summaryObj) summaryObj.value = selectedProduct.description;
                                                 if (quantityObj) {
                                                     quantityObj.value = 1;
-                                                    const total = selectedProduct.unitPrice * quantityObj.value;
-                                                    if (totalObj) {
-                                                        totalObj.value = total;
-                                                    }
+                                                    if (totalObj) totalObj.value = selectedProduct.unitPrice * quantityObj.value;
                                                 }
                                             }
                                         },
-                                        placeholder: 'Select a Product',
+                                        placeholder: 'اختر المنتج',
                                         floatLabelType: 'Never'
                                     });
                                     productObj.appendTo(args.element);
@@ -697,28 +718,16 @@
                             }
                         },
                         {
-                            field: 'unitPrice',
-                            headerText: 'Unit Price',
-                            width: 200, validationRules: { required: true }, type: 'number', format: 'N2', textAlign: 'Right',
+                            field: 'unitPrice', headerText: 'سعر الوحدة', width: 200, validationRules: { required: true }, type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
-                                create: () => {
-                                    let priceElem = document.createElement('input');
-                                    return priceElem;
-                                },
-                                read: () => {
-                                    return priceObj.value;
-                                },
-                                destroy: () => {
-                                    priceObj.destroy();
-                                },
+                                create: () => document.createElement('input'),
+                                read: () => priceObj.value,
+                                destroy: () => priceObj.destroy(),
                                 write: (args) => {
                                     priceObj = new ej.inputs.NumericTextBox({
                                         value: args.rowData.unitPrice ?? 0,
                                         change: (e) => {
-                                            if (quantityObj && totalObj) {
-                                                const total = e.value * quantityObj.value;
-                                                totalObj.value = total;
-                                            }
+                                            if (quantityObj && totalObj) totalObj.value = e.value * quantityObj.value;
                                         }
                                     });
                                     priceObj.appendTo(args.element);
@@ -726,35 +735,16 @@
                             }
                         },
                         {
-                            field: 'quantity',
-                            headerText: 'Quantity',
-                            width: 200,
-                            validationRules: {
-                                required: true,
-                                custom: [(args) => {
-                                    return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
-                            },
-                            type: 'number', format: 'N2', textAlign: 'Right',
+                            field: 'quantity', headerText: 'الكمية', width: 200, validationRules: { required: true, custom: [(args) => args['value'] > 0, 'يجب أن تكون قيمة موجبة وغير صفر'] }, type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
-                                create: () => {
-                                    let quantityElem = document.createElement('input');
-                                    return quantityElem;
-                                },
-                                read: () => {
-                                    return quantityObj.value;
-                                },
-                                destroy: () => {
-                                    quantityObj.destroy();
-                                },
+                                create: () => document.createElement('input'),
+                                read: () => quantityObj.value,
+                                destroy: () => quantityObj.destroy(),
                                 write: (args) => {
                                     quantityObj = new ej.inputs.NumericTextBox({
                                         value: args.rowData.quantity ?? 0,
                                         change: (e) => {
-                                            if (priceObj && totalObj) {
-                                                const total = e.value * priceObj.value;
-                                                totalObj.value = total;
-                                            }
+                                            if (priceObj && totalObj) totalObj.value = e.value * priceObj.value;
                                         }
                                     });
                                     quantityObj.appendTo(args.element);
@@ -762,45 +752,21 @@
                             }
                         },
                         {
-                            field: 'total',
-                            headerText: 'Total',
-                            width: 200, validationRules: { required: false }, type: 'number', format: 'N2', textAlign: 'Right',
-                            edit: {
-                                create: () => {
-                                    let totalElem = document.createElement('input');
-                                    return totalElem;
-                                },
-                                read: () => {
-                                    return totalObj.value;
-                                },
-                                destroy: () => {
-                                    totalObj.destroy();
-                                },
+                            field: 'total', headerText: 'الإجمالي', width: 200, type: 'number', format: 'N2', textAlign: 'Right', edit: {
+                                create: () => document.createElement('input'),
+                                read: () => totalObj.value,
+                                destroy: () => totalObj.destroy(),
                                 write: (args) => {
-                                    totalObj = new ej.inputs.NumericTextBox({
-                                        value: args.rowData.total ?? 0,
-                                        readonly: true
-                                    });
+                                    totalObj = new ej.inputs.NumericTextBox({ value: args.rowData.total ?? 0, readonly: true });
                                     totalObj.appendTo(args.element);
                                 }
                             }
                         },
                         {
-                            field: 'productNumber',
-                            headerText: 'Product Number',
-                            allowEditing: false,
-                            width: 180,
-                            edit: {
-                                create: () => {
-                                    let numberElem = document.createElement('input');
-                                    return numberElem;
-                                },
-                                read: () => {
-                                    return numberObj.value;
-                                },
-                                destroy: () => {
-                                    numberObj.destroy();
-                                },
+                            field: 'productNumber', headerText: 'رقم المنتج', allowEditing: false, width: 180, edit: {
+                                create: () => document.createElement('input'),
+                                read: () => numberObj.value,
+                                destroy: () => numberObj.destroy(),
                                 write: (args) => {
                                     numberObj = new ej.inputs.TextBox();
                                     numberObj.value = args.rowData.productNumber;
@@ -810,20 +776,10 @@
                             }
                         },
                         {
-                            field: 'summary',
-                            headerText: 'Summary',
-                            width: 200,
-                            edit: {
-                                create: () => {
-                                    let summaryElem = document.createElement('input');
-                                    return summaryElem;
-                                },
-                                read: () => {
-                                    return summaryObj.value;
-                                },
-                                destroy: () => {
-                                    summaryObj.destroy();
-                                },
+                            field: 'summary', headerText: 'وصف المنتج', width: 200, edit: {
+                                create: () => document.createElement('input'),
+                                read: () => summaryObj.value,
+                                destroy: () => summaryObj.destroy(),
                                 write: (args) => {
                                     summaryObj = new ej.inputs.TextBox();
                                     summaryObj.value = args.rowData.summary;
@@ -832,88 +788,52 @@
                             }
                         },
                     ],
-                    toolbar: [
-                        'ExcelExport',
-                        { type: 'Separator' },
-                        'Add', 'Edit', 'Delete', 'Update', 'Cancel',
-                    ],
+                    toolbar: ['ExcelExport', { type: 'Separator' }, 'Add', 'Edit', 'Delete', 'Update', 'Cancel'],
                     beforeDataBound: () => { },
-                    dataBound: function () { },
+                    dataBound: () => { },
                     excelExportComplete: () => { },
                     rowSelected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
-                        }
+                        if (secondaryGrid.obj.getSelectedRecords().length == 1) secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
+                        else secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
                     },
                     rowDeselected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
-                        }
+                        if (secondaryGrid.obj.getSelectedRecords().length == 1) secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
+                        else secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
                     },
                     rowSelecting: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length) {
-                            secondaryGrid.obj.clearSelection();
-                        }
+                        if (secondaryGrid.obj.getSelectedRecords().length) secondaryGrid.obj.clearSelection();
                     },
                     toolbarClick: (args) => {
-                        if (args.item.id === 'SecondaryGrid_excelexport') {
-                            secondaryGrid.obj.excelExport();
-                        }
+                        if (args.item.id === 'SecondaryGrid_excelexport') secondaryGrid.obj.excelExport();
                     },
                     actionComplete: async (args) => {
                         if (args.requestType === 'save' && args.action === 'add') {
-                            const salesOrderId = state.id; 
+                            const salesOrderId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
-
                             await services.createSecondaryData(data?.unitPrice, data?.quantity, data?.summary, data?.productId, salesOrderId, userId);
                             await methods.populateSecondaryData(salesOrderId);
                             secondaryGrid.refresh();
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحفظ',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
                         }
                         if (args.requestType === 'save' && args.action === 'edit') {
-                            const salesOrderId = state.id; 
+                            const salesOrderId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
-
                             await services.updateSecondaryData(data?.id, data?.unitPrice, data?.quantity, data?.summary, data?.productId, salesOrderId, userId);
                             await methods.populateSecondaryData(salesOrderId);
                             secondaryGrid.refresh();
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحفظ',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
                         }
                         if (args.requestType === 'delete') {
-                            const salesOrderId = state.id; 
+                            const salesOrderId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data[0];
-
                             await services.deleteSecondaryData(data?.id, userId);
                             await methods.populateSecondaryData(salesOrderId);
                             secondaryGrid.refresh();
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon: 'success', title: 'تم الحذف', timer: 2000, showConfirmButton: false });
                         }
-
                         await methods.populateMainData();
                         mainGrid.refresh();
                         await methods.refreshPaymentSummary(state.id);
@@ -925,6 +845,7 @@
                 secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
             }
         };
+
 
         const mainModal = {
             obj: null,

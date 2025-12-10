@@ -957,6 +957,8 @@ const App = {
             create: async (dataSource) => {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: '240px',
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
@@ -966,7 +968,14 @@ const App = {
                     allowResizing: true,
                     allowPaging: true,
                     allowExcelExport: true,
-                    editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
+                    editSettings: {
+                        allowEditing: true,
+                        allowAdding: true,
+                        allowDeleting: true,
+                        showDeleteConfirmDialog: true,
+                        mode: 'Normal',
+                        allowEditOnDblClick: true
+                    },
                     filterSettings: { type: 'CheckBox' },
                     sortSettings: { columns: [{ field: 'createdAtUtc', direction: 'Descending' }] },
                     pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
@@ -976,99 +985,64 @@ const App = {
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false
-                        },
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
                         { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200, validationRules: { required: true } },
                         { field: 'jobTitle', headerText: 'المسمى الوظيفي', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'phoneNumber', headerText: 'رقم الهاتف', width: 200, minWidth: 200, validationRules: { required: true } },
-                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 200, minWidth: 200, validationRules: { required: true } },
+                        { field: 'phoneNumber', headerText: 'رقم الهاتف', width: 200, minWidth: 200 },
+                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 200, minWidth: 200 },
                         { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 },
                         { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport',
-                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
-                        'Update',
-                        'Cancel',
-                        'Search'
+                        'Add', 'Edit', 'Delete', 'Update', 'Cancel', 'Search', 'ExcelExport'
                     ],
-
-                    beforeDataBound: () => { },
                     dataBound: function () {
                         secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], false);
-                        secondaryGrid.obj.autoFitColumns(['name', 'jobTitle', 'phoneNumber', 'emailAddress', 'description', 'createdAtUtc']);
                     },
-                    excelExportComplete: () => { },
-                    rowSelected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], false);
-                        }
+                    rowSelected: function () {
+                        const selected = secondaryGrid.obj.getSelectedRecords();
+                        secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], selected.length === 1);
                     },
-                    rowDeselected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], false);
-                        }
+                    rowDeselected: function () {
+                        const selected = secondaryGrid.obj.getSelectedRecords();
+                        secondaryGrid.obj.toolbarModule.enableItems(['Edit', 'Delete'], selected.length === 1);
                     },
-                    rowSelecting: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length) {
-                            secondaryGrid.obj.clearSelection();
-                        }
-                    },
-                    actionComplete: async (args) => {
+                    actionComplete: async function (args) {
                         if (args.requestType === 'save' && args.action === 'add') {
-                            const response = await services.createSecondaryData(
-                                args.data.name, args.data.jobTitle, args.data.phoneNumber, args.data.emailAddress, args.data.description, state.id, StorageManager.getUserId()
+                            await services.createSecondaryData(
+                                args.data.name, args.data.jobTitle, args.data.phoneNumber,
+                                args.data.emailAddress, args.data.description, state.id, StorageManager.getUserId()
                             );
                             await methods.populateSecondaryData(state.id);
                             secondaryGrid.refresh();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحفظ',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
                         }
                         if (args.requestType === 'save' && args.action === 'edit') {
-                            const response = await services.updateSecondaryData(
-                                args.data.id, args.data.name, args.data.jobTitle, args.data.phoneNumber, args.data.emailAddress, args.data.description, state.id, StorageManager.getUserId()
+                            await services.updateSecondaryData(
+                                args.data.id, args.data.name, args.data.jobTitle,
+                                args.data.phoneNumber, args.data.emailAddress, args.data.description,
+                                state.id, StorageManager.getUserId()
                             );
                             await methods.populateSecondaryData(state.id);
                             secondaryGrid.refresh();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Update Successful',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon: 'success', title: 'تم التعديل', timer: 2000, showConfirmButton: false });
                         }
                         if (args.requestType === 'delete') {
-                            const response = await services.deleteSecondaryData(
-                                args.data[0].id, StorageManager.getUserId()
-                            );
+                            await services.deleteSecondaryData(args.data[0].id, StorageManager.getUserId());
                             await methods.populateSecondaryData(state.id);
                             secondaryGrid.refresh();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'تم الحذف',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ icon: 'success', title: 'تم الحذف', timer: 2000, showConfirmButton: false });
                         }
                     }
                 });
+
                 secondaryGrid.obj.appendTo(secondaryGridRef.value);
             },
             refresh: () => {
                 secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
             }
         };
+
 
         Vue.onMounted(async () => {
             try {

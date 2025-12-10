@@ -1,6 +1,6 @@
 ﻿@page
 @{
-    ViewData["Title"] = "Customer List";
+    ViewData["Title"] = "قائمة العملاء";
 }
 
 <div id="app" v-cloak>
@@ -17,151 +17,154 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" v-text="state.mainTitle"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" v-model="state.id" id="Id" name="Id" />
                     <form id="MainForm">
                         <div class="card mb-3">
                             <div class="card-header">
-                                <h5>Main Info</h5>
+                                <h5>المعلومات الأساسية</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label for="Name">Name</label>
+                                        <label for="Name">الاسم</label>
                                         <input ref="nameRef" v-model="state.name" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.name"></label>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="Number">Number</label>
+                                        <label for="Number">الرقم</label>
                                         <input ref="numberRef" v-model="state.number" class="form-control" placeholder="" readonly />
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label for="CustomerGroupId">Customer Group</label>
+                                        <label for="CustomerGroupId">مجموعة العملاء</label>
                                         <div ref="customerGroupIdRef"></div>
                                         <label class="text-danger" v-text="state.errors.customerGroupId"></label>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="CustomerCategoryId">Customer Category</label>
+                                        <label for="CustomerCategoryId">فئة العملاء</label>
                                         <div ref="customerCategoryIdRef"></div>
                                         <label class="text-danger" v-text="state.errors.customerCategoryId"></label>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-12">
-                                        <label for="Description">Description</label>
+                                        <label for="Description">الوصف</label>
                                         <textarea v-model="state.description" class="form-control" rows="3" placeholder=""></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="card mb-3">
                             <div class="card-header">
-                                <h5>Address</h5>
+                                <h5>العنوان</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label for="Street">Street</label>
+                                        <label for="Street">الشارع</label>
                                         <input ref="streetRef" v-model="state.street" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.street"></label>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="City">City</label>
+                                        <label for="City">المدينة</label>
                                         <input ref="cityRef" v-model="state.city" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.city"></label>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label for="State">State</label>
+                                        <label for="State">المحافظة / الولاية</label>
                                         <input ref="stateRef" v-model="state.state" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.state"></label>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="ZipCode">Zip Code</label>
+                                        <label for="ZipCode">الرمز البريدي</label>
                                         <input ref="zipCodeRef" v-model="state.zipCode" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.zipCode"></label>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label for="Country">Country</label>
+                                        <label for="Country">الدولة</label>
                                         <input ref="countryRef" v-model="state.country" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.country"></label>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="card mb-3">
                             <div class="card-header">
-                                <h5>Communication</h5>
+                                <h5>وسائل الاتصال</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label for="PhoneNumber">Phone Number</label>
+                                        <label for="PhoneNumber">رقم الهاتف</label>
                                         <input ref="phoneNumberRef" v-model="state.phoneNumber" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.phoneNumber"></label>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="FaxNumber">Fax Number</label>
+                                        <label for="FaxNumber">رقم الفاكس</label>
                                         <input ref="faxNumberRef" v-model="state.faxNumber" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.faxNumber"></label>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label for="EmailAddress">Email</label>
+                                        <label for="EmailAddress">البريد الإلكتروني</label>
                                         <input ref="emailAddressRef" v-model="state.emailAddress" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.emailAddress"></label>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="Website">Website</label>
+                                        <label for="Website">الموقع الإلكتروني</label>
                                         <input ref="websiteRef" v-model="state.website" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.website"></label>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="card mb-3">
                             <div class="card-header">
-                                <h5>Social Media</h5>
+                                <h5>وسائل التواصل الاجتماعي</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row mb-2">
                                     <div class="col-md-4">
-                                        <label for="WhatsApp">WhatsApp</label>
+                                        <label for="WhatsApp">واتساب</label>
                                         <input ref="whatsAppRef" v-model="state.whatsApp" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.whatsApp"></label>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="LinkedIn">LinkedIn</label>
+                                        <label for="LinkedIn">لينكدإن</label>
                                         <input ref="linkedInRef" v-model="state.linkedIn" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.linkedIn"></label>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="Facebook">Facebook</label>
+                                        <label for="Facebook">فيسبوك</label>
                                         <input ref="facebookRef" v-model="state.facebook" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.facebook"></label>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-4">
-                                        <label for="Instagram">Instagram</label>
+                                        <label for="Instagram">إنستغرام</label>
                                         <input ref="instagramRef" v-model="state.instagram" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.instagram"></label>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="TwitterX">Twitter/X</label>
+                                        <label for="TwitterX">تويتر / إكس</label>
                                         <input ref="twitterXRef" v-model="state.twitterX" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.twitterX"></label>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="TikTok">TikTok</label>
+                                        <label for="TikTok">تيك توك</label>
                                         <input ref="tikTokRef" v-model="state.tikTok" class="form-control" placeholder="" />
                                         <label class="text-danger" v-text="state.errors.tikTok"></label>
                                     </div>
@@ -171,7 +174,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
                     <button type="button"
                             id="MainSaveButton"
                             class="btn"
@@ -179,8 +182,8 @@
                             v-on:click="handler.handleSubmit"
                             v-bind:disabled="state.isSubmitting">
                         <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
-                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'Delete' : 'Save' }}</span>
-                        <span v-else>{{ state.deleteMode ? 'Deleting...' : 'Saving...' }}</span>
+                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'حذف' : 'حفظ' }}</span>
+                        <span v-else>{{ state.deleteMode ? 'جارٍ الحذف...' : 'جارٍ الحفظ...' }}</span>
                     </button>
                 </div>
             </div>
@@ -192,7 +195,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" v-text="state.manageContactTitle"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" v-model="state.id" id="Id" name="Id" />
@@ -200,7 +203,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5>Customer Contact</h5>
+                                    <h5>جهات اتصال العميل</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -216,7 +219,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
                 </div>
             </div>
         </div>

@@ -41,23 +41,23 @@
             let isValid = true;
 
             if (!state.name) {
-                state.errors.name = 'Name is required.';
+                state.errors.name = 'الاسم مطلوب.';
                 isValid = false;
             }
             if (!state.jobTitle) {
-                state.errors.jobTitle = 'Job Title is required.';
+                state.errors.jobTitle = 'المسمى الوظيفي مطلوب.';
                 isValid = false;
             }
             if (!state.phoneNumber) {
-                state.errors.phoneNumber = 'Phone number is required.';
+                state.errors.phoneNumber = 'رقم الهاتف مطلوب.';
                 isValid = false;
             }
             if (!state.emailAddress) {
-                state.errors.emailAddress = 'Email address is required.';
+                state.errors.emailAddress = 'البريد الإلكتروني مطلوب.';
                 isValid = false;
             }
             if (!state.customerId) {
-                state.errors.customerId = 'Customer is required.';
+                state.errors.customerId = 'العميل مطلوب.';
                 isValid = false;
             }
 
@@ -149,7 +149,7 @@
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name'
+                    placeholder: 'أدخل الاسم'
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -165,7 +165,7 @@
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                     readonly: true
                 });
                 numberText.obj.appendTo(numberRef.value);
@@ -181,7 +181,7 @@
             obj: null,
             create: () => {
                 jobTitleText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Job Title'
+                    placeholder: 'أدخل المسمى الوظيفي'
                 });
                 jobTitleText.obj.appendTo(jobTitleRef.value);
             },
@@ -196,7 +196,7 @@
             obj: null,
             create: () => {
                 phoneNumberText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Phone Number'
+                    placeholder: 'أدخل رقم الهاتف'
                 });
                 phoneNumberText.obj.appendTo(phoneNumberRef.value);
             },
@@ -211,7 +211,7 @@
             obj: null,
             create: () => {
                 emailAddressText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Email Address'
+                    placeholder: 'أدخل البريد الإلكتروني'
                 });
                 emailAddressText.obj.appendTo(emailAddressRef.value);
             },
@@ -229,14 +229,14 @@
                     customerListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.customerListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Customer',
+                        placeholder: 'اختر العميل',
                         change: (e) => {
                             state.customerId = e.value;
                         }
                     });
                     customerListLookup.obj.appendTo(customerIdRef.value);
                 } else {
-                    console.error('Customer list lookup data is not available or invalid.');
+                    console.error('بيانات قائمة العملاء غير متوفرة أو غير صالحة.');
                 }
             },
             refresh: () => {
@@ -307,7 +307,7 @@
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Customer Contact';
+                            state.mainTitle = 'تعديل بيانات جهة الاتصال';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             state.name = response?.data?.content?.data.name ?? '';
@@ -320,7 +320,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: state.deleteMode ? 'تم الحذف' : 'تم الحفظ',
-                                text: 'الاغلاق من هنا...',
+                                text: 'سيتم الإغلاق تلقائياً...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -332,7 +332,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'تم الحذف',
-                                text: 'الاغلاق من هنا...',
+                                text: 'سيتم الإغلاق تلقائياً...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -345,8 +345,8 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -356,7 +356,7 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'موافق'
                     });
                 } finally {
                     state.isSubmitting = false;
@@ -385,9 +385,7 @@
                 });
 
             } catch (e) {
-                console.error('page init error:', e);
-            } finally {
-                
+                console.error('خطأ أثناء تحميل الصفحة:', e);
             }
         });
 
@@ -421,23 +419,22 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'name', headerText: 'Name', width: 200, minWidth: 200 },
-                        { field: 'customerName', headerText: 'Customer', width: 150, minWidth: 150 },
-                        { field: 'jobTitle', headerText: 'Job Title', width: 150, minWidth: 150 },
-                        { field: 'phoneNumber', headerText: 'Phone', width: 150, minWidth: 150 },
-                        { field: 'emailAddress', headerText: 'Email', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
+                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'customerName', headerText: 'العميل', width: 150, minWidth: 150 },
+                        { field: 'jobTitle', headerText: 'المسمى الوظيفي', width: 150, minWidth: 150 },
+                        { field: 'phoneNumber', headerText: 'الهاتف', width: 150, minWidth: 150 },
+                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 150, minWidth: 150 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+                        'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
                     ],
                     beforeDataBound: () => { },
@@ -472,7 +469,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Customer Contact';
+                            state.mainTitle = 'إضافة جهة اتصال';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -481,7 +478,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Customer Contact';
+                                state.mainTitle = 'تعديل جهة اتصال';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';
@@ -498,7 +495,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Customer Contact?';
+                                state.mainTitle = 'هل تريد حذف جهة الاتصال؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';

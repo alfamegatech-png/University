@@ -1,6 +1,6 @@
 ﻿@page
 @{
-    ViewData["Title"] = "Sales Order List";
+    ViewData["Title"] = "قائمة طلبات المبيعات";
 }
 
 <div id="app" v-cloak>
@@ -17,7 +17,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ state.mainTitle }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" v-model="state.id" id="Id" name="Id" />
@@ -26,42 +26,42 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Main Info</h5>
+                                        <h5>المعلومات الرئيسية</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="OrderDate">Order Date</label>
+                                                <label for="OrderDate">تاريخ الطلب</label>
                                                 <input ref="orderDateRef" />
                                                 <label class="text-danger">{{ state.errors.orderDate }}</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="Number">Number</label>
+                                                <label for="Number">رقم الطلب</label>
                                                 <input ref="numberRef" v-model="state.number" readonly>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="CustomerId">Customer</label>
+                                                <label for="CustomerId">العميل</label>
                                                 <div ref="customerIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.customerId }}</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="TaxId">Tax</label>
+                                                <label for="TaxId">الضريبة</label>
                                                 <div ref="taxIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.taxId }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="OrderStatus">Order Status</label>
+                                                <label for="OrderStatus">حالة الطلب</label>
                                                 <div ref="orderStatusRef"></div>
                                                 <label class="text-danger">{{ state.errors.orderStatus }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-12">
-                                                <label for="Description">Description</label>
+                                                <label for="Description">الوصف</label>
                                                 <textarea class="form-control" rows="3" v-model="state.description"></textarea>
                                                 <label class="text-danger">{{ state.errors.description }}</label>
                                             </div>
@@ -76,7 +76,7 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Sales Order Item</h5>
+                                        <h5>بنود طلب المبيعات</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
@@ -94,21 +94,21 @@
                             <div class="col-md-12">
                                 <div class="card shadow-sm">
                                     <div class="card-header text-white">
-                                        <h5 class="mb-0">Payment Summary</h5>
+                                        <h5 class="mb-0">ملخص الدفع</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row justify-content-end">
                                             <div class="col-md-6">
                                                 <div class="d-flex justify-content-between py-2 border-bottom">
-                                                    <span class="fw-bold">Subtotal</span>
+                                                    <span class="fw-bold">الإجمالي الفرعي</span>
                                                     <span id="SubTotalAmount">{{ state.subTotalAmount }}</span>
                                                 </div>
                                                 <div class="d-flex justify-content-between py-2 border-bottom">
-                                                    <span class="fw-bold">Tax</span>
+                                                    <span class="fw-bold">الضريبة</span>
                                                     <span id="TaxAmount">{{ state.taxAmount }}</span>
                                                 </div>
                                                 <div class="d-flex justify-content-between py-2">
-                                                    <span class="fw-bold">Total Amount</span>
+                                                    <span class="fw-bold">المبلغ الإجمالي</span>
                                                     <span id="TotalAmount" class="fw-bold text-success">{{ state.totalAmount }}</span>
                                                 </div>
                                             </div>
@@ -120,7 +120,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
                     <button type="button"
                             id="MainSaveButton"
                             class="btn"
@@ -128,8 +128,8 @@
                             v-on:click="handler.handleSubmit"
                             v-bind:disabled="state.isSubmitting">
                         <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
-                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'Delete' : 'Save' }}</span>
-                        <span v-else>{{ state.deleteMode ? 'Deleting...' : 'Saving...' }}</span>
+                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'حذف' : 'حفظ' }}</span>
+                        <span v-else>{{ state.deleteMode ? 'جارٍ الحذف...' : 'جارٍ الحفظ...' }}</span>
                     </button>
                 </div>
             </div>
