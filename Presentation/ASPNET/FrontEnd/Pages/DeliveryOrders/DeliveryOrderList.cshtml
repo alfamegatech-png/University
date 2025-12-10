@@ -1,6 +1,6 @@
 ﻿@page
 @{
-    ViewData["Title"] = "Delivery Order List";
+    ViewData["Title"] = "قائمة أوامر التسليم";
 }
 
 <div id="app" v-cloak>
@@ -26,35 +26,35 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Main Info</h5>
+                                        <h5>المعلومات الأساسية</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="DeliveryDate">Delivery Date</label>
-                                                <input ref="deliveryDateRef"/>
+                                                <label for="DeliveryDate">تاريخ التسليم</label>
+                                                <input ref="deliveryDateRef" />
                                                 <label class="text-danger">{{ state.errors.deliveryDate }}</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="Number">Number</label>
+                                                <label for="Number">الرقم</label>
                                                 <input ref="numberRef" v-model="state.number" readonly>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="SalesOrderId">Sales Order</label>
+                                                <label for="SalesOrderId">طلب البيع</label>
                                                 <div ref="salesOrderIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.salesOrderId }}</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="Status">Status</label>
+                                                <label for="Status">الحالة</label>
                                                 <div ref="statusRef"></div>
                                                 <label class="text-danger">{{ state.errors.status }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-12">
-                                                <label for="Description">Description</label>
+                                                <label for="Description">الوصف</label>
                                                 <textarea class="form-control" rows="3" v-model="state.description"></textarea>
                                                 <label class="text-danger">{{ state.errors.description }}</label>
                                             </div>
@@ -69,7 +69,7 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5>Delivery Item</h5>
+                                        <h5>بنود التسليم</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
@@ -87,13 +87,13 @@
                             <div class="col-md-12">
                                 <div class="card shadow-sm">
                                     <div class="card-header text-white">
-                                        <h5 class="mb-0">Summary</h5>
+                                        <h5 class="mb-0">الملخص</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row justify-content-end">
                                             <div class="col-md-6">
                                                 <div class="d-flex justify-content-between py-2">
-                                                    <span class="fw-bold">Total Movement</span>
+                                                    <span class="fw-bold">إجمالي الحركة</span>
                                                     <span id="TotalMovement" class="fw-bold text-success">{{ state.totalMovementFormatted }}</span>
                                                 </div>
                                             </div>
@@ -105,7 +105,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
                     <button type="button"
                             id="MainSaveButton"
                             class="btn"
@@ -113,8 +113,8 @@
                             v-on:click="handler.handleSubmit"
                             v-bind:disabled="state.isSubmitting">
                         <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
-                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'Delete' : 'Save' }}</span>
-                        <span v-else>{{ state.deleteMode ? 'Deleting...' : 'Saving...' }}</span>
+                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'حذف' : 'حفظ' }}</span>
+                        <span v-else>{{ state.deleteMode ? 'جارٍ الحذف...' : 'جارٍ الحفظ...' }}</span>
                     </button>
                 </div>
             </div>

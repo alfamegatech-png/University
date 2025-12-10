@@ -477,23 +477,21 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'deliveryDate', headerText: 'Delivery Date', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'salesOrderNumber', headerText: 'Sales Order', width: 150, minWidth: 150 },
-                        { field: 'statusName', headerText: 'Status', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
+                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+                        { field: 'deliveryDate', headerText: 'تاريخ التسليم', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'salesOrderNumber', headerText: 'أمر البيع', width: 150, minWidth: 150 },
+                        { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
                         'ExcelExport', 'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'Print PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
+                        { text: 'طباعة PDF', tooltipText: 'طباعة PDF', id: 'PrintPDFCustom' },
                     ],
                     beforeDataBound: () => { },
                     dataBound: function () {
@@ -527,7 +525,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Delivery Order';
+                            state.mainTitle = 'إضافة أمر تسليم';
                             resetFormState();
                             state.showComplexDiv = false;
                             mainModal.obj.show();
@@ -537,7 +535,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Delivery Order';
+                                state.mainTitle = 'تعديل أمر التسليم';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.deliveryDate = selectedRecord.deliveryDate ? new Date(selectedRecord.deliveryDate) : null;
@@ -555,7 +553,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Delivery Order?';
+                                state.mainTitle = 'هل تريد حذف أمر التسليم؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.deliveryDate = selectedRecord.deliveryDate ? new Date(selectedRecord.deliveryDate) : null;

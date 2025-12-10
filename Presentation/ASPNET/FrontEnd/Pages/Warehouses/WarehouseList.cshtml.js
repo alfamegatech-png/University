@@ -24,7 +24,7 @@
             let isValid = true;
 
             if (!state.name) {
-                state.errors.name = 'Name is required.';
+                state.errors.name = 'الاسم مطلوب.';
                 isValid = false;
             }
 
@@ -96,7 +96,7 @@
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name',
+                    placeholder: 'أدخل الاسم',
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -136,7 +136,7 @@
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Warehouse';
+                            state.mainTitle = 'تعديل المخزن';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.name = response?.data?.content?.data.name ?? '';
                             state.description = response?.data?.content?.data.description ?? '';
@@ -144,8 +144,8 @@
 
                             Swal.fire({
                                 icon: 'success',
-                                title: state.deleteMode ? 'تم الحذف' : 'تم الحفظ',
-                                text: 'الاغلاق من هنا...',
+                                title: 'تم الحفظ',
+                                text: 'سيتم الإغلاق تلقائيًا...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -157,7 +157,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: 'تم الحذف',
-                                text: 'الاغلاق من هنا...',
+                                text: 'سيتم الإغلاق تلقائيًا...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -170,8 +170,8 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-                                title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -181,7 +181,7 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'موافق'
                     });
                 } finally {
                     state.isSubmitting = false;
@@ -204,9 +204,7 @@
                 });
 
             } catch (e) {
-                console.error('page init error:', e);
-            } finally {
-                
+                console.error('خطأ في تهيئة الصفحة:', e);
             }
         });
 
@@ -230,33 +228,31 @@
                     allowExcelExport: true,
                     filterSettings: { type: 'CheckBox' },
                     sortSettings: { columns: [{ field: 'createdAtUtc', direction: 'Descending' }] },
-                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
+                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "الكل"] },
                     selectionSettings: { persistSelection: true, type: 'Single' },
                     autoFit: true,
                     showColumnMenu: true,
                     gridLines: 'Horizontal',
                     columns: [
-                        { type: 'checkbox', width: 60 }, // مربع اختيار
-                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false }, // المفتاح الأساسي، مخفي
-                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 }, // الاسم
-                        { field: 'systemWarehouse', headerText: 'مستودع نظامي', width: 200, minWidth: 200, textAlign: 'Center', type: 'boolean', displayAsCheckBox: true }, // مستودع نظامي (صح/خطأ)
-                        { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 }, // الوصف
-                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' } // تاريخ الإنشاء
+                        { type: 'checkbox', width: 60 },
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
+                        { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
+                        { field: 'systemWarehouse', headerText: 'مستودع نظامي', width: 200, minWidth: 200, textAlign: 'Center', type: 'boolean', displayAsCheckBox: true },
+                        { field: 'description', headerText: 'الوصف', width: 400, minWidth: 400 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
                         'ExcelExport', 'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة مخزن', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل مخزن', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف مخزن', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
                     ],
-                    beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], false);
                         mainGrid.obj.autoFitColumns(['name', 'systemWarehouse', 'description', 'createdAtUtc']);
                     },
-                    excelExportComplete: () => { },
                     rowSelected: () => {
                         if (mainGrid.obj.getSelectedRecords().length == 1) {
                             mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'], true);
@@ -283,7 +279,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Warehouse';
+                            state.mainTitle = 'إضافة مخزن';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -292,7 +288,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Warehouse';
+                                state.mainTitle = 'تعديل المخزن';
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
@@ -305,7 +301,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Warehouse?';
+                                state.mainTitle = 'حذف المخزن؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
