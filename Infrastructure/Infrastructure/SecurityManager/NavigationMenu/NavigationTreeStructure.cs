@@ -87,7 +87,18 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                 "URL": "/PurchaseReports/PurchaseReportList",
                 "Name": "تقارير أوامر التوريد",
                 "IsModule": false
+            },
+            {
+                "URL": "/SalesOrders/SalesOrderList",
+                "Name": "أوامر البيع",
+                "IsModule": false
+            },
+            {
+                "URL": "/SalesReports/SalesReportList",
+                "Name": "تقارير المبيعات",
+                "IsModule": false
             }
+
 
                     
                 ]
