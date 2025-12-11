@@ -125,3 +125,6 @@ i.fas.fa-lock.mr-2 {
 .e-grid .e-gridheader .e-sortfilter .e-fltr-icon .e-headercelldiv {
     margin: -5px -15px -5px -12px;
 }
+.card {
+    text-align: right;
+}
