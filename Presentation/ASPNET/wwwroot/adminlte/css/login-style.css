@@ -31,3 +31,11 @@
 .txt-right {
     text-align: right;
 }
+[class*=icheck-] > input:first-child + input[type=hidden] + label::before, [class*=icheck-] > input:first-child + label::before {
+    margin-left: unset !important;
+    margin-right: -29px !important;
+}
+label:not(.form-check-label):not(.custom-file-label) {
+    
+    margin-right: 7px;
+}

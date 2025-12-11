@@ -85,10 +85,7 @@
     padding-left:unset;
     padding-right: 5px;
 }
-span#topbarContent {
-    top: 10px;
-    position: relative;
-}
+
 i.fas.fa-lock.mr-2 {
     float: right;
     margin-left: 5px;
@@ -127,4 +124,9 @@ i.fas.fa-lock.mr-2 {
 }
 .card {
     text-align: right;
+}
+
+.sidebar-mini.sidebar-collapse .content-wrapper, .sidebar-mini.sidebar-collapse .main-footer, .sidebar-mini.sidebar-collapse .main-header {
+    margin-left: unset !important;
+    margin-right: 4.6rem !important;
 }
