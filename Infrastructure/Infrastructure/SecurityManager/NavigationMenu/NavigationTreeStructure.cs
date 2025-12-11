@@ -106,12 +106,12 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "IsModule": false
                     },
          
-        {
+                    {
                         "URL": "/PurchaseReturns/PurchaseReturnList",
                         "Name": "مرتجعات المشتريات",
                         "IsModule": false
                     },
-                   {
+                    {
                         "URL": "/TransferOuts/TransferOutList",
                         "Name": "تحويل صادر",
                         "IsModule": false
@@ -121,7 +121,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "Name": "تحويل وارد",
                         "IsModule": false
                     },
-        {
+                    {
                         "URL": "/PositiveAdjustments/PositiveAdjustmentList",
                         "Name": "تسويات موجبة",
                         "IsModule": false
