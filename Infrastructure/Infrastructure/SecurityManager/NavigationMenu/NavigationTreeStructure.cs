@@ -32,26 +32,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                 "Name": "المبيعات",
                 "IsModule": true,
                 "Children": [
-                    {
-                        "URL": "/CustomerGroups/CustomerGroupList",
-                        "Name": "مجموعات العملاء",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/CustomerCategories/CustomerCategoryList",
-                        "Name": "تصنيفات العملاء",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/Customers/CustomerList",
-                        "Name": "العملاء",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/CustomerContacts/CustomerContactList",
-                        "Name": "جهات اتصال العملاء",
-                        "IsModule": false
-                    },
+                    
                     {
                         "URL": "/SalesOrders/SalesOrderList",
                         "Name": "أوامر البيع",
@@ -88,17 +69,27 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "URL": "/VendorContacts/VendorContactList",
                         "Name": "جهات اتصال الموردين",
                         "IsModule": false
-                    },
-                    {
-                        "URL": "/PurchaseOrders/PurchaseOrderList",
-                        "Name": "أوامر الشراء",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/PurchaseReports/PurchaseReportList",
-                        "Name": "تقارير المشتريات",
-                        "IsModule": false
                     }
+                    
+                ]
+            },
+
+        {
+                "URL": "#",
+                "Name": "الجديد",
+                "IsModule": true,
+                "Children": [  
+         {
+                        "URL": "/PurchaseOrders/PurchaseOrderList",
+                        "Name": "أوامر التوريد",
+                        "IsModule": false
+                    },{
+                "URL": "/PurchaseReports/PurchaseReportList",
+                "Name": "تقارير أوامر التوريد",
+                "IsModule": false
+            }
+
+                    
                 ]
             },
             {
