@@ -91,8 +91,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                     },
                     {
                         "URL": "/PurchaseOrders/PurchaseOrderList",
-                        //"Name": "أوامر الشراء",
-                        "Name": "إذن الاضافة",
+                        "Name": "أوامر الشراء",
                         "IsModule": false
                     },
                     {
