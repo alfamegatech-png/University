@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Login";
 }
-
+<link href="~/adminlte/css/login-style.css" rel="stylesheet" />
 <div id="app" class="container-fluid" v-cloak>
 
     <div class="card-body login-card-body">
@@ -40,14 +40,6 @@
             </div>
             <label v-if="state.errors.password" class="text-danger">{{ state.errors.password }}</label>
             <div class="row">
-                <div class="col-8">
-                    <div class="icheck-primary">
-                        <input type="checkbox">
-                        <label for="remember">
-                            Remember Me
-                        </label>
-                    </div>
-                </div>
                 <!-- /.col -->
                 <div class="col-4">
                     <button type="submit"
@@ -61,6 +53,15 @@
                     </button>
                 </div>
                 <!-- /.col -->
+                <div class="col-8">
+                    <div class="icheck-primary">
+                        <input type="checkbox">
+                        <label for="remember">
+                            Remember Me
+                        </label>
+                    </div>
+                </div>
+                
             </div>
         </form>
 
@@ -75,10 +76,10 @@
         </div>
         <!-- /.social-auth-links -->
 
-        <p class="mb-1">
+        <p class="mb-1 txt-right">
             <a asp-page="/Accounts/ForgotPassword">Forgot Password</a>
         </p>
-        <p class="mb-0">
+        <p class="mb-0 txt-right">
             <a asp-page="/Accounts/Register" class="text-center">Register a new membership</a>
         </p>
     </div>
