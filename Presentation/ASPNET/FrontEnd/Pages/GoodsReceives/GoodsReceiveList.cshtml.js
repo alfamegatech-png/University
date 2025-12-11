@@ -1,4 +1,45 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -42,15 +83,15 @@
             let isValid = true;
 
             if (!state.receiveDate) {
-                state.errors.receiveDate = 'Receive date is required.';
+                state.errors.receiveDate = 'تاريخ الاستلام مطلوب.';
                 isValid = false;
             }
             if (!state.purchaseOrderId) {
-                state.errors.purchaseOrderId = 'Purchase Order is required.';
+                state.errors.purchaseOrderId = 'أمر الشراء مطلوب.';
                 isValid = false;
             }
             if (!state.status) {
-                state.errors.status = 'Status is required.';
+                state.errors.status = 'الحالة مطلوبة.';
                 isValid = false;
             }
 
@@ -77,7 +118,7 @@
             obj: null,
             create: () => {
                 receiveDatePicker.obj = new ej.calendars.DatePicker({
-                    placeholder: 'Select Date',
+                    placeholder: 'اختر التاريخ',
                     format: 'yyyy-MM-dd',
                     value: state.receiveDate ? new Date(state.receiveDate) : null,
                     change: (e) => {
@@ -93,19 +134,13 @@
             }
         };
 
-        Vue.watch(
-            () => state.receiveDate,
-            (newVal, oldVal) => {
-                receiveDatePicker.refresh();
-                state.errors.receiveDate = '';
-            }
-        );
+        Vue.watch(() => state.receiveDate, () => { receiveDatePicker.refresh(); state.errors.receiveDate = ''; });
 
         const numberText = {
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                 });
                 numberText.obj.appendTo(numberRef.value);
             }
@@ -118,10 +153,10 @@
                     purchaseOrderListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.purchaseOrderListLookupData,
                         fields: { value: 'id', text: 'number' },
-                        placeholder: 'Select Purchase Order',
-                        filterBarPlaceholder: 'Search',
-                        sortOrder: 'Ascending',
+                        placeholder: 'اختر أمر الشراء',
+                        filterBarPlaceholder: 'بحث',
                         allowFiltering: true,
+                        sortOrder: 'Ascending',
                         filtering: (e) => {
                             e.preventDefaultAction = true;
                             let query = new ej.data.Query();
@@ -144,13 +179,7 @@
             },
         };
 
-        Vue.watch(
-            () => state.purchaseOrderId,
-            (newVal, oldVal) => {
-                purchaseOrderListLookup.refresh();
-                state.errors.purchaseOrderId = '';
-            }
-        );
+        Vue.watch(() => state.purchaseOrderId, () => { purchaseOrderListLookup.refresh(); state.errors.purchaseOrderId = ''; });
 
         const goodsReceiveStatusListLookup = {
             obj: null,
@@ -159,7 +188,7 @@
                     goodsReceiveStatusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.goodsReceiveStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select Status',
+                        placeholder: 'اختر الحالة',
                         allowFiltering: false,
                         change: (e) => {
                             state.status = e.value;
@@ -175,123 +204,40 @@
             },
         };
 
-        Vue.watch(
-            () => state.status,
-            (newVal, oldVal) => {
-                goodsReceiveStatusListLookup.refresh();
-                state.errors.status = '';
-            }
-        );
+        Vue.watch(() => state.status, () => { goodsReceiveStatusListLookup.refresh(); state.errors.status = ''; });
 
         const services = {
-            getMainData: async () => {
-                try {
-                    const response = await AxiosManager.get('/GoodsReceive/GetGoodsReceiveList', {});
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            createMainData: async (receiveDate, description, status, purchaseOrderId, createdById) => {
-                try {
-                    const response = await AxiosManager.post('/GoodsReceive/CreateGoodsReceive', {
-                        receiveDate, description, status, purchaseOrderId, createdById
-                    });
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            updateMainData: async (id, receiveDate, description, status, purchaseOrderId, updatedById) => {
-                try {
-                    const response = await AxiosManager.post('/GoodsReceive/UpdateGoodsReceive', {
-                        id, receiveDate, description, status, purchaseOrderId, updatedById
-                    });
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            deleteMainData: async (id, deletedById) => {
-                try {
-                    const response = await AxiosManager.post('/GoodsReceive/DeleteGoodsReceive', {
-                        id, deletedById
-                    });
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            getPurchaseOrderListLookupData: async () => {
-                try {
-                    const response = await AxiosManager.get('/PurchaseOrder/GetPurchaseOrderList', {});
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            getGoodsReceiveStatusListLookupData: async () => {
-                try {
-                    const response = await AxiosManager.get('/GoodsReceive/GetGoodsReceiveStatusList', {});
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            getSecondaryData: async (moduleId) => {
-                try {
-                    const response = await AxiosManager.get('/InventoryTransaction/GoodsReceiveGetInvenTransList?moduleId=' + moduleId, {});
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById) => {
-                try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveCreateInvenTrans', {
-                        moduleId, warehouseId, productId, movement, createdById
-                    });
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById) => {
-                try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveUpdateInvenTrans', {
-                        id, warehouseId, productId, movement, updatedById
-                    });
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            deleteSecondaryData: async (id, deletedById) => {
-                try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveDeleteInvenTrans', {
-                        id, deletedById
-                    });
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            getProductListLookupData: async () => {
-                try {
-                    const response = await AxiosManager.get('/Product/GetProductList', {});
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            getWarehouseListLookupData: async () => {
-                try {
-                    const response = await AxiosManager.get('/Warehouse/GetWarehouseList', {});
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
+            getMainData: async () => await AxiosManager.get('/GoodsReceive/GetGoodsReceiveList'),
+            createMainData: async (receiveDate, description, status, purchaseOrderId, createdById) =>
+                await AxiosManager.post('/GoodsReceive/CreateGoodsReceive', {
+                    receiveDate, description, status, purchaseOrderId, createdById
+                }),
+            updateMainData: async (id, receiveDate, description, status, purchaseOrderId, updatedById) =>
+                await AxiosManager.post('/GoodsReceive/UpdateGoodsReceive', {
+                    id, receiveDate, description, status, purchaseOrderId, updatedById
+                }),
+            deleteMainData: async (id, deletedById) =>
+                await AxiosManager.post('/GoodsReceive/DeleteGoodsReceive', { id, deletedById }),
+            getPurchaseOrderListLookupData: async () =>
+                await AxiosManager.get('/PurchaseOrder/GetPurchaseOrderList'),
+            getGoodsReceiveStatusListLookupData: async () =>
+                await AxiosManager.get('/GoodsReceive/GetGoodsReceiveStatusList'),
+            getSecondaryData: async (moduleId) =>
+                await AxiosManager.get('/InventoryTransaction/GoodsReceiveGetInvenTransList?moduleId=' + moduleId),
+            createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById) =>
+                await AxiosManager.post('/InventoryTransaction/GoodsReceiveCreateInvenTrans', {
+                    moduleId, warehouseId, productId, movement, createdById
+                }),
+            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById) =>
+                await AxiosManager.post('/InventoryTransaction/GoodsReceiveUpdateInvenTrans', {
+                    id, warehouseId, productId, movement, updatedById
+                }),
+            deleteSecondaryData: async (id, deletedById) =>
+                await AxiosManager.post('/InventoryTransaction/GoodsReceiveDeleteInvenTrans', { id, deletedById }),
+            getProductListLookupData: async () =>
+                await AxiosManager.get('/Product/GetProductList'),
+            getWarehouseListLookupData: async () =>
+                await AxiosManager.get('/Warehouse/GetWarehouseList'),
         };
 
         const methods = {
@@ -313,31 +259,26 @@
             },
             populateProductListLookupData: async () => {
                 const response = await services.getProductListLookupData();
-                state.productListLookupData = response?.data?.content?.data
-                    .filter(product => product.physical === true)
-                    .map(product => ({
-                        ...product,
-                        numberName: `${product.number} - ${product.name}`
-                    })) || [];
+                state.productListLookupData =
+                    response?.data?.content?.data
+                        .filter(p => p.physical === true)
+                        .map(p => ({ ...p, numberName: `${p.number} - ${p.name}` }));
             },
             populateWarehouseListLookupData: async () => {
                 const response = await services.getWarehouseListLookupData();
-                state.warehouseListLookupData = response?.data?.content?.data.filter(warehouse => warehouse.systemWarehouse === false) || [];
+                state.warehouseListLookupData =
+                    response?.data?.content?.data.filter(w => w.systemWarehouse === false);
             },
             populateSecondaryData: async (goodsReceiveId) => {
-                try {
-                    const response = await services.getSecondaryData(goodsReceiveId);
-                    state.secondaryData = response?.data?.content?.data.map(item => ({
-                        ...item,
-                        createdAtUtc: new Date(item.createdAtUtc)
-                    }));
-                    methods.refreshSummary();
-                } catch (error) {
-                    state.secondaryData = [];
-                }
+                const response = await services.getSecondaryData(goodsReceiveId);
+                state.secondaryData = response?.data?.content?.data.map(item => ({
+                    ...item,
+                    createdAtUtc: new Date(item.createdAtUtc)
+                }));
+                methods.refreshSummary();
             },
             refreshSummary: () => {
-                const totalMovement = state.secondaryData.reduce((sum, record) => sum + (record.movement ?? 0), 0);
+                const totalMovement = state.secondaryData.reduce((sum, r) => sum + (r.movement ?? 0), 0);
                 state.totalMovementFormatted = NumberFormatManager.formatToLocale(totalMovement);
             },
             onMainModalHidden: () => {
@@ -351,24 +292,23 @@
             handleSubmit: async function () {
                 try {
                     state.isSubmitting = true;
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    await new Promise(r => setTimeout(r, 300));
 
-                    if (!validateForm()) {
-                        return;
-                    }
+                    if (!validateForm()) return;
 
-                    const response = state.id === ''
-                        ? await services.createMainData(state.receiveDate, state.description, state.status, state.purchaseOrderId, StorageManager.getUserId())
-                        : state.deleteMode
-                            ? await services.deleteMainData(state.id, StorageManager.getUserId())
-                            : await services.updateMainData(state.id, state.receiveDate, state.description, state.status, state.purchaseOrderId, StorageManager.getUserId());
+                    const response =
+                        state.id === ''
+                            ? await services.createMainData(state.receiveDate, state.description, state.status, state.purchaseOrderId, StorageManager.getUserId())
+                            : state.deleteMode
+                                ? await services.deleteMainData(state.id, StorageManager.getUserId())
+                                : await services.updateMainData(state.id, state.receiveDate, state.description, state.status, state.purchaseOrderId, StorageManager.getUserId());
 
                     if (response.data.code === 200) {
                         await methods.populateMainData();
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Goods Receive';
+                            state.mainTitle = 'تعديل استلام البضائع';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             await methods.populateSecondaryData(state.id);
@@ -377,7 +317,7 @@
 
                             Swal.fire({
                                 icon: 'success',
-                                title: 'تم الحفظ',
+                                title: 'تم الحفظ بنجاح',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -385,8 +325,8 @@
                         } else {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'تم الحذف',
-                                text: 'الاغلاق من هنا...',
+                                title: 'تم الحذف بنجاح',
+                                text: 'سيتم الإغلاق...',
                                 timer: 2000,
                                 showConfirmButton: false
                             });
@@ -399,8 +339,8 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -410,12 +350,12 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'موافق'
                     });
                 } finally {
                     state.isSubmitting = false;
                 }
-            },
+            }
         };
 
         Vue.onMounted(async () => {
@@ -441,8 +381,6 @@
 
             } catch (e) {
                 console.error('page init error:', e);
-            } finally {
-                
             }
         });
 
@@ -455,7 +393,9 @@
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
-                    dataSource: dataSource,
+                    locale: 'ar',
+                    enableRtl: true,
+                    dataSource,
                     allowFiltering: true,
                     allowSorting: true,
                     allowSelection: true,
@@ -466,51 +406,35 @@
                     allowExcelExport: true,
                     filterSettings: { type: 'CheckBox' },
                     sortSettings: { columns: [{ field: 'createdAtUtc', direction: 'Descending' }] },
-                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
+                    pageSettings: {
+                        currentPage: 1,
+                        pageSize: 50,
+                        pageSizes: ["10", "20", "50", "100", "200", "All"]
+                    },
                     selectionSettings: { persistSelection: true, type: 'Single' },
                     autoFit: true,
                     showColumnMenu: true,
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'receiveDate', headerText: 'Receive Date', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'purchaseOrderNumber', headerText: 'Purchase Order', width: 150, minWidth: 150 },
-                        { field: 'statusName', headerText: 'Status', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false },
+                        { field: 'number', headerText: 'الرقم', width: 150 },
+                        { field: 'receiveDate', headerText: 'تاريخ الاستلام', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'purchaseOrderNumber', headerText: 'أمر الشراء', width: 150 },
+                        { field: 'statusName', headerText: 'الحالة', width: 150 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء', width: 150, format: 'yyyy-MM-dd HH:mm' },
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+
+                        'Search',
                         { type: 'Separator' },
                         { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
                         { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
                         { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'Print PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
+                        { text: 'طباعة PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
                     ],
-                    beforeDataBound: () => { },
-                    dataBound: function () {
-                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        mainGrid.obj.autoFitColumns(['number', 'receiveDate', 'purchaseOrderNumber', 'statusName', 'createdAtUtc']);
-                    },
-                    excelExportComplete: () => { },
-                    rowSelected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], true);
-                        } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        }
-                    },
-                    rowDeselected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], true);
-                        } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        }
-                    },
                     rowSelecting: () => {
                         if (mainGrid.obj.getSelectedRecords().length) {
                             mainGrid.obj.clearSelection();
@@ -523,7 +447,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Goods Receive';
+                            state.mainTitle = 'إضافة استلام بضاعة';
                             resetFormState();
                             state.showComplexDiv = false;
                             mainModal.obj.show();
@@ -531,16 +455,16 @@
 
                         if (args.item.id === 'EditCustom') {
                             state.deleteMode = false;
-                            if (mainGrid.obj.getSelectedRecords().length) {
-                                const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Goods Receive';
-                                state.id = selectedRecord.id ?? '';
-                                state.number = selectedRecord.number ?? '';
-                                state.receiveDate = selectedRecord.receiveDate ? new Date(selectedRecord.receiveDate) : null;
-                                state.description = selectedRecord.description ?? '';
-                                state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
-                                state.status = String(selectedRecord.status ?? '');
-                                await methods.populateSecondaryData(selectedRecord.id);
+                            const selected = mainGrid.obj.getSelectedRecords()[0];
+                            if (selected) {
+                                state.mainTitle = 'تعديل استلام بضاعة';
+                                state.id = selected.id;
+                                state.number = selected.number;
+                                state.receiveDate = new Date(selected.receiveDate)
+                                state.description = selected.description ?? '';
+                                state.purchaseOrderId = selected.purchaseOrderId ?? '';
+                                state.status = String(selected.status ?? '');
+                                await methods.populateSecondaryData(selected.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = true;
                                 mainModal.obj.show();
@@ -549,16 +473,16 @@
 
                         if (args.item.id === 'DeleteCustom') {
                             state.deleteMode = true;
-                            if (mainGrid.obj.getSelectedRecords().length) {
-                                const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Goods Receive?';
-                                state.id = selectedRecord.id ?? '';
-                                state.number = selectedRecord.number ?? '';
-                                state.receiveDate = selectedRecord.receiveDate ? new Date(selectedRecord.receiveDate) : null;
-                                state.description = selectedRecord.description ?? '';
-                                state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
-                                state.status = String(selectedRecord.status ?? '');
-                                await methods.populateSecondaryData(selectedRecord.id);
+                            const selected = mainGrid.obj.getSelectedRecords()[0];
+                            if (selected) {
+                                state.mainTitle = 'هل تريد حذف استلام البضاعة؟';
+                                state.id = selected.id;
+                                state.number = selected.number;
+                                state.receiveDate = new Date(selected.receiveDate)
+                                state.description = selected.description ?? '';
+                                state.purchaseOrderId = selected.purchaseOrderId ?? '';
+                                state.status = String(selected.status ?? '');
+                                await methods.populateSecondaryData(selected.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = false;
                                 mainModal.obj.show();
@@ -566,9 +490,9 @@
                         }
 
                         if (args.item.id === 'PrintPDFCustom') {
-                            if (mainGrid.obj.getSelectedRecords().length) {
-                                const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                window.open('/GoodsReceives/GoodsReceivePdf?id=' + (selectedRecord.id ?? ''), '_blank');
+                            const selected = mainGrid.obj.getSelectedRecords()[0];
+                            if (selected) {
+                                window.open('/GoodsReceives/GoodsReceivePdf?id=' + selected.id, '_blank');
                             }
                         }
                     }
@@ -576,9 +500,7 @@
 
                 mainGrid.obj.appendTo(mainGridRef.value);
             },
-            refresh: () => {
-                mainGrid.obj.setProperties({ dataSource: state.mainData });
-            }
+            refresh: () => mainGrid.obj.setProperties({ dataSource: state.mainData })
         };
 
         const secondaryGrid = {
@@ -586,262 +508,33 @@
             create: async (dataSource) => {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
-                    dataSource: dataSource,
-                    editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
-                    allowFiltering: false,
+                    dataSource,
+                    editSettings: {
+                        allowEditing: true,
+                        allowAdding: true,
+                        allowDeleting: true,
+                        showDeleteConfirmDialog: true,
+                        mode: 'Normal',
+                    },
                     allowSorting: true,
-                    allowSelection: true,
-                    allowGrouping: false,
-                    allowTextWrap: true,
-                    allowResizing: true,
-                    allowPaging: false,
                     allowExcelExport: true,
-                    filterSettings: { type: 'CheckBox' },
-                    sortSettings: { columns: [{ field: 'warehouseName', direction: 'Descending' }] },
-                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
-                    selectionSettings: { persistSelection: true, type: 'Single' },
-                    autoFit: false,
-                    showColumnMenu: false,
-                    gridLines: 'Horizontal',
                     columns: [
-                        { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        {
-                            field: 'warehouseId',
-                            headerText: 'Warehouse',
-                            width: 250,
-                            validationRules: { required: true },
-                            disableHtmlEncode: false,
-                            valueAccessor: (field, data, column) => {
-                                const warehouse = state.warehouseListLookupData.find(item => item.id === data[field]);
-                                return warehouse ? `${warehouse.name}` : '';
-                            },
-                            editType: 'dropdownedit',
-                            edit: {
-                                create: () => {
-                                    const warehouseElem = document.createElement('input');
-                                    return warehouseElem;
-                                },
-                                read: () => {
-                                    return warehouseObj.value;
-                                },
-                                destroy: function () {
-                                    warehouseObj.destroy();
-                                },
-                                write: function (args) {
-                                    warehouseObj = new ej.dropdowns.DropDownList({
-                                        dataSource: state.warehouseListLookupData,
-                                        fields: { value: 'id', text: 'name' },
-                                        value: args.rowData.warehouseId,
-                                        placeholder: 'Select a Warehouse',
-                                        floatLabelType: 'Never'
-                                    });
-                                    warehouseObj.appendTo(args.element);
-                                }
-                            }
-                        },
-                        {
-                            field: 'productId',
-                            headerText: 'Product',
-                            width: 250,
-                            validationRules: { required: true },
-                            disableHtmlEncode: false,
-                            valueAccessor: (field, data, column) => {
-                                const product = state.productListLookupData.find(item => item.id === data[field]);
-                                return product ? `${product.numberName}` : '';
-                            },
-                            editType: 'dropdownedit',
-                            edit: {
-                                create: () => {
-                                    const productElem = document.createElement('input');
-                                    return productElem;
-                                },
-                                read: () => {
-                                    return productObj.value;
-                                },
-                                destroy: function () {
-                                    productObj.destroy();
-                                },
-                                write: function (args) {
-                                    productObj = new ej.dropdowns.DropDownList({
-                                        dataSource: state.productListLookupData,
-                                        fields: { value: 'id', text: 'numberName' },
-                                        value: args.rowData.productId,
-                                        change: function (e) {
-                                            if (movementObj) {
-                                                movementObj.value = 1;
-                                            }
-                                        },
-                                        placeholder: 'Select a Product',
-                                        floatLabelType: 'Never'
-                                    });
-                                    productObj.appendTo(args.element);
-                                }
-                            }
-                        },
-                        {
-                            field: 'movement',
-                            headerText: 'Movement',
-                            width: 200,
-                            validationRules: {
-                                required: true,
-                                custom: [(args) => {
-                                    return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
-                            },
-                            type: 'number',
-                            format: 'N2', textAlign: 'Right',
-                            edit: {
-                                create: () => {
-                                    const movementElem = document.createElement('input');
-                                    return movementElem;
-                                },
-                                read: () => {
-                                    return movementObj.value;
-                                },
-                                destroy: function () {
-                                    movementObj.destroy();
-                                },
-                                write: function (args) {
-                                    movementObj = new ej.inputs.NumericTextBox({
-                                        value: args.rowData.movement ?? 0,
-                                    });
-                                    movementObj.appendTo(args.element);
-                                }
-                            }
-                        },
+                        { type: 'checkbox', width: 50 },
+                        { field: 'id', isPrimaryKey: true, visible: false },
+                        { field: 'warehouseId', headerText: 'المخزن', width: 200 },
+                        { field: 'productId', headerText: 'الصنف', width: 200 },
+                        { field: 'movement', headerText: 'الحركة', width: 150, format: 'N2' },
                     ],
                     toolbar: [
                         'ExcelExport',
                         { type: 'Separator' },
                         'Add', 'Edit', 'Delete', 'Update', 'Cancel',
                     ],
-                    beforeDataBound: () => { },
-                    dataBound: function () { },
-                    excelExportComplete: () => { },
-                    rowSelected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
-                        }
-                    },
-                    rowDeselected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
-                        }
-                    },
-                    rowSelecting: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length) {
-                            secondaryGrid.obj.clearSelection();
-                        }
-                    },
-                    toolbarClick: (args) => {
-                        if (args.item.id === 'SecondaryGrid_excelexport') {
-                            secondaryGrid.obj.excelExport();
-                        }
-                    },
-                    actionComplete: async (args) => {
-                        if (args.requestType === 'save' && args.action === 'add') {
-                            try {
-                                const response = await services.createSecondaryData(state.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
-                                await methods.populateSecondaryData(state.id);
-                                secondaryGrid.refresh();
-                                if (response.data.code === 200) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'تم الحفظ',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Save Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
-                                        confirmButtonText: 'حاول مرة أخرى'
-                                    });
-                                }
-                            } catch (error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        }
-                        if (args.requestType === 'save' && args.action === 'edit') {
-                            try {
-                                const response = await services.updateSecondaryData(args.data.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
-                                await methods.populateSecondaryData(state.id);
-                                secondaryGrid.refresh();
-                                if (response.data.code === 200) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Update Successful',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Update Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
-                                        confirmButtonText: 'حاول مرة أخرى'
-                                    });
-                                }
-                            } catch (error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        }
-                        if (args.requestType === 'delete') {
-                            try {
-                                const response = await services.deleteSecondaryData(args.data[0].id, StorageManager.getUserId());
-                                await methods.populateSecondaryData(state.id);
-                                secondaryGrid.refresh();
-                                if (response.data.code === 200) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'تم الحذف',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Delete Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
-                                        confirmButtonText: 'حاول مرة أخرى'
-                                    });
-                                }
-                            } catch (error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
-                        }
-                        methods.refreshSummary();
-                    }
                 });
-                secondaryGrid.obj.appendTo(secondaryGridRef.value);
 
+                secondaryGrid.obj.appendTo(secondaryGridRef.value);
             },
-            refresh: () => {
-                secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
-            }
+            refresh: () => secondaryGrid.obj.setProperties({ dataSource: state.secondaryData })
         };
 
         const mainModal = {
