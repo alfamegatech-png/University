@@ -1,4 +1,46 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -74,7 +116,7 @@
             obj: null,
             create: () => {
                 scrappingDatePicker.obj = new ej.calendars.DatePicker({
-                    placeholder: 'Select Date',
+                    placeholder: 'اختر التاريخ',
                     format: 'yyyy-MM-dd',
                     value: state.scrappingDate ? new Date(state.scrappingDate) : null,
                     change: (e) => {
@@ -102,7 +144,7 @@
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                 });
                 numberText.obj.appendTo(numberRef.value);
             }
@@ -115,7 +157,7 @@
                     warehouseListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.warehouseListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select Warehouse',
+                        placeholder: 'احتر المخزن',
                         allowFiltering: true,
                         filtering: (e) => {
                             e.preventDefaultAction = true;
@@ -154,7 +196,7 @@
                     statusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.scrappingStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select Status',
+                        placeholder: 'اختر الحالة',
                         allowFiltering: false,
                         change: (e) => {
                             state.status = e.value;
@@ -451,6 +493,8 @@
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
@@ -469,23 +513,34 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
+
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id',
+                            isPrimaryKey: true,
+                            headerText: 'المعرف',
+                            visible: false
                         },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'scrappingDate', headerText: 'Scrapping Date', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'warehouseName', headerText: 'Warehouse', width: 150, minWidth: 150 },
-                        { field: 'statusName', headerText: 'Status', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+
+                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+
+                        { field: 'scrappingDate', headerText: 'تاريخ الإتلاف', width: 150, format: 'yyyy-MM-dd' },
+
+                        { field: 'warehouseName', headerText: 'المستودع', width: 150, minWidth: 150 },
+
+                        { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
+
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء (UTC)', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
+
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+                        'Search',
                         { type: 'Separator' },
                         { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
                         { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
                         { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'Print PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
+                        { text: 'طباعة PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
                     ],
                     beforeDataBound: () => { },
                     dataBound: function () {
@@ -519,7 +574,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Scrapping';
+                            state.mainTitle = 'اضافة تالف';
                             resetFormState();
                             state.showComplexDiv = false;
                             mainModal.obj.show();
@@ -529,7 +584,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Scrapping';
+                                state.mainTitle = 'تعديل تالف';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.scrappingDate = selectedRecord.scrappingDate ? new Date(selectedRecord.scrappingDate) : null;
@@ -547,7 +602,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Scrapping?';
+                                state.mainTitle = 'حذف تالف?';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.scrappingDate = selectedRecord.scrappingDate ? new Date(selectedRecord.scrappingDate) : null;
@@ -602,11 +657,11 @@
                     columns: [
                         { type: 'checkbox', width: 60 },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false
                         },
                         {
                             field: 'productId',
-                            headerText: 'Product',
+                            headerText: 'المنتج',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -636,7 +691,7 @@
                                                 movementObj.value = 1;
                                             }
                                         },
-                                        placeholder: 'Select a Product',
+                                        placeholder: 'اختر منتجاً',
                                         floatLabelType: 'Never'
                                     });
 
@@ -646,13 +701,13 @@
                         },
                         {
                             field: 'movement',
-                            headerText: 'Movement',
+                            headerText: 'الحركة',
                             width: 200,
                             validationRules: {
                                 required: true,
                                 custom: [(args) => {
                                     return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
+                                }, 'يجب أن يكون عدداً موجباً وألا يساوي صفر']
                             },
                             type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
@@ -723,8 +778,8 @@
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Save Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        title: 'فشل الحفظ',
+                                        text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
@@ -733,7 +788,7 @@
                                     icon: 'error',
                                     title: 'حدث خطأ',
                                     text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'موافق'
                                 });
                             }
                         }
@@ -745,15 +800,15 @@
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Update Successful',
+                                        title: 'تم التحديث',
                                         timer: 2000,
                                         showConfirmButton: false
                                     });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Update Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        title: 'فشل التحديث',
+                                        text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
@@ -762,7 +817,7 @@
                                     icon: 'error',
                                     title: 'حدث خطأ',
                                     text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'موافق'
                                 });
                             }
                         }
@@ -781,8 +836,8 @@
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Delete Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                                        title: 'فشل الحذف',
+                                        text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
                                 }
@@ -791,7 +846,7 @@
                                     icon: 'error',
                                     title: 'حدث خطأ',
                                     text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'موافق'
                                 });
                             }
                         }
@@ -814,6 +869,7 @@
                 });
             }
         };
+
 
         return {
             mainGridRef,

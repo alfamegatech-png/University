@@ -1,4 +1,46 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -451,6 +493,8 @@
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
@@ -469,23 +513,22 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'countDate', headerText: 'Count Date', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'warehouseName', headerText: 'Warehouse', width: 150, minWidth: 150 },
-                        { field: 'statusName', headerText: 'Status', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'معرّف', visible: false },
+                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+                        { field: 'countDate', headerText: 'تاريخ الجرد', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'warehouseName', headerText: 'المستودع', width: 150, minWidth: 150 },
+                        { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء (UTC)', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+                        'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'Print PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
+                        { text: 'طباعة PDF', tooltipText: 'طباعة PDF', id: 'PrintPDFCustom' },
                     ],
                     beforeDataBound: () => { },
                     dataBound: function () {
@@ -494,32 +537,22 @@
                     },
                     excelExportComplete: () => { },
                     rowSelected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], true);
-                        } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        }
+                        const enable = mainGrid.obj.getSelectedRecords().length === 1;
+                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], enable);
                     },
                     rowDeselected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], true);
-                        } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        }
+                        const enable = mainGrid.obj.getSelectedRecords().length === 1;
+                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], enable);
                     },
                     rowSelecting: () => {
-                        if (mainGrid.obj.getSelectedRecords().length) {
-                            mainGrid.obj.clearSelection();
-                        }
+                        if (mainGrid.obj.getSelectedRecords().length) mainGrid.obj.clearSelection();
                     },
                     toolbarClick: async (args) => {
-                        if (args.item.id === 'MainGrid_excelexport') {
-                            mainGrid.obj.excelExport();
-                        }
+                        if (args.item.id === 'MainGrid_excelexport') mainGrid.obj.excelExport();
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Stock Count';
+                            state.mainTitle = 'إضافة جرد المخزون';
                             resetFormState();
                             state.showComplexDiv = false;
                             mainModal.obj.show();
@@ -529,7 +562,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Stock Count';
+                                state.mainTitle = 'تعديل جرد المخزون';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.countDate = selectedRecord.countDate ? new Date(selectedRecord.countDate) : null;
@@ -547,7 +580,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Stock Count?';
+                                state.mainTitle = 'هل تريد حذف جرد المخزون؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.countDate = selectedRecord.countDate ? new Date(selectedRecord.countDate) : null;
@@ -601,12 +634,10 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
+                        { field: 'id', isPrimaryKey: true, headerText: 'معرّف', visible: false },
                         {
                             field: 'productId',
-                            headerText: 'Product',
+                            headerText: 'المنتج',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -616,66 +647,43 @@
                             },
                             editType: 'dropdownedit',
                             edit: {
-                                create: () => {
-                                    productElem = document.createElement('input');
-                                    return productElem;
-                                },
-                                read: () => {
-                                    return productObj.value;
-                                },
-                                destroy: function () {
-                                    productObj.destroy();
-                                },
-                                write: function (args) {
+                                create: () => { productElem = document.createElement('input'); return productElem; },
+                                read: () => { return productObj.value; },
+                                destroy: () => { productObj.destroy(); },
+                                write: (args) => {
                                     productObj = new ej.dropdowns.DropDownList({
                                         dataSource: state.productListLookupData,
                                         fields: { value: 'id', text: 'name' },
                                         value: args.rowData.productId,
-                                        change: function (e) {
-                                            if (qtySCCountObj) {
-                                                qtySCCountObj.value = 1;
-                                            }
-                                        },
-                                        placeholder: 'Select a Product',
+                                        change: (e) => { if (qtySCCountObj) qtySCCountObj.value = 1; },
+                                        placeholder: 'اختر المنتج',
                                         floatLabelType: 'Never'
                                     });
-
                                     productObj.appendTo(productElem);
                                 }
                             }
                         },
-                        { field: 'qtySCSys', headerText: 'System Stock', width: 100, allowEditing: false, type: 'number', format: 'N2', textAlign: 'Right'},
+                        { field: 'qtySCSys', headerText: 'المخزون الفعلي', width: 100, allowEditing: false, type: 'number', format: 'N2', textAlign: 'Right' },
                         {
                             field: 'qtySCCount',
-                            headerText: 'Counted',
+                            headerText: 'العدد المحسوب',
                             width: 200,
                             validationRules: {
                                 required: true,
-                                custom: [(args) => {
-                                    return args['value'] >= 0;
-                                }, 'Must be a non-negative number']
+                                custom: [(args) => args['value'] >= 0, 'يجب أن يكون رقم غير سلبي']
                             },
                             type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
-                                create: () => {
-                                    qtySCCountElem = document.createElement('input');
-                                    return qtySCCountElem;
-                                },
-                                read: () => {
-                                    return qtySCCountObj.value;
-                                },
-                                destroy: function () {
-                                    qtySCCountObj.destroy();
-                                },
-                                write: function (args) {
-                                    qtySCCountObj = new ej.inputs.NumericTextBox({
-                                        value: args.rowData.qtySCCount ?? 0,
-                                    });
+                                create: () => { qtySCCountElem = document.createElement('input'); return qtySCCountElem; },
+                                read: () => qtySCCountObj.value,
+                                destroy: () => qtySCCountObj.destroy(),
+                                write: (args) => {
+                                    qtySCCountObj = new ej.inputs.NumericTextBox({ value: args.rowData.qtySCCount ?? 0 });
                                     qtySCCountObj.appendTo(qtySCCountElem);
                                 }
                             }
                         },
-                        { field: 'qtySCDelta', headerText: 'Adjustment', width: 100, allowEditing: false, type: 'number', format: '+0.00;-0.00;0.00', textAlign: 'Right' },
+                        { field: 'qtySCDelta', headerText: 'التعديل', width: 100, allowEditing: false, type: 'number', format: '+0.00;-0.00;0.00', textAlign: 'Right' },
                     ],
                     toolbar: [
                         'ExcelExport',
@@ -683,120 +691,54 @@
                         'Add', 'Edit', 'Delete', 'Update', 'Cancel',
                     ],
                     beforeDataBound: () => { },
-                    dataBound: function () { },
+                    dataBound: () => { },
                     excelExportComplete: () => { },
                     rowSelected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['SecondaryGrid_edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['SecondaryGrid_edit'], false);
-                        }
+                        secondaryGrid.obj.toolbarModule.enableItems(['SecondaryGrid_edit'], secondaryGrid.obj.getSelectedRecords().length === 1);
                     },
                     rowDeselected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['SecondaryGrid_edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['SecondaryGrid_edit'], false);
-                        }
+                        secondaryGrid.obj.toolbarModule.enableItems(['SecondaryGrid_edit'], secondaryGrid.obj.getSelectedRecords().length === 1);
                     },
                     rowSelecting: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length) {
-                            secondaryGrid.obj.clearSelection();
-                        }
+                        if (secondaryGrid.obj.getSelectedRecords().length) secondaryGrid.obj.clearSelection();
                     },
                     toolbarClick: (args) => {
-                        if (args.item.id === 'SecondaryGrid_excelexport') {
-                            secondaryGrid.obj.excelExport();
-                        }
+                        if (args.item.id === 'SecondaryGrid_excelexport') secondaryGrid.obj.excelExport();
                     },
                     actionComplete: async (args) => {
-                        if (args.requestType === 'save' && args.action === 'add') {
-                            try {
+                        const showSuccess = (msg) => Swal.fire({ icon: 'success', title: msg, timer: 2000, showConfirmButton: false });
+                        const showError = (title, msg) => Swal.fire({ icon: 'error', title: title, text: msg, confirmButtonText: 'حاول مرة أخرى' });
+
+                        try {
+                            if (args.requestType === 'save' && args.action === 'add') {
                                 const response = await services.createSecondaryData(state.id, args.data.productId, args.data.qtySCCount, StorageManager.getUserId());
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
-                                if (response.data.code === 200) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'تم الحفظ',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Save Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
-                                        confirmButtonText: 'حاول مرة أخرى'
-                                    });
-                                }
-                            } catch (error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
-                                });
+                                response.data.code === 200 ? showSuccess('تم الحفظ') : showError('فشل الحفظ', response.data.message ?? 'يرجى التحقق من البيانات.');
                             }
-                        }
-                        if (args.requestType === 'save' && args.action === 'edit') {
-                            try {
+
+                            if (args.requestType === 'save' && args.action === 'edit') {
                                 const response = await services.updateSecondaryData(args.data.id, args.data.productId, args.data.qtySCCount, StorageManager.getUserId());
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
-                                if (response.data.code === 200) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Update Successful',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Update Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
-                                        confirmButtonText: 'حاول مرة أخرى'
-                                    });
-                                }
-                            } catch (error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
-                                });
+                                response.data.code === 200 ? showSuccess('تم التحديث') : showError('فشل التحديث', response.data.message ?? 'يرجى التحقق من البيانات.');
                             }
-                        }
-                        if (args.requestType === 'delete') {
-                            try {
+
+                            if (args.requestType === 'delete') {
                                 const response = await services.deleteSecondaryData(args.data[0].id, StorageManager.getUserId());
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
-                                if (response.data.code === 200) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'تم الحذف',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Delete Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
-                                        confirmButtonText: 'حاول مرة أخرى'
-                                    });
-                                }
-                            } catch (error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
-                                });
+                                response.data.code === 200 ? showSuccess('تم الحذف') : showError('فشل الحذف', response.data.message ?? 'يرجى التحقق من البيانات.');
                             }
+                        } catch (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'حدث خطأ',
+                                text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
+                                confirmButtonText: 'موافق'
+                            });
                         }
+
                         methods.refreshSummary();
                     }
                 });
@@ -806,6 +748,7 @@
                 secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
             }
         };
+
 
         const mainModal = {
             obj: null,
