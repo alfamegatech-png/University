@@ -540,7 +540,7 @@ const App = {
                         { field: 'id', isPrimaryKey: true, headerText: 'معرف', visible: false },
                         { field: 'number', headerText: 'رقم الطلب', width: 150, minWidth: 150 },
                         { field: 'orderDate', headerText: 'تاريخ الطلب', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'customerName', headerText: 'العميل', width: 200, minWidth: 200 },
+                        { field: 'customerName', headerText: 'الموظف', width: 200, minWidth: 200 },
                         { field: 'orderStatusName', headerText: 'الحالة', width: 150, minWidth: 150 },
                         { field: 'taxName', headerText: 'الضريبة', width: 150, minWidth: 150 },
                         { field: 'afterTaxAmount', headerText: 'الإجمالي', width: 150, minWidth: 150, format: 'N2' },
