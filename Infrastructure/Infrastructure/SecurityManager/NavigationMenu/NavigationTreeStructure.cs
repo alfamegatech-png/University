@@ -102,7 +102,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                     },
                     {
                         "URL": "/GoodsReceives/GoodsReceiveList",
-                        "Name": "استلام ",
+                        "Name": "فحص واستلام ",
                         "IsModule": false
                     },
          
