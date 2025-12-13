@@ -59,7 +59,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
 
         {
                 "URL": "#",
-                "Name": "الجديد",
+                "Name": "اوامر الشغل",
                 "IsModule": true,
                 "Children": [  
          {
@@ -75,25 +75,16 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                     },
 
          {
+            "URL": "/IssueRequests/IssueRequestsList",
+            "Name": "طلب وإذن الصرف ",
+            "IsModule": false
+        },
+         {
             "URL": "/GoodsReceives/GoodsReceiveList",
             "Name": "فحص واستلام ",
             "IsModule": false
         },
-                        {
-                        "URL": "/SalesOrders/SalesOrderList",
-                        "Name": "أوامر البيع",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/SalesReports/SalesReportList",
-                        "Name": "تقارير المبيعات",
-                        "IsModule": false
-                    },
-                   {
-            "URL": "/DeliveryOrders/DeliveryOrderList",
-            "Name": "أوامر التسليم",
-            "IsModule": false
-        },
+                  
          
                     {
                         "URL": "/PurchaseReturns/PurchaseReturnList",
