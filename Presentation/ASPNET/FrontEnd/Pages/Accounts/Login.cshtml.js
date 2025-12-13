@@ -16,18 +16,18 @@
             let isValid = true;
 
             if (!state.email) {
-                state.errors.email = 'Email is required.';
+                state.errors.email = 'البريد الإلكتروني مطلوب.';
                 isValid = false;
             } else if (!/\S+@\S+\.\S+/.test(state.email)) {
-                state.errors.email = 'Please enter a valid email address.';
+                state.errors.email = 'من فضلك أدخل بريدًا إلكترونيًا صحيحًا.';
                 isValid = false;
             }
 
             if (!state.password) {
-                state.errors.password = 'Password is required.';
+                state.errors.password = 'كلمة المرور مطلوبة.';
                 isValid = false;
             } else if (state.password.length < 6) {
-                state.errors.password = 'Password must be at least 6 characters.';
+                state.errors.password = 'كلمة المرور يجب ألا تقل عن 6 أحرف.';
                 isValid = false;
             }
 
@@ -53,8 +53,8 @@
                     StorageManager.saveLoginResult(response.data);
                     Swal.fire({
                         icon: 'success',
-                        title: 'Login Successful',
-                        text: 'You are being redirected...',
+                        title: 'تم تسجيل الدخول بنجاح',
+                        text: 'جاري تحويلك الآن...',
                         timer: 2000,
                         showConfirmButton: false
                     });
@@ -65,8 +65,8 @@
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Login Failed',
-                        text: response.data.message || 'Please check your credentials.',
+                        title: 'فشل تسجيل الدخول',
+                        text: response.data.message || 'من فضلك تحقق من بيانات الدخول.',
                         confirmButtonText: 'حاول مرة أخرى'
                     });
                 }
@@ -74,8 +74,8 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'حدث خطأ',
-                    text: error.response?.data?.message || 'Please try again.',
-                    confirmButtonText: 'OK'
+                    text: error.response?.data?.message || 'من فضلك حاول مرة أخرى.',
+                    confirmButtonText: 'موافق'
                 });
             } finally {
                 state.isSubmitting = false;
