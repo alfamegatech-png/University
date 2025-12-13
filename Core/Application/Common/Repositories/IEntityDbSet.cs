@@ -42,5 +42,10 @@ public interface IEntityDbSet
     public DbSet<NegativeAdjustment> NegativeAdjustment { get; set; }
     public DbSet<PositiveAdjustment> PositiveAdjustment { get; set; }
     public DbSet<Scrapping> Scrapping { get; set; }
+
+    ///mai
+    public DbSet<IssueRequests> IssueRequests { get; set; }
+    public DbSet<IssueRequestsItem> IssueRequestsItem { get; set; }
+    public DbSet<Employee> Employee { get; set; }
 }
 
