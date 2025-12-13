@@ -20,13 +20,19 @@ namespace Infrastructure.SeedManager.Systems
         public async Task GenerateDataAsync()
         {
             var warehouses = new List<Warehouse>
-            {
-                new Warehouse { Name = "Customer", SystemWarehouse = true },
-                new Warehouse { Name = "Vendor", SystemWarehouse = true },
-                new Warehouse { Name = "Transfer", SystemWarehouse = true },
-                new Warehouse { Name = "Adjustment", SystemWarehouse = true },
-                new Warehouse { Name = "StockCount", SystemWarehouse = true },
-                new Warehouse { Name = "Scrapping", SystemWarehouse = true }
+            {new Warehouse { Name = "العملاء", SystemWarehouse = true },
+new Warehouse { Name = "الموردين", SystemWarehouse = true },
+new Warehouse { Name = "التحويلات", SystemWarehouse = true },
+new Warehouse { Name = "التعديلات", SystemWarehouse = true },
+new Warehouse { Name = "جرد المخزون", SystemWarehouse = true },
+new Warehouse { Name = "التلفيات", SystemWarehouse = true }
+
+                //new Warehouse { Name = "Customer", SystemWarehouse = true },
+                //new Warehouse { Name = "Vendor", SystemWarehouse = true },
+                //new Warehouse { Name = "Transfer", SystemWarehouse = true },
+                //new Warehouse { Name = "Adjustment", SystemWarehouse = true },
+                //new Warehouse { Name = "StockCount", SystemWarehouse = true },
+                //new Warehouse { Name = "Scrapping", SystemWarehouse = true }
             };
 
             foreach (var warehouse in warehouses)

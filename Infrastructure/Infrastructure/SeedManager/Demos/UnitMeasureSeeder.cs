@@ -21,12 +21,13 @@ public class UnitMeasureSeeder
     {
         var unitMeasures = new List<UnitMeasure>
         {
-            new UnitMeasure { Name = "m" },
-            new UnitMeasure { Name = "kg" },
-            new UnitMeasure { Name = "hour" },
-            new UnitMeasure { Name = "unit" },
-            new UnitMeasure { Name = "pcs" }
-        };
+		   new UnitMeasure { Name = "متر (m)" },
+new UnitMeasure { Name = "كيلو جرام (kg)" },
+new UnitMeasure { Name = "ساعة (hour)" },
+new UnitMeasure { Name = "وحدة (unit)" },
+new UnitMeasure { Name = "قطعة (pcs)" }
+
+		};
 
         foreach (var unitMeasure in unitMeasures)
         {
