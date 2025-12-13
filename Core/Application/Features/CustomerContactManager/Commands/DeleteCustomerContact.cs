@@ -16,6 +16,8 @@ public class DeleteCustomerContactRequest : IRequest<DeleteCustomerContactResult
     public string? DeletedById { get; init; }
 }
 
+
+
 public class DeleteCustomerContactValidator : AbstractValidator<DeleteCustomerContactRequest>
 {
     public DeleteCustomerContactValidator()
