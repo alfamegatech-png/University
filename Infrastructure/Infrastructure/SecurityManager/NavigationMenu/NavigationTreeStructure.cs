@@ -27,27 +27,10 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                     }
                 ]
             },
+           
             {
                 "URL": "#",
-                "Name": "المبيعات",
-                "IsModule": true,
-                "Children": [
-                    
-                    {
-                        "URL": "/SalesOrders/SalesOrderList",
-                        "Name": "أوامر البيع",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/SalesReports/SalesReportList",
-                        "Name": "تقارير المبيعات",
-                        "IsModule": false
-                    }
-                ]
-            },
-            {
-                "URL": "#",
-                "Name": "المشتريات",
+                "Name": "الموردين",
                 "IsModule": true,
                 "Children": [
                     {
@@ -90,6 +73,12 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "Name": "تقارير أوامر التوريد",
                         "IsModule": false
                     },
+
+         {
+            "URL": "/GoodsReceives/GoodsReceiveList",
+            "Name": "فحص واستلام ",
+            "IsModule": false
+        },
                         {
                         "URL": "/SalesOrders/SalesOrderList",
                         "Name": "أوامر البيع",
@@ -100,11 +89,11 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "Name": "تقارير المبيعات",
                         "IsModule": false
                     },
-                    {
-                        "URL": "/GoodsReceives/GoodsReceiveList",
-                        "Name": "فحص واستلام ",
-                        "IsModule": false
-                    },
+                   {
+            "URL": "/DeliveryOrders/DeliveryOrderList",
+            "Name": "أوامر التسليم",
+            "IsModule": false
+        },
          
                     {
                         "URL": "/PurchaseReturns/PurchaseReturnList",
@@ -169,11 +158,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "Name": "المخازن",
                         "IsModule": false
                     },
-                    {
-                        "URL": "/DeliveryOrders/DeliveryOrderList",
-                        "Name": "أوامر التسليم",
-                        "IsModule": false
-                    },
+                   
                     {
                         "URL": "/SalesReturns/SalesReturnList",
                         "Name": "مرتجعات المبيعات",
@@ -253,23 +238,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                     }
                 ]
             },
-            {
-                "URL": "#",
-                "Name": "الأعضاء",
-                "IsModule": true,
-                "Children": [
-                    {
-                        "URL": "/Users/UserList",
-                        "Name": "المستخدمون",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/Roles/RoleList",
-                        "Name": "الأدوار",
-                        "IsModule": false
-                    }
-                ]
-            },
+            
             {
                 "URL": "#",
                 "Name": "الملفات الشخصية",
@@ -281,29 +250,8 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "IsModule": false
                     }
                 ]
-            },
-            {
-                "URL": "#",
-                "Name": "الإعدادات",
-                "IsModule": true,
-                "Children": [
-                    {
-                        "URL": "/Companies/MyCompany",
-                        "Name": "شركتي",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/Taxs/TaxList",
-                        "Name": "الضرائب",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/NumberSequences/NumberSequenceList",
-                        "Name": "تسلسل الأرقام",
-                        "IsModule": false
-                    }
-                ]
             }
+            
         ]
         """;
 
