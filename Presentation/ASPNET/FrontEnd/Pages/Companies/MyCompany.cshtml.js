@@ -105,27 +105,48 @@
                     columns: [
                         { type: 'checkbox', width: 60 },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id',
+                            isPrimaryKey: true,
+                            headerText: 'المعرف',
+                            visible: false
                         },
-                        { field: 'name', headerText: 'Name', width: 150, minWidth: 150 },
-                        { field: 'currency', headerText: 'Currency', width: 150, minWidth: 150 },
-                        { field: 'street', headerText: 'Street', width: 150, minWidth: 150 },
-                        { field: 'phoneNumber', headerText: 'Phone#', width: 150, minWidth: 150 },
-                        { field: 'emailAddress', headerText: 'Email', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'name', headerText: 'اسم الشركة', width: 150, minWidth: 150 },
+                        { field: 'currency', headerText: 'العملة', width: 150, minWidth: 150 },
+                        { field: 'street', headerText: 'الشارع', width: 150, minWidth: 150 },
+                        { field: 'phoneNumber', headerText: 'رقم الهاتف', width: 150, minWidth: 150 },
+                        { field: 'emailAddress', headerText: 'البريد الإلكتروني', width: 150, minWidth: 150 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء (UTC)', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
+
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        'ExcelExport',
+                        'Search',
                         { type: 'Separator' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        {
+                            text: 'تعديل',
+                            tooltipText: 'تعديل البيانات',
+                            prefixIcon: 'e-edit',
+                            id: 'EditCustom'
+                        },
                         { type: 'Separator' },
                     ],
+
                     beforeDataBound: () => { },
+
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom'], false);
-                        mainGrid.obj.autoFitColumns(['name', 'currency', 'street', 'phoneNumber', 'emailAddress', 'createdAtUtc']);
+                        mainGrid.obj.autoFitColumns([
+                            'name',
+                            'currency',
+                            'street',
+                            'phoneNumber',
+                            'emailAddress',
+                            'createdAtUtc'
+                        ]);
                     },
+
                     excelExportComplete: () => { },
+
                     rowSelected: () => {
                         if (mainGrid.obj.getSelectedRecords().length === 1) {
                             mainGrid.obj.toolbarModule.enableItems(['EditCustom'], true);
@@ -133,6 +154,7 @@
                             mainGrid.obj.toolbarModule.enableItems(['EditCustom'], false);
                         }
                     },
+
                     rowDeselected: () => {
                         if (mainGrid.obj.getSelectedRecords().length === 1) {
                             mainGrid.obj.toolbarModule.enableItems(['EditCustom'], true);
@@ -140,11 +162,13 @@
                             mainGrid.obj.toolbarModule.enableItems(['EditCustom'], false);
                         }
                     },
+
                     rowSelecting: () => {
                         if (mainGrid.obj.getSelectedRecords().length) {
                             mainGrid.obj.clearSelection();
                         }
                     },
+
                     toolbarClick: (args) => {
                         if (args.item.id === 'MainGrid_excelexport') {
                             mainGrid.obj.excelExport();
@@ -152,8 +176,10 @@
 
                         if (args.item.id === 'EditCustom') {
                             state.deleteMode = false;
+
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
+
                                 state.id = selectedRecord.id ?? '';
                                 state.name = selectedRecord.name ?? '';
                                 state.description = selectedRecord.description ?? '';
@@ -167,10 +193,12 @@
                                 state.faxNumber = selectedRecord.faxNumber ?? '';
                                 state.emailAddress = selectedRecord.emailAddress ?? '';
                                 state.website = selectedRecord.website ?? '';
+
                                 mainModal.obj.show();
                             }
                         }
                     }
+
                 });
 
                 mainGrid.obj.appendTo(mainGridRef.value);
@@ -205,7 +233,7 @@
             obj: null,
             create: () => {
                 nameText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Name',
+                    placeholder: 'أدخل اسم الشركة',
                 });
                 nameText.obj.appendTo(nameRef.value);
             },
@@ -220,7 +248,7 @@
             obj: null,
             create: () => {
                 currencyText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Currency',
+                    placeholder: 'أدخل العملة',
                 });
                 currencyText.obj.appendTo(currencyRef.value);
             },
@@ -235,7 +263,7 @@
             obj: null,
             create: () => {
                 streetText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Street',
+                    placeholder: 'أدخل اسم الشارع',
                 });
                 streetText.obj.appendTo(streetRef.value);
             },
@@ -250,7 +278,7 @@
             obj: null,
             create: () => {
                 cityText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter City',
+                    placeholder: 'أدخل اسم المدينة',
                 });
                 cityText.obj.appendTo(cityRef.value);
             },
@@ -265,7 +293,7 @@
             obj: null,
             create: () => {
                 stateText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter State',
+                    placeholder: 'أدخل المحافظة / الولاية',
                 });
                 stateText.obj.appendTo(stateRef.value);
             },
@@ -280,7 +308,7 @@
             obj: null,
             create: () => {
                 zipCodeText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Zip Code',
+                    placeholder: 'أدخل الرمز البريدي',
                 });
                 zipCodeText.obj.appendTo(zipCodeRef.value);
             },
@@ -295,7 +323,7 @@
             obj: null,
             create: () => {
                 countryText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Country',
+                    placeholder: 'أدخل الدولة',
                 });
                 countryText.obj.appendTo(countryRef.value);
             },
@@ -310,7 +338,7 @@
             obj: null,
             create: () => {
                 phoneNumberText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Phone Number',
+                    placeholder: 'أدخل رقم الهاتف',
                 });
                 phoneNumberText.obj.appendTo(phoneNumberRef.value);
             },
@@ -325,7 +353,7 @@
             obj: null,
             create: () => {
                 faxNumberText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Fax Number',
+                    placeholder: 'أدخل رقم الفاكس',
                 });
                 faxNumberText.obj.appendTo(faxNumberRef.value);
             },
@@ -340,7 +368,7 @@
             obj: null,
             create: () => {
                 emailAddressText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Email Address',
+                    placeholder: 'أدخل البريد الإلكتروني',
                 });
                 emailAddressText.obj.appendTo(emailAddressRef.value);
             },
@@ -355,7 +383,7 @@
             obj: null,
             create: () => {
                 websiteText.obj = new ej.inputs.TextBox({
-                    placeholder: 'Enter Website',
+                    placeholder: 'أدخل الموقع الإلكتروني',
                 });
                 websiteText.obj.appendTo(websiteRef.value);
             },
@@ -366,9 +394,10 @@
             }
         };
 
+        // Watchers
         Vue.watch(
             () => state.name,
-            (newVal, oldVal) => {
+            () => {
                 state.errors.name = '';
                 nameText.refresh();
             }
@@ -376,7 +405,7 @@
 
         Vue.watch(
             () => state.currency,
-            (newVal, oldVal) => {
+            () => {
                 state.errors.currency = '';
                 currencyText.refresh();
             }
@@ -384,7 +413,7 @@
 
         Vue.watch(
             () => state.street,
-            (newVal, oldVal) => {
+            () => {
                 state.errors.street = '';
                 streetText.refresh();
             }
@@ -392,7 +421,7 @@
 
         Vue.watch(
             () => state.city,
-            (newVal, oldVal) => {
+            () => {
                 state.errors.city = '';
                 cityText.refresh();
             }
@@ -400,7 +429,7 @@
 
         Vue.watch(
             () => state.state,
-            (newVal, oldVal) => {
+            () => {
                 state.errors.state = '';
                 stateText.refresh();
             }
@@ -408,7 +437,7 @@
 
         Vue.watch(
             () => state.zipCode,
-            (newVal, oldVal) => {
+            () => {
                 state.errors.zipCode = '';
                 zipCodeText.refresh();
             }
@@ -416,14 +445,14 @@
 
         Vue.watch(
             () => state.country,
-            (newVal, oldVal) => {
+            () => {
                 countryText.refresh();
             }
         );
 
         Vue.watch(
             () => state.phoneNumber,
-            (newVal, oldVal) => {
+            () => {
                 state.errors.phoneNumber = '';
                 phoneNumberText.refresh();
             }
@@ -462,7 +491,18 @@
                     Object.keys(state.errors).forEach(field => {
                         state.errors[field] = '';
                         if (!state[field] && ['name', 'currency', 'street', 'city', 'state', 'zipCode', 'phoneNumber', 'emailAddress'].includes(field)) {
-                            state.errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required.`;
+                            // تحويل اسم الحقل إلى نص عربي للرسائل
+                            const fieldNamesAr = {
+                                name: 'اسم الشركة',
+                                currency: 'العملة',
+                                street: 'الشارع',
+                                city: 'المدينة',
+                                state: 'المحافظة / الولاية',
+                                zipCode: 'الرمز البريدي',
+                                phoneNumber: 'رقم الهاتف',
+                                emailAddress: 'البريد الإلكتروني'
+                            };
+                            state.errors[field] = `${fieldNamesAr[field]} مطلوب.`;
                             isValid = false;
                         }
                     });
@@ -492,7 +532,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: state.deleteMode ? 'تم الحذف' : 'تم الحفظ',
-                            text: 'Page will be refreshed...',
+                            text: 'سيتم تحديث الصفحة...',
                             timer: 1000,
                             showConfirmButton: false
                         });
@@ -505,8 +545,8 @@
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -516,7 +556,7 @@
                         icon: 'error',
                         title: 'حدث خطأ',
                         text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'حسناً'
                     });
                 } finally {
                     state.isSubmitting = false;
@@ -563,9 +603,7 @@
                     };
                 });
             } catch (e) {
-                console.error('page init error:', e);
-            } finally {
-                
+                console.error('خطأ أثناء تهيئة الصفحة:', e);
             }
         });
 
@@ -590,6 +628,7 @@
             websiteRef,
             handler
         };
+
     }
 };
 

@@ -21,10 +21,10 @@ namespace Infrastructure.SeedManager.Demos
         {
             var warehouses = new List<Warehouse>
             {
-                new Warehouse { Name = "New York" },
-                new Warehouse { Name = "San Francisco" },
-                new Warehouse { Name = "Chicago" },
-                new Warehouse { Name = "Los Angeles" }
+                new Warehouse { Name = "مخزن الزقازيق" },
+                new Warehouse { Name = "مخزن القاهره" },
+                new Warehouse { Name = "مخزن 3" },
+                new Warehouse { Name = "4 مخزن" }
             };
 
             foreach (var warehouse in warehouses)

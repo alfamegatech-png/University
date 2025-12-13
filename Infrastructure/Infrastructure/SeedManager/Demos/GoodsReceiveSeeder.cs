@@ -97,6 +97,7 @@ public class GoodsReceiveSeeder
         }
     }
 
+
     private static T GetRandomValue<T>(List<T> list, Random random)
     {
         return list[random.Next(list.Count)];

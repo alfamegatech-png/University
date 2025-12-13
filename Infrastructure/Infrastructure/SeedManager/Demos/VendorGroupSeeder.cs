@@ -21,12 +21,13 @@ public class VendorGroupSeeder
     {
         var vendorGroups = new List<VendorGroup>
         {
-            new VendorGroup { Name = "Manufacture" },
-            new VendorGroup { Name = "Supplier" },
-            new VendorGroup { Name = "Service Provider" },
-            new VendorGroup { Name = "Distributor" },
-            new VendorGroup { Name = "Freelancer" }
-        };
+		   new VendorGroup { Name = "مصنع" },
+new VendorGroup { Name = "مورد" },
+new VendorGroup { Name = "مقدم خدمة" },
+new VendorGroup { Name = "موزع" },
+new VendorGroup { Name = "فريلانسر" }
+
+		};
 
         foreach (var group in vendorGroups)
         {

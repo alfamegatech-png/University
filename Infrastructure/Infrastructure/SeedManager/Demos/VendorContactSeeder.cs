@@ -27,32 +27,34 @@ public class VendorContactSeeder
 
     public async Task GenerateDataAsync()
     {
-        var firstNames = new string[]
-        {
-            "Adam", "Sarah", "Michael", "Emily", "David", "Jessica",
-            "Kevin", "Samantha", "Jason", "Olivia", "Matthew", "Ashley",
-            "Christopher", "Jennifer", "Nicholas", "Amanda", "Alexander",
-            "Stephanie", "Jonathan", "Lauren"
-        };
+		var firstNames = new string[]
+		{
+	"Ahmed", "Sara", "Mohamed", "Fatma", "Ali", "Mona",
+	"Karim", "Hana", "Yasser", "Hala", "Mahmoud", "Dina",
+	"Tarek", "Laila", "Omar", "Amal", "Youssef",
+	"Salma", "Omar", "Noor"
+		};
 
-        var lastNames = new string[]
-        {
-            "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis",
-            "Garcia", "Rodriguez", "Wilson", "Martinez", "Anderson", "Taylor",
-            "Thomas", "Hernandez", "Moore", "Martin", "Jackson", "Thompson",
-            "White", "Lopez"
-        };
+		var lastNames = new string[]
+		{
+	"Mohamed", "Ahmed", "Ali", "Hassan", "Abdallah", "Mostafa",
+	"Youssef", "Saeed", "Hassan", "Mahmoud", "Salah", "Khaled",
+	"Tarek", "Samir", "Fouad", "Ibrahim", "Hassan", "Sherif",
+	"Mina", "Ramy"
+		};
 
-        var jobTitles = new string[]
-        {
-            "Chief Executive Officer", "Data Scientist", "Product Manager", "Business Development Executive",
-            "IT Consultant", "Social Media Specialist", "Research Analyst", "Content Writer",
-            "Operations Manager", "Financial Planner", "Software Developer", "Vendor Success Manager",
-            "Marketing Coordinator", "Quality Assurance Tester", "HR Specialist", "Event Coordinator",
-            "Account Executive", "Network Administrator", "Sales Manager", "Legal Assistant"
-        };
 
-        var vendorIds = await _vendorRepository.GetQuery().Select(x => x.Id).ToListAsync();
+		var jobTitles = new string[]
+		{
+	"المدير التنفيذي", "عالم بيانات", "مدير منتج", "مدير تطوير الأعمال",
+	"استشاري تكنولوجيا المعلومات", "أخصائي وسائل التواصل الاجتماعي", "محلل أبحاث", "كاتب محتوى",
+	"مدير العمليات", "مخطط مالي", "مطور برمجيات", "مدير نجاح الموردين",
+	"منسق تسويق", "مختبر ضمان الجودة", "أخصائي الموارد البشرية", "منسق فعاليات",
+	"مدير حسابات", "مسؤول الشبكات", "مدير مبيعات", "مساعد قانوني"
+		};
+
+
+		var vendorIds = await _vendorRepository.GetQuery().Select(x => x.Id).ToListAsync();
         var random = new Random();
 
         var vendorContacts = new List<VendorContact>();

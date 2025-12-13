@@ -31,39 +31,43 @@ public class CustomerSeeder
     public async Task GenerateDataAsync()
     {
         var groups = (await _groupRepository.GetQuery().ToListAsync()).Select(x => x.Id).ToArray();
-        var categories = (await _categoryRepository.GetQuery().ToListAsync()).Select(x => x.Id).ToArray();
-        var cities = new string[] { "New York", "Los Angeles", "San Francisco", "Chicago" };
-        var streets = new string[] { "Main St", "Broadway", "Market St", "Elm St" };
-        var states = new string[] { "NY", "CA", "IL", "TX" };
-        var zipCodes = new string[] { "10001", "90001", "94101", "60601" };
-        var phoneNumbers = new string[] { "555-1234", "555-5678", "555-8765", "555-4321" };
-        var emailDomains = new string[] { "example.com", "demo.com", "test.com", "sample.com" };
+		var categories = (await _categoryRepository.GetQuery().ToListAsync()).Select(x => x.Id).ToArray();
+
+		var cities = new string[] { "القاهرة", "الإسكندرية", "الجيزة", "المنصورة" };
+		var streets = new string[] { "شارع التحرير", "شارع الجمهورية", "شارع سعد زغلول", "شارع عبد الرحمن حسن" };
+		var states = new string[] { "القاهرة", "الإسكندرية", "الجيزة", "الدقهلية" };
+		var zipCodes = new string[] { "11511", "21511", "12511", "34511" };
+		var phoneNumbers = new string[] { "02-12345678", "03-87654321", "02-56781234", "050-4321876" };
+
+		var emailDomains = new string[] { "example.com", "demo.com", "test.com", "sample.com" };
 
         var random = new Random();
 
         var customers = new List<Customer>
         {
-            new Customer { Name = "Citadel LLC" },
-            new Customer { Name = "Ironclad LLC" },
-            new Customer { Name = "Armada LLC" },
-            new Customer { Name = "Shield LLC" },
-            new Customer { Name = "Alpha LLC" },
-            new Customer { Name = "Capitol LLC" },
-            new Customer { Name = "Federal LLC" },
-            new Customer { Name = "Statewide LLC" },
-            new Customer { Name = "Harmony LLC" },
-            new Customer { Name = "Hope LLC" },
-            new Customer { Name = "Unity LLC" },
-            new Customer { Name = "Prosperity LLC" },
-            new Customer { Name = "Global LLC" },
-            new Customer { Name = "Sunset LLC" },
-            new Customer { Name = "Luxe LLC" },
-            new Customer { Name = "Serenity LLC" },
-            new Customer { Name = "Oasis LLC" },
-            new Customer { Name = "Grandeur LLC" },
-            new Customer { Name = "Bright LLC" },
-            new Customer { Name = "Stellar LLC" }
-        };
+new Customer { Name = "العميل 1" },
+new Customer { Name = "العميل 2" },
+new Customer { Name = "العميل 3" },
+new Customer { Name = "العميل 4" },
+new Customer { Name = "العميل 5" },
+new Customer { Name = "العميل 6" },
+new Customer { Name = "العميل 7" },
+new Customer { Name = "العميل 8" },
+new Customer { Name = "العميل 9" },
+new Customer { Name = "العميل 10" },
+new Customer { Name = "العميل 11" },
+new Customer { Name = "العميل 12" },
+new Customer { Name = "العميل 13" },
+new Customer { Name = "العميل 14" },
+new Customer { Name = "العميل 15" },
+new Customer { Name = "العميل 16" },
+new Customer { Name = "العميل 17" },
+new Customer { Name = "العميل 18" },
+new Customer { Name = "العميل 19" },
+new Customer { Name = "العميل 20" },
+new Customer { Name = "العميل 21" }
+
+		};
 
         foreach (var customer in customers)
         {
