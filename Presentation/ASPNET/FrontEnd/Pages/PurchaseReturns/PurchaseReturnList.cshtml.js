@@ -159,8 +159,8 @@ const App = {
                     goodsReceiveListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.goodsReceiveListLookupData,
                         fields: { value: 'id', text: 'number' },
-                        placeholder: 'Select Goods Receive',
-                        filterBarPlaceholder: 'Search',
+                        placeholder: 'اختر اذن استلام بضاعة',
+                        filterBarPlaceholder: 'بحث',
                         sortOrder: 'Ascending',
                         allowFiltering: true,
                         filtering: (e) => {

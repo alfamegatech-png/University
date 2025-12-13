@@ -1,6 +1,6 @@
 ﻿@page
 @{
-    ViewData["Title"] = "Transfer In List";
+    ViewData["Title"] = "قائمة التحويلات الواردة";
 }
 
 <div id="app" v-cloak>
@@ -15,62 +15,78 @@
     <div class="modal fade" ref="mainModalRef" id="MainModal" aria-hidden="true" tabindex="-1" data-bs-focus="false" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h5 class="modal-title">{{ state.mainTitle }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                 </div>
+
                 <div class="modal-body">
                     <input type="hidden" v-model="state.id" id="Id" name="Id" />
+
                     <form>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card">
+
                                     <div class="card-header">
-                                        <h5>Main Info</h5>
+                                        <h5>المعلومات الأساسية</h5>
                                     </div>
+
                                     <div class="card-body">
+
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="TransferReceiveDate">Receive Date</label>
+                                                <label for="TransferReceiveDate">تاريخ الاستلام</label>
                                                 <input ref="transferReceiveDateRef">
                                                 <label class="text-danger">{{ state.errors.transferReceiveDate }}</label>
                                             </div>
+
                                             <div class="col-md-6">
-                                                <label for="Number">Number</label>
+                                                <label for="Number">الرقم</label>
                                                 <input ref="numberRef" v-model="state.number" readonly>
                                             </div>
                                         </div>
+
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="TransferOutId">Transfer Out</label>
+                                                <label for="TransferOutId">تحويل خارجي</label>
                                                 <div ref="transferOutIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.transferOutId }}</label>
                                             </div>
+
                                             <div class="col-md-6">
-                                                <label for="Status">Status</label>
+                                                <label for="Status">الحالة</label>
                                                 <div ref="statusRef"></div>
                                                 <label class="text-danger">{{ state.errors.status }}</label>
                                             </div>
                                         </div>
+
                                         <div class="row mb-2">
                                             <div class="col-md-12">
-                                                <label for="Description">Description</label>
+                                                <label for="Description">الوصف</label>
                                                 <textarea class="form-control" rows="3" v-model="state.description"></textarea>
                                                 <label class="text-danger">{{ state.errors.description }}</label>
                                             </div>
                                         </div>
+
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </form>
+
                     <div id="ComplexDiv" :style="{ display: state.showComplexDiv ? 'block' : 'none' }">
+
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <div class="card">
+
                                     <div class="card-header">
-                                        <h5>Delivery Item</h5>
+                                        <h5>عناصر التسليم</h5>
                                     </div>
+
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-12">
@@ -80,43 +96,61 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
+
                         <div class="row mt-4">
                             <div class="col-md-12">
                                 <div class="card shadow-sm">
+
                                     <div class="card-header text-white">
-                                        <h5 class="mb-0">Summary</h5>
+                                        <h5 class="mb-0">الملخص</h5>
                                     </div>
+
                                     <div class="card-body">
                                         <div class="row justify-content-end">
                                             <div class="col-md-6">
                                                 <div class="d-flex justify-content-between py-2">
-                                                    <span class="fw-bold">Total Movement</span>
+                                                    <span class="fw-bold">إجمالي الحركة</span>
                                                     <span id="TotalMovement" class="fw-bold text-success">{{ state.totalMovementFormatted }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+
                     <button type="button"
                             id="MainSaveButton"
                             class="btn"
                             v-bind:class="state.deleteMode ? 'btn-danger' : 'btn-primary'"
                             v-on:click="handler.handleSubmit"
                             v-bind:disabled="state.isSubmitting">
-                        <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
-                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'Delete' : 'Save' }}</span>
-                        <span v-else>{{ state.deleteMode ? 'Deleting...' : 'Saving...' }}</span>
+
+                        <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting"></span>
+
+                        <span v-if="!state.isSubmitting">
+                            {{ state.deleteMode ? 'حذف' : 'حفظ' }}
+                        </span>
+
+                        <span v-else>
+                            {{ state.deleteMode ? 'جاري الحذف...' : 'جاري الحفظ...' }}
+                        </span>
+
                     </button>
                 </div>
+
             </div>
         </div>
     </div>

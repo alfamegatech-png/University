@@ -1,4 +1,45 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -37,11 +78,11 @@
             let isValid = true;
 
             if (!state.adjustmentDate) {
-                state.errors.adjustmentDate = 'Adjustment date is required.';
+                state.errors.adjustmentDate = 'يجب ادخال تاريخ التسوية.';
                 isValid = false;
             }
             if (!state.status) {
-                state.errors.status = 'Status is required.';
+                state.errors.status = 'يجب ادخال الحالة';
                 isValid = false;
             }
 
@@ -66,7 +107,7 @@
             obj: null,
             create: () => {
                 adjustmentDatePicker.obj = new ej.calendars.DatePicker({
-                    placeholder: 'Select Date',
+                    placeholder: 'اختر التاريخ',
                     format: 'yyyy-MM-dd',
                     value: state.adjustmentDate ? new Date(state.adjustmentDate) : null,
                     change: (e) => {
@@ -94,7 +135,7 @@
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                 });
                 numberText.obj.appendTo(numberRef.value);
             }
@@ -107,7 +148,7 @@
                     positiveAdjustmentStatusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.positiveAdjustmentStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select Status',
+                        placeholder: 'اختر الحالة',
                         allowFiltering: false,
                         change: (e) => {
                             state.status = e.value;
@@ -388,6 +429,8 @@
             create: async (dataSource) => {
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     allowFiltering: true,
                     allowSorting: true,
@@ -406,23 +449,23 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
-                        },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'adjustmentDate', headerText: 'Adjustment Date', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'statusName', headerText: 'Status', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        { field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false },
+                        { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
+                        { field: 'adjustmentDate', headerText: 'تاريخ التسوية', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إلى إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+                        'Search',
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+                        { text: 'إضافة', tooltipText: 'إضافة سجل', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل السجل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف السجل', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'Print PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
+                        { text: 'طباعة PDF', tooltipText: 'طباعة PDF', id: 'PrintPDFCustom' },
                     ],
+
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
@@ -455,7 +498,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Positive Adjustment';
+                            state.mainTitle = 'اضافة تسوية موحبة';
                             resetFormState();
                             state.showComplexDiv = false;
                             mainModal.obj.show();
@@ -465,7 +508,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Positive Adjustment';
+                                state.mainTitle = 'تعديل التسوية الموجبة';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.adjustmentDate = selectedRecord.adjustmentDate ? new Date(selectedRecord.adjustmentDate) : null;
@@ -482,7 +525,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Positive Adjustment?';
+                                state.mainTitle = 'حذف التسوية الموجبه?';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.adjustmentDate = selectedRecord.adjustmentDate ? new Date(selectedRecord.adjustmentDate) : null;
@@ -540,7 +583,7 @@
                         },
                         {
                             field: 'warehouseId',
-                            headerText: 'Warehouse',
+                            headerText: 'المخزن',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -565,7 +608,7 @@
                                         dataSource: state.warehouseListLookupData,
                                         fields: { value: 'id', text: 'name' },
                                         value: args.rowData.warehouseId,
-                                        placeholder: 'Select a Warehouse',
+                                        placeholder: 'اختر المخزن/ المستودع',
                                         floatLabelType: 'Never'
                                     });
                                     warehouseObj.appendTo(args.element);
@@ -574,7 +617,7 @@
                         },
                         {
                             field: 'productId',
-                            headerText: 'Product',
+                            headerText: 'المنتج',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -604,7 +647,7 @@
                                                 movementObj.value = 1;
                                             }
                                         },
-                                        placeholder: 'Select a Product',
+                                        placeholder: 'اختر المنتج',
                                         floatLabelType: 'Never'
                                     });
                                     productObj.appendTo(args.element);
@@ -613,13 +656,13 @@
                         },
                         {
                             field: 'movement',
-                            headerText: 'Movement',
+                            headerText: 'الحركة',
                             width: 200,
                             validationRules: {
                                 required: true,
                                 custom: [(args) => {
                                     return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
+                                }, 'الرقم يجب ان يكون اكبر من صفر']
                             },
                             type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
@@ -712,7 +755,7 @@
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Update Successful',
+                                        title: 'تم التعديل بنجاح',
                                         timer: 2000,
                                         showConfirmButton: false
                                     });

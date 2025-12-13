@@ -1,4 +1,46 @@
-﻿const App = {
+﻿ej.base.L10n.load({
+    'ar': {
+        'grid': {
+            'EmptyRecord': 'لا توجد بيانات للعرض',
+            'GroupDropArea': 'اسحب عنوان العمود هنا لتجميع البيانات',
+            'UnGroup': 'اضغط لإلغاء التجميع',
+            'Item': 'عنصر',
+            'Items': 'عناصر',
+            'Edit': 'تعديل',
+            'Delete': 'حذف',
+            'Update': 'تحديث',
+            'Cancel': 'إلغاء',
+            'Search': 'بحث',
+            'Save': 'حفظ',
+            'Close': 'إغلاق',
+            'ExcelExport': 'تصدير إكسل',
+            'AddVendorCategory': 'إضافة فئة موردين',
+            "FilterButton": "تطبيق",
+            "ClearButton": "مسح",
+            "StartsWith": " يبدأ بـ ",
+            "EndsWith": " ينتهي بـ ",
+            "Contains": " يحتوي على ",
+            "Equal": " يساوي ",
+            "NotEqual": " لا يساوي ",
+            "LessThan": " أصغر من ",
+            "LessThanOrEqual": " أصغر أو يساوي ",
+            "GreaterThan": " أكبر من ",
+            "GreaterThanOrEqual": " أكبر أو يساوي "
+        },
+        'pager': {
+            'currentPageInfo': 'صفحة {0} من {1}',
+            'firstPageTooltip': 'الصفحة الأولى',
+            'lastPageTooltip': 'الصفحة الأخيرة',
+            'nextPageTooltip': 'الصفحة التالية',
+            'previousPageTooltip': 'الصفحة السابقة',
+            'nextPagerTooltip': 'التالي',
+            'previousPagerTooltip': 'السابق',
+            'totalItemsInfo': '({0} عناصر)'
+        }
+    }
+});
+
+const App = {
     setup() {
         const state = Vue.reactive({
             mainData: [],
@@ -39,17 +81,16 @@
             state.errors.status = '';
 
             let isValid = true;
-
             if (!state.transferReceiveDate) {
-                state.errors.transferReceiveDate = 'Receive date is required.';
+                state.errors.transferReceiveDate = 'تاريخ الاستلام مطلوب.';
                 isValid = false;
             }
             if (!state.transferOutId) {
-                state.errors.transferOutId = 'Transfer Out is required.';
+                state.errors.transferOutId = 'التحويل الصادر مطلوب.';
                 isValid = false;
             }
             if (!state.status) {
-                state.errors.status = 'Status is required.';
+                state.errors.status = 'الحالة مطلوبة.';
                 isValid = false;
             }
 
@@ -76,7 +117,7 @@
             obj: null,
             create: () => {
                 transferReceiveDatePicker.obj = new ej.calendars.DatePicker({
-                    placeholder: 'Select Date',
+                    placeholder: 'اختر التاريخ',
                     format: 'yyyy-MM-dd',
                     value: state.transferReceiveDate ? new Date(state.transferReceiveDate) : null,
                     change: (e) => {
@@ -104,7 +145,7 @@
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                 });
                 numberText.obj.appendTo(numberRef.value);
             }
@@ -117,8 +158,8 @@
                     transferOutListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.transferOutListLookupData,
                         fields: { value: 'id', text: 'number' },
-                        placeholder: 'Select Transfer Out',
-                        filterBarPlaceholder: 'Search',
+                        placeholder: 'اختر التحويل الخارجي',
+                        filterBarPlaceholder: 'بحث',
                         sortOrder: 'Ascending',
                         allowFiltering: true,
                         filtering: (e) => {
@@ -158,7 +199,7 @@
                     transferInStatusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.transferInStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select Status',
+                        placeholder: 'اختر الحالة',
                         allowFiltering: false,
                         change: (e) => {
                             state.status = e.value;
@@ -442,6 +483,8 @@
                 mainGrid.obj = new ej.grids.Grid({
                     height: '240px',
                     dataSource: dataSource,
+                    locale: 'ar',
+                    enableRtl: true,
                     allowFiltering: true,
                     allowSorting: true,
                     allowSelection: true,
@@ -459,24 +502,41 @@
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
+
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id',
+                            isPrimaryKey: true,
+                            headerText: 'المعرّف',
+                            visible: false
                         },
-                        { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'transferReceiveDate', headerText: 'Receive Date', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'transferOutNumber', headerText: 'Transfer Out', width: 150, minWidth: 150 },
-                        { field: 'statusName', headerText: 'Status', width: 150, minWidth: 150 },
-                        { field: 'createdAtUtc', headerText: 'Created At UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+
+                        { field: 'number', headerText: 'رقم الحركة', width: 150, minWidth: 150 },
+
+                        { field: 'transferReceiveDate', headerText: 'تاريخ الاستلام', width: 150, format: 'yyyy-MM-dd' },
+
+                        { field: 'transferOutNumber', headerText: 'رقم التحويل الخارج', width: 150, minWidth: 150 },
+
+                        { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
+
+                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء (UTC)', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
+
                     toolbar: [
-                        'ExcelExport', 'Search',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
+
+                        'Search',
+
                         { type: 'Separator' },
-                        { text: 'إضافة', tooltipText: 'Add', prefixIcon: 'e-add', id: 'AddCustom' },
-                        { text: 'تعديل', tooltipText: 'Edit', prefixIcon: 'e-edit', id: 'EditCustom' },
-                        { text: 'حذف', tooltipText: 'Delete', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+
+                        { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
+                        { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
+                        { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
+
                         { type: 'Separator' },
-                        { text: 'Print PDF', tooltipText: 'Print PDF', id: 'PrintPDFCustom' },
+
+                        { text: 'طباعة PDF', tooltipText: 'طباعة PDF', id: 'PrintPDFCustom' },
                     ],
+
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
@@ -509,7 +569,7 @@
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Transfer In';
+                            state.mainTitle = 'اضافة تحويل وارد';
                             resetFormState();
                             state.showComplexDiv = false;
                             mainModal.obj.show();
@@ -519,7 +579,7 @@
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Transfer In';
+                                state.mainTitle = 'تعديل تحويل وارد';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.transferReceiveDate = selectedRecord.transferReceiveDate ? new Date(selectedRecord.transferReceiveDate) : null;
@@ -537,7 +597,7 @@
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Transfer In?';
+                                state.mainTitle = 'حذف تحويل وارد?';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.transferReceiveDate = selectedRecord.transferReceiveDate ? new Date(selectedRecord.transferReceiveDate) : null;
@@ -572,6 +632,8 @@
             create: async (dataSource) => {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
                     allowFiltering: false,
@@ -596,7 +658,7 @@
                         },
                         {
                             field: 'productId',
-                            headerText: 'Product',
+                            headerText: 'المنتج',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -626,7 +688,7 @@
                                                 movementObj.value = 1;
                                             }
                                         },
-                                        placeholder: 'Select Product',
+                                        placeholder: 'احتر المنتج',
                                         floatLabelType: 'Never'
                                     });
                                     productObj.appendTo(args.element);
@@ -635,13 +697,13 @@
                         },
                         {
                             field: 'movement',
-                            headerText: 'Movement',
+                            headerText: 'الحركة',
                             width: 200,
                             validationRules: {
                                 required: true,
                                 custom: [(args) => {
                                     return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
+                                }, 'يجب ان يكون الرقم اكبر من صفر']
                             },
                             type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
@@ -712,7 +774,7 @@
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Save Failed',
+                                        title: 'فشل الحفظ',
                                             text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
@@ -734,14 +796,14 @@
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Update Successful',
+                                        title: 'تم التعديل',
                                         timer: 2000,
                                         showConfirmButton: false
                                     });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Update Failed',
+                                        title: 'فشل التعديل',
                                             text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
