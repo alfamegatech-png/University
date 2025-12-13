@@ -27,32 +27,47 @@ public class CustomerContactSeeder
 
     public async Task GenerateDataAsync()
     {
-        var firstNames = new string[]
-        {
-            "Adam", "Sarah", "Michael", "Emily", "David", "Jessica",
-            "Kevin", "Samantha", "Jason", "Olivia", "Matthew", "Ashley",
-            "Christopher", "Jennifer", "Nicholas", "Amanda", "Alexander",
-            "Stephanie", "Jonathan", "Lauren"
-        };
+		var firstNames = new string[]
+		{
+	"Ahmed", "Sara", "Mohamed", "Fatma", "Ali", "Mona",
+	"Karim", "Hana", "Yasser", "Hala", "Mahmoud", "Dina",
+	"Tarek", "Leila", "Omar", "Amal", "Youssef",
+	"Salma", "Omar", "Noor"
+		};
 
-        var lastNames = new string[]
-        {
-            "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis",
-            "Garcia", "Rodriguez", "Wilson", "Martinez", "Anderson", "Taylor",
-            "Thomas", "Hernandez", "Moore", "Martin", "Jackson", "Thompson",
-            "White", "Lopez"
-        };
+		var lastNames = new string[]
+		{
+	"Mohamed", "Ahmed", "Ali", "Hassan", "Abdallah", "Mostafa",
+	"Youssef", "Saeed", "Hassan", "Mahmoud", "Salah", "Khaled",
+	"Tarek", "Samir", "Fouad", "Ibrahim", "Hassan", "Sherif",
+	"Mina", "Ramy"
+		};
 
-        var jobTitles = new string[]
-        {
-            "Chief Executive Officer", "Data Scientist", "Product Manager", "Business Development Executive",
-            "IT Consultant", "Social Media Specialist", "Research Analyst", "Content Writer",
-            "Operations Manager", "Financial Planner", "Software Developer", "Customer Success Manager",
-            "Marketing Coordinator", "Quality Assurance Tester", "HR Specialist", "Event Coordinator",
-            "Account Executive", "Network Administrator", "Sales Manager", "Legal Assistant"
-        };
+		var jobTitles = new string[]
+		{
+	"الرئيس التنفيذي",           // Chief Executive Officer
+    "عالم بيانات",               // Data Scientist
+    "مدير المنتج",               // Product Manager
+    "مدير تطوير الأعمال",        // Business Development Executive
+    "استشاري تكنولوجيا المعلومات", // IT Consultant
+    "أخصائي وسائل التواصل الاجتماعي", // Social Media Specialist
+    "محلل أبحاث",                // Research Analyst
+    "كاتب محتوى",               // Content Writer
+    "مدير العمليات",            // Operations Manager
+    "مخطط مالي",               // Financial Planner
+    "مطور برمجيات",             // Software Developer
+    "مدير نجاح العملاء",         // Customer Success Manager
+    "منسق تسويق",               // Marketing Coordinator
+    "مختبر ضمان الجودة",         // Quality Assurance Tester
+    "أخصائي موارد بشرية",        // HR Specialist
+    "منسق فعاليات",             // Event Coordinator
+    "مدير حسابات",              // Account Executive
+    "مسؤول الشبكات",            // Network Administrator
+    "مدير المبيعات",            // Sales Manager
+    "مساعد قانوني"              // Legal Assistant
+		};
 
-        var customerIds = await _customerRepository.GetQuery().Select(x => x.Id).ToListAsync();
+		var customerIds = await _customerRepository.GetQuery().Select(x => x.Id).ToListAsync();
         var random = new Random();
 
         var customerContacts = new List<CustomerContact>();

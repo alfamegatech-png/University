@@ -21,13 +21,14 @@ public class VendorCategorySeeder
     {
         var vendorCategories = new List<VendorCategory>
         {
-            new VendorCategory { Name = "Large" },
-            new VendorCategory { Name = "Medium" },
-            new VendorCategory { Name = "Small" },
-            new VendorCategory { Name = "Specialty" },
-            new VendorCategory { Name = "Local" },
-            new VendorCategory { Name = "Global" }
-        };
+		   new VendorCategory { Name = "كبير" },
+new VendorCategory { Name = "متوسط" },
+new VendorCategory { Name = "صغير" },
+new VendorCategory { Name = "متخصص" },
+new VendorCategory { Name = "محلي" },
+new VendorCategory { Name = "عالمي" }
+
+		};
 
         foreach (var category in vendorCategories)
         {

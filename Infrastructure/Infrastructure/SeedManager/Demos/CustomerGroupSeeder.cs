@@ -21,13 +21,14 @@ public class CustomerGroupSeeder
     {
         var customerGroups = new List<CustomerGroup>
         {
-            new CustomerGroup { Name = "Corporate" },
-            new CustomerGroup { Name = "Government" },
-            new CustomerGroup { Name = "Foundation" },
-            new CustomerGroup { Name = "Military" },
-            new CustomerGroup { Name = "Education" },
-            new CustomerGroup { Name = "Hospitality" }
-        };
+		 new CustomerGroup { Name = "شركات" },
+new CustomerGroup { Name = "حكومي" },
+new CustomerGroup { Name = "مؤسسات" },
+new CustomerGroup { Name = "عسكري" },
+new CustomerGroup { Name = "تعليم" },
+new CustomerGroup { Name = "ضيافة" }
+
+		};
 
         foreach (var group in customerGroups)
         {

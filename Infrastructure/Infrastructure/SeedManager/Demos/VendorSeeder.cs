@@ -32,10 +32,11 @@ public class VendorSeeder
     {
         var groups = (await _groupRepository.GetQuery().ToListAsync()).Select(x => x.Id).ToArray();
         var categories = (await _categoryRepository.GetQuery().ToListAsync()).Select(x => x.Id).ToArray();
-        var cities = new string[] { "New York", "Los Angeles", "San Francisco", "Chicago" };
-        var streets = new string[] { "Main Street", "Broadway", "Elm Street", "Maple Avenue" };
-        var states = new string[] { "NY", "CA", "IL", "TX" };
-        var zipCodes = new string[] { "10001", "90001", "60601", "73301" };
+		var cities = new string[] { "القاهرة", "الإسكندرية", "الجيزة", "المنصورة" };
+		var streets = new string[] { "شارع التحرير", "شارع الجمهورية", "شارع سعد زغلول", "شارع عبد الرحمن حسن" };
+		var states = new string[] { "القاهرة", "الإسكندرية", "الجيزة", "الدقهلية" };
+
+		var zipCodes = new string[] { "10001", "90001", "60601", "73301" };
         var phoneNumbers = new string[] { "123-456-7890", "987-654-3210", "555-123-4567", "111-222-3333" };
         var emails = new string[] { "vendor1@example.com", "vendor2@example.com", "vendor3@example.com", "vendor4@example.com" };
 
@@ -43,27 +44,28 @@ public class VendorSeeder
 
         var vendors = new List<Vendor>
         {
-            new Vendor { Name = "Quantum Industries" },
-            new Vendor { Name = "Apex Ventures" },
-            new Vendor { Name = "Horizon Enterprises" },
-            new Vendor { Name = "Nova Innovations" },
-            new Vendor { Name = "Phoenix Holdings" },
-            new Vendor { Name = "Titan Group" },
-            new Vendor { Name = "Zenith Corporation" },
-            new Vendor { Name = "Prime Solutions" },
-            new Vendor { Name = "Cascade Enterprises" },
-            new Vendor { Name = "Aurora Holdings" },
-            new Vendor { Name = "Vanguard Industries" },
-            new Vendor { Name = "Empyrean Ventures" },
-            new Vendor { Name = "Genesis Corporation" },
-            new Vendor { Name = "Equinox Enterprises" },
-            new Vendor { Name = "Summit Holdings" },
-            new Vendor { Name = "Sovereign Solutions" },
-            new Vendor { Name = "Spectrum Corporation" },
-            new Vendor { Name = "Elysium Enterprises" },
-            new Vendor { Name = "Infinity Holdings" },
-            new Vendor { Name = "Momentum Ventures" }
-        };
+		   new Vendor { Name = "المورد 1" },
+new Vendor { Name = "المورد 2" },
+new Vendor { Name = "المورد 3" },
+new Vendor { Name = "المورد 4" },
+new Vendor { Name = "المورد 5" },
+new Vendor { Name = "المورد 6" },
+new Vendor { Name = "المورد 7" },
+new Vendor { Name = "المورد 8" },
+new Vendor { Name = "المورد 9" },
+new Vendor { Name = "المورد 10" },
+new Vendor { Name = "المورد 11" },
+new Vendor { Name = "المورد 12" },
+new Vendor { Name = "المورد 13" },
+new Vendor { Name = "المورد 14" },
+new Vendor { Name = "المورد 15" },
+new Vendor { Name = "المورد 16" },
+new Vendor { Name = "المورد 17" },
+new Vendor { Name = "المورد 18" },
+new Vendor { Name = "المورد 19" },
+new Vendor { Name = "المورد 20" }
+
+		};
 
         foreach (var vendor in vendors)
         {

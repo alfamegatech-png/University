@@ -21,13 +21,14 @@ public class ProductGroupSeeder
     {
         var productGroups = new List<ProductGroup>
         {
-            new ProductGroup { Name = "Hardware" },
-            new ProductGroup { Name = "Networking" },
-            new ProductGroup { Name = "Storage" },
-            new ProductGroup { Name = "Device" },
-            new ProductGroup { Name = "Software" },
-            new ProductGroup { Name = "Service" }
-        };
+new ProductGroup { Name = "أجهزة" },
+new ProductGroup { Name = "الشبكات" },
+new ProductGroup { Name = "التخزين" },
+new ProductGroup { Name = "أجهزة ملحقة" },
+new ProductGroup { Name = "البرمجيات" },
+new ProductGroup { Name = "الخدمات" }
+
+		};
 
         foreach (var productGroup in productGroups)
         {

@@ -15,15 +15,16 @@ public class UserSeeder
 
     public async Task GenerateDataAsync()
     {
-        var userNames = new List<string>
-        {
-            "Alex", "Taylor", "Jordan", "Morgan", "Riley",
-            "Casey", "Peyton", "Cameron", "Jamie", "Drew",
-            "Dakota", "Avery", "Quinn", "Harper", "Rowan",
-            "Emerson", "Finley", "Skyler", "Charlie", "Sage"
-        };
+		var userNames = new List<string>
+{
+	"Ahmed", "Sara", "Omar", "Mona", "Youssef",
+	"Karim", "Noor", "Dina", "Hassan", "Laila",
+	"Tarek", "Salma", "Amal", "Mahmoud", "Hana",
+	"Ali", "Ramy", "Mina", "Fatma", "Yasser"
+};
 
-        var defaultPassword = "123456";
+
+		var defaultPassword = "123456";
         var domain = "@example.com";
 
         foreach (var name in userNames)

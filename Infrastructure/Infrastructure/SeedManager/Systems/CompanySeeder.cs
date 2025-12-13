@@ -17,24 +17,25 @@ public class CompanySeeder
     }
     public async Task GenerateDataAsync()
     {
-        var entity = new Company
-        {
-            CreatedAtUtc = DateTime.UtcNow,
-            IsDeleted = false,
-            Name = "Acme Corp",
-            Currency = "USD",
-            Street = "123 Main St",
-            City = "Metropolis",
-            State = "New York",
-            ZipCode = "10001",
-            Country = "USA",
-            PhoneNumber = "+1-212-555-1234",
-            FaxNumber = "+1-212-555-5678",
-            EmailAddress = "info@acmecorp.com",
-            Website = "https://www.acmecorp.com"
-        };
+		var entity = new Company
+		{
+			CreatedAtUtc = DateTime.UtcNow,
+			IsDeleted = false,
+			Name = "شركة المتحدة",
+			Currency = "دولار أمريكي",
+			Street = " الشارع الرئيسي",
+			City = "القاهرة",
+			State = "مصر",
+			ZipCode = "10001",
+			Country = "مصر ",
+			PhoneNumber = "+02989889899",
+			FaxNumber = "+1-212-555-5678",
+			EmailAddress = "info@nationals.com",
+			Website = "https://www.nationals.com"
+		};
 
-        await _repository.CreateAsync(entity);
+
+		await _repository.CreateAsync(entity);
         await _unitOfWork.SaveAsync();
     }
 
