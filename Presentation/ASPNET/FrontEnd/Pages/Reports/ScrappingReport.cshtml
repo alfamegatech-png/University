@@ -1,0 +1,167 @@
+﻿@page
+@{
+    ViewData["Title"] = "تقرير دفتر الشطب";
+}
+
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<div id="scrappingReportApp" v-cloak>
+
+    <!-- الفلاتر -->
+    <div class="mb-3 d-flex align-items-end gap-2">
+        <div>
+            <label>من تاريخ</label>
+            <input type="date" v-model="filters.fromDate" class="form-control" />
+        </div>
+        <div>
+            <label>إلى تاريخ</label>
+            <input type="date" v-model="filters.toDate" class="form-control" />
+        </div>
+        <button class="btn btn-primary" v-on:click="loadReport">بحث</button>
+    </div>
+
+    <!-- جدول التقرير -->
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>رقم الشطب</th>
+                <th>التاريخ</th>
+                <th>المخزن</th>
+                <th>الصنف</th>
+                <th>الوحدة</th>
+                <th>الكمية</th>
+                <th>ملاحظات</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="item in pagedData" :key="item.scrappingNumber + item.productCode">
+                <td v-text="item.scrappingNumber"></td>
+                <td v-text="formatDate(item.scrappingDate)"></td>
+                <td v-text="item.warehouseName"></td>
+                <td v-text="item.productName"></td>
+                <td v-text="item.unitName"></td>
+                <td v-text="item.quantity"></td>
+                <td v-text="item.notes"></td>
+            </tr>
+
+            <tr v-if="pagedData.length === 0">
+                <td colspan="7" class="text-center">لا توجد بيانات</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            الصفحة {{ currentPage }} من {{ totalPages }}
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary"
+                    :disabled="currentPage === 1"
+                    v-on:click="prevPage">
+                السابق
+            </button>
+
+            <button class="btn btn-outline-primary"
+                    :disabled="currentPage === totalPages"
+                    v-on:click="nextPage">
+                التالي
+            </button>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        const { ref, computed } = Vue;
+
+        Vue.createApp({
+            setup() {
+
+                const filters = ref({
+                    fromDate: '',
+                    toDate: ''
+                });
+
+                const report = ref([]);
+
+                // Pagination
+                const pageSize = ref(5);
+                const currentPage = ref(1);
+
+                const totalPages = computed(() => {
+                    return Math.ceil(report.value.length / pageSize.value) || 1;
+                });
+
+                    const pagedData = computed(() => {
+            if (!Array.isArray(report.value)) return [];
+            const start = (currentPage.value - 1) * pageSize.value;
+            return report.value.slice(start, start + pageSize.value);
+        });
+
+                const loadReport = async () => {
+            try {
+                const response = await axios.get('/api/Scrapping/scrapping', {
+                    params: {
+                        fromDate: filters.value.fromDate,
+                        toDate: filters.value.toDate
+                    }
+                });
+
+                console.log("RAW RESPONSE", response.data);
+
+                // 👇 فكّ التغليف الصح
+                const list =
+                    response.data?.data?.content?.data ??   // ApiSuccessResult
+                    response.data?.data?.data ??             // wrapper تاني
+                    response.data?.data ??                   // wrapper واحد
+                    [];
+
+                console.log("FINAL LIST", list, Array.isArray(list));
+
+                report.value = Array.isArray(list) ? list : [];
+                currentPage.value = 1;
+
+            } catch (e) {
+                console.error(e);
+                report.value = [];
+            }
+        };
+
+
+                const formatDate = (date) => {
+                    if (!date) return '';
+                    return new Date(date).toLocaleDateString();
+                };
+
+                const nextPage = () => {
+                    if (currentPage.value < totalPages.value)
+                        currentPage.value++;
+                };
+
+                const prevPage = () => {
+                    if (currentPage.value > 1)
+                        currentPage.value--;
+                };
+
+                return {
+                    filters,
+                    loadReport,
+                    pagedData,
+                    currentPage,
+                    totalPages,
+                    formatDate,
+                    nextPage,
+                    prevPage
+                };
+            }
+        }).mount('#scrappingReportApp');
+    </script>
+}
