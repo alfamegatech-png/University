@@ -5,15 +5,35 @@ using ASPNET.BackEnd.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Application.Features.GoodsReceiveManager.Queries;
+
 
 namespace ASPNET.BackEnd.Controllers;
 
 [Route("api/[controller]")]
 public class ScrappingController : BaseApiController
 {
-    public ScrappingController(ISender sender) : base(sender)
+   
+
+    private readonly IMediator _mediator;
+   
+    public ScrappingController(ISender sender, IMediator mediator) : base(sender)
     {
+        _mediator = mediator;
     }
+
+    // إرجاع البيانات للتقرير
+    [HttpGet("scrapping")]
+    public async Task<IActionResult> GetScrappingReport([FromQuery] GetScrappingReportRequest request)
+    {
+        var result = await _mediator.Send(request);
+        return Ok(new
+        {
+            data = result
+        });
+      
+    }
+
 
     [Authorize]
     [HttpPost("CreateScrapping")]
