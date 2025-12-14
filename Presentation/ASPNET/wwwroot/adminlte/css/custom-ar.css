@@ -130,3 +130,59 @@ i.fas.fa-lock.mr-2 {
     margin-left: unset !important;
     margin-right: 4.6rem !important;
 }
+
+
+
+/*******/
+/* ============================= */
+/* Mobile Sidebar Fix - AdminLTE */
+/* ============================= */
+
+/* ================================= */
+/* Mobile Sidebar RTL Fix - AdminLTE */
+/* ================================= */
+
+@media (max-width: 991.98px) {
+
+    /* السايدبار مخفي افتراضياً (RTL → من اليمين) */
+    body:not(.sidebar-open) .main-sidebar {
+        transform: translateX(260px);
+        right: 0;
+        left: auto;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    /* عند الفتح */
+    body.sidebar-open .main-sidebar {
+        transform: translateX(0);
+        z-index: 1050;
+    }
+
+    /* Overlay خلف السايدبار */
+    body.sidebar-open::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+    }
+
+    /* لا تحريك للمحتوى */
+    body .content-wrapper,
+    body .main-header,
+    body .main-footer {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    /* منع التمرير عند فتح القائمة */
+    body.sidebar-open {
+        overflow: hidden;
+    }
+
+    /* تصحيح موضع الـ Sidebar في RTL */
+    .main-sidebar {
+        right: 0;
+        left: auto;
+    }
+}
