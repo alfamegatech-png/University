@@ -44,9 +44,9 @@ const App = {
         const state = Vue.reactive({
             mainData: [],
             deleteMode: false,
-            customerListLookupData: [],
-            taxListLookupData: [],
-            salesOrderStatusListLookupData: [],
+            employeeListLookupData: [],
+           // taxListLookupData: [],
+            issueRequestsStatusListLookupData: [],
             secondaryData: [],
             productListLookupData: [],
             mainTitle: null,
@@ -54,20 +54,20 @@ const App = {
             number: '',
             orderDate: '',
             description: '',
-            customerId: null,
-            taxId: null,
+            employeeId: null,
+            //taxId: null,
             orderStatus: null,
             errors: {
                 orderDate: '',
                 customerId: '',
-                taxId: '',
+                //taxId: '',
                 orderStatus: '',
                 description: ''
             },
             showComplexDiv: false,
             isSubmitting: false,
             subTotalAmount: '0.00',
-            taxAmount: '0.00',
+            //taxAmount: '0.00',
             totalAmount: '0.00'
         });
 
@@ -75,15 +75,15 @@ const App = {
         const mainModalRef = Vue.ref(null);
         const orderDateRef = Vue.ref(null);
         const numberRef = Vue.ref(null);
-        const customerIdRef = Vue.ref(null);
-        const taxIdRef = Vue.ref(null);
+        const employeeIdRef = Vue.ref(null);
+        //const taxIdRef = Vue.ref(null);
         const orderStatusRef = Vue.ref(null);
         const secondaryGridRef = Vue.ref(null);
 
         const validateForm = function () {
             state.errors.orderDate = '';
-            state.errors.customerId = '';
-            state.errors.taxId = '';
+            state.errors.employeeId = '';
+            //state.errors.taxId = '';
             state.errors.orderStatus = '';
 
             let isValid = true;
@@ -92,14 +92,14 @@ const App = {
                 state.errors.orderDate = 'Order date is required.';
                 isValid = false;
             }
-            if (!state.customerId) {
-                state.errors.customerId = 'Customer is required.';
+            if (!state.employeeId) {
+                state.errors.employeeId = 'Employee is required.';
                 isValid = false;
             }
-            if (!state.taxId) {
-                state.errors.taxId = 'Tax is required.';
-                isValid = false;
-            }
+            //if (!state.taxId) {
+            //    state.errors.taxId = 'Tax is required.';
+            //    isValid = false;
+            //}
             if (!state.orderStatus) {
                 state.errors.orderStatus = 'Order status is required.';
                 isValid = false;
@@ -113,19 +113,19 @@ const App = {
             state.number = '';
             state.orderDate = '';
             state.description = '';
-            state.customerId = null;
-            state.taxId = null;
+            state.employeeId = null;
+            //state.taxId = null;
             state.orderStatus = null;
             state.errors = {
                 orderDate: '',
-                customerId: '',
-                taxId: '',
+                employeeId: '',
+               // taxId: '',
                 orderStatus: '',
                 description: ''
             };
             state.secondaryData = [];
             state.subTotalAmount = '0.00';
-            state.taxAmount = '0.00';
+            //state.taxAmount = '0.00';
             state.totalAmount = '0.00';
             state.showComplexDiv = false;
         };
@@ -133,26 +133,26 @@ const App = {
         const services = {
             getMainData: async () => {
                 try {
-                    const response = await AxiosManager.get('/SalesOrder/GetSalesOrderList', {});
+                    const response = await AxiosManager.get('/IssueRequests/GetIssueRequestsList', {});
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            createMainData: async (orderDate, description, orderStatus, taxId, customerId, createdById) => {
+            createMainData: async (orderDate, description, orderStatus, taxId, employeeId, createdById) => {
                 try {
-                    const response = await AxiosManager.post('/SalesOrder/CreateSalesOrder', {
-                        orderDate, description, orderStatus, taxId, customerId, createdById
+                    const response = await AxiosManager.post('/IssueRequests/CreateIssueRequests', {
+                        orderDate, description, orderStatus, /*taxId,*/ employeeId, createdById
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateMainData: async (id, orderDate, description, orderStatus, taxId, customerId, updatedById) => {
+            updateMainData: async (id, orderDate, description, orderStatus, taxId, employeeId, updatedById) => {
                 try {
-                    const response = await AxiosManager.post('/SalesOrder/UpdateSalesOrder', {
-                        id, orderDate, description, orderStatus, taxId, customerId, updatedById
+                    const response = await AxiosManager.post('/IssueRequests/UpdateIssueRequests', {
+                        id, orderDate, description, orderStatus, /*taxId,*/ employeeId, updatedById
                     });
                     return response;
                 } catch (error) {
@@ -161,7 +161,7 @@ const App = {
             },
             deleteMainData: async (id, deletedById) => {
                 try {
-                    const response = await AxiosManager.post('/SalesOrder/DeleteSalesOrder', {
+                    const response = await AxiosManager.post('/IssueRequests/DeleteIssueRequests', {
                         id, deletedById
                     });
                     return response;
@@ -169,52 +169,52 @@ const App = {
                     throw error;
                 }
             },
-            getCustomerListLookupData: async () => {
+            getEmployeeListLookupData: async () => {
                 try {
-                    const response = await AxiosManager.get('/Customer/GetCustomerList', {});
+                    const response = await AxiosManager.get('/Employee/GetEmployeeList', {});
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            getTaxListLookupData: async () => {
+            //getTaxListLookupData: async () => {
+            //    try {
+            //        const response = await AxiosManager.get('/Tax/GetTaxList', {});
+            //        return response;
+            //    } catch (error) {
+            //        throw error;
+            //    }
+            //},
+            getIssueRequestsStatusListLookupData: async () => {
                 try {
-                    const response = await AxiosManager.get('/Tax/GetTaxList', {});
+                    const response = await AxiosManager.get('/IssueRequests/GetIssueRequestsStatusList', {});
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            getSalesOrderStatusListLookupData: async () => {
+            getSecondaryData: async (issueRequestsId) => {
                 try {
-                    const response = await AxiosManager.get('/SalesOrder/GetSalesOrderStatusList', {});
+                    const response = await AxiosManager.get('/IssueRequestsItem/GetIssueRequestsItemByIssueRequestsIdList?issueRequestsId=' + issueRequestsId, {});
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            getSecondaryData: async (salesOrderId) => {
+            createSecondaryData: async (unitPrice, quantity, summary, productId, issueRequestsId, createdById) => {
                 try {
-                    const response = await AxiosManager.get('/SalesOrderItem/GetSalesOrderItemBySalesOrderIdList?salesOrderId=' + salesOrderId, {});
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            createSecondaryData: async (unitPrice, quantity, summary, productId, salesOrderId, createdById) => {
-                try {
-                    const response = await AxiosManager.post('/SalesOrderItem/CreateSalesOrderItem', {
-                        unitPrice, quantity, summary, productId, salesOrderId, createdById
+                    const response = await AxiosManager.post('/IssueRequestsItem/CreateIssueRequestsItem', {
+                        unitPrice, quantity, summary, productId, issueRequestsId, createdById
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateSecondaryData: async (id, unitPrice, quantity, summary, productId, salesOrderId, updatedById) => {
+            updateSecondaryData: async (id, unitPrice, quantity, summary, productId, issueRequestsId, updatedById) => {
                 try {
-                    const response = await AxiosManager.post('/SalesOrderItem/UpdateSalesOrderItem', {
-                        id, unitPrice, quantity, summary, productId, salesOrderId, updatedById
+                    const response = await AxiosManager.post('/IssueRequestsItem/UpdateIssueRequestsItem', {
+                        id, unitPrice, quantity, summary, productId, issueRequestsId, updatedById
                     });
                     return response;
                 } catch (error) {
@@ -223,7 +223,7 @@ const App = {
             },
             deleteSecondaryData: async (id, deletedById) => {
                 try {
-                    const response = await AxiosManager.post('/SalesOrderItem/DeleteSalesOrderItem', {
+                    const response = await AxiosManager.post('/IssueRequestsItem/DeleteIssueRequestsItem', {
                         id, deletedById
                     });
                     return response;
@@ -242,17 +242,17 @@ const App = {
         };
 
         const methods = {
-            populateCustomerListLookupData: async () => {
-                const response = await services.getCustomerListLookupData();
-                state.customerListLookupData = response?.data?.content?.data;
+            populateEmployeeListLookupData: async () => {
+                const response = await services.getEmployeeListLookupData();
+                state.employeeListLookupData = response?.data?.content?.data;
             },
-            populateTaxListLookupData: async () => {
-                const response = await services.getTaxListLookupData();
-                state.taxListLookupData = response?.data?.content?.data;
-            },
-            populateSalesOrderStatusListLookupData: async () => {
-                const response = await services.getSalesOrderStatusListLookupData();
-                state.salesOrderStatusListLookupData = response?.data?.content?.data;
+            //populateTaxListLookupData: async () => {
+            //    const response = await services.getTaxListLookupData();
+            //    state.taxListLookupData = response?.data?.content?.data;
+            //},
+            populateIssueRequestsStatusListLookupData: async () => {
+                const response = await services.getIssueRequestsStatusListLookupData();
+                state.issueRequestsStatusListLookupData = response?.data?.content?.data;
             },
             populateMainData: async () => {
                 const response = await services.getMainData();
@@ -282,7 +282,7 @@ const App = {
                 const record = state.mainData.find(item => item.id === id);
                 if (record) {
                     state.subTotalAmount = NumberFormatManager.formatToLocale(record.beforeTaxAmount ?? 0);
-                    state.taxAmount = NumberFormatManager.formatToLocale(record.taxAmount ?? 0);
+                   // state.taxAmount = NumberFormatManager.formatToLocale(record.taxAmount ?? 0);
                     state.totalAmount = NumberFormatManager.formatToLocale(record.afterTaxAmount ?? 0);
                 }
             },
@@ -297,10 +297,10 @@ const App = {
 
                 try {
                     const response = state.id === ''
-                        ? await services.createMainData(state.orderDate, state.description, state.orderStatus, state.taxId, state.customerId, StorageManager.getUserId())
+                        ? await services.createMainData(state.orderDate, state.description, state.orderStatus,/* state.taxId,*/ state.employeeId, StorageManager.getUserId())
                         : state.deleteMode
                             ? await services.deleteMainData(state.id, StorageManager.getUserId())
-                            : await services.updateMainData(state.id, state.orderDate, state.description, state.orderStatus, state.taxId, state.customerId, StorageManager.getUserId());
+                            : await services.updateMainData(state.id, state.orderDate, state.description, state.orderStatus,/* state.taxId,*/ state.employeeId, StorageManager.getUserId());
 
                     if (response.data.code === 200) {
                         await methods.populateMainData();
@@ -312,9 +312,9 @@ const App = {
                             state.number = response?.data?.content?.data.number ?? '';
                             state.orderDate = response?.data?.content?.data.orderDate ? new Date(response.data.content.data.orderDate) : null;
                             state.description = response?.data?.content?.data.description ?? '';
-                            state.customerId = response?.data?.content?.data.customerId ?? '';
-                            state.taxId = response?.data?.content?.data.taxId ?? '';
-                            taxListLookup.trackingChange = true;
+                            state.customerId = response?.data?.content?.data.employeeId ?? '';
+                            //state.taxId = response?.data?.content?.data.taxId ?? '';
+                            //taxListLookup.trackingChange = true;
                             state.orderStatus = String(response?.data?.content?.data.orderStatus ?? '');
                             state.showComplexDiv = true;
 
@@ -361,21 +361,21 @@ const App = {
             },
             onMainModalHidden: () => {
                 state.errors.orderDate = '';
-                state.errors.customerId = '';
-                state.errors.taxId = '';
+                state.errors.employeeId = '';
+                //state.errors.taxId = '';
                 state.errors.orderStatus = '';
-                taxListLookup.trackingChange = false;
+                //taxListLookup.trackingChange = false;
             }
         };
 
-        const customerListLookup = {
+        const employeeListLookup = {
             obj: null,
             create: () => {
-                if (state.customerListLookupData && Array.isArray(state.customerListLookupData)) {
-                    customerListLookup.obj = new ej.dropdowns.DropDownList({
-                        dataSource: state.customerListLookupData,
+                if (state.employeeListLookupData && Array.isArray(state.employeeListLookupData)) {
+                    employeeListLookup.obj = new ej.dropdowns.DropDownList({
+                        dataSource: state.employeeListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Customer',
+                        placeholder: 'Select a Employee',
                         filterBarPlaceholder: 'Search',
                         sortOrder: 'Ascending',
                         allowFiltering: true,
@@ -385,66 +385,66 @@ const App = {
                             if (e.text !== '') {
                                 query = query.where('name', 'startsWith', e.text, true);
                             }
-                            e.updateData(state.customerListLookupData, query);
+                            e.updateData(state.employeeListLookupData, query);
                         },
                         change: (e) => {
-                            state.customerId = e.value;
+                            state.employeeId = e.value;
                         }
                     });
-                    customerListLookup.obj.appendTo(customerIdRef.value);
+                    employeeListLookup.obj.appendTo(employeeIdRef.value);
                 }
             },
             refresh: () => {
-                if (customerListLookup.obj) {
-                    customerListLookup.obj.value = state.customerId;
+                if (employeeListLookup.obj) {
+                    employeeListLookup.obj.value = state.employeeId;
                 }
             }
         };
 
-        const taxListLookup = {
-            obj: null,
-            trackingChange: false,
-            create: () => {
-                if (state.taxListLookupData && Array.isArray(state.taxListLookupData)) {
-                    taxListLookup.obj = new ej.dropdowns.DropDownList({
-                        dataSource: state.taxListLookupData,
-                        fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Tax',
-                        change: async (e) => {
-                            state.taxId = e.value;
-                            if (e.isInteracted && taxListLookup.trackingChange) {
-                                await methods.handleFormSubmit();
-                            }
-                        }
-                    });
-                    taxListLookup.obj.appendTo(taxIdRef.value);
-                }
-            },
-            refresh: () => {
-                if (taxListLookup.obj) {
-                    taxListLookup.obj.value = state.taxId;
-                }
-            }
-        };
+        //const taxListLookup = {
+        //    obj: null,
+        //    trackingChange: false,
+        //    create: () => {
+        //        if (state.taxListLookupData && Array.isArray(state.taxListLookupData)) {
+        //            taxListLookup.obj = new ej.dropdowns.DropDownList({
+        //                dataSource: state.taxListLookupData,
+        //                fields: { value: 'id', text: 'name' },
+        //                placeholder: 'Select a Tax',
+        //                change: async (e) => {
+        //                    state.taxId = e.value;
+        //                    if (e.isInteracted && taxListLookup.trackingChange) {
+        //                        await methods.handleFormSubmit();
+        //                    }
+        //                }
+        //            });
+        //            taxListLookup.obj.appendTo(taxIdRef.value);
+        //        }
+        //    },
+        //    refresh: () => {
+        //        if (taxListLookup.obj) {
+        //            taxListLookup.obj.value = state.taxId;
+        //        }
+        //    }
+        //};
 
-        const salesOrderStatusListLookup = {
+        const issueRequestsStatusListLookup = {
             obj: null,
             create: () => {
-                if (state.salesOrderStatusListLookupData && Array.isArray(state.salesOrderStatusListLookupData)) {
-                    salesOrderStatusListLookup.obj = new ej.dropdowns.DropDownList({
-                        dataSource: state.salesOrderStatusListLookupData,
+                if (state.issueRequestsStatusListLookupData && Array.isArray(state.issueRequestsStatusListLookupData)) {
+                    issueRequestsStatusListLookup.obj = new ej.dropdowns.DropDownList({
+                        dataSource: state.issueRequestsStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
                         placeholder: 'Select an Order Status',
                         change: (e) => {
                             state.orderStatus = e.value;
                         }
                     });
-                    salesOrderStatusListLookup.obj.appendTo(orderStatusRef.value);
+                    issueRequestsStatusListLookup.obj.appendTo(orderStatusRef.value);
                 }
             },
             refresh: () => {
-                if (salesOrderStatusListLookup.obj) {
-                    salesOrderStatusListLookup.obj.value = state.orderStatus;
+                if (issueRequestsStatusListLookup.obj) {
+                    issueRequestsStatusListLookup.obj.value = state.orderStatus;
                 }
             }
         };
@@ -488,25 +488,25 @@ const App = {
         );
 
         Vue.watch(
-            () => state.customerId,
+            () => state.employeeId,
             (newVal, oldVal) => {
-                customerListLookup.refresh();
-                state.errors.customerId = '';
+                employeeListLookup.refresh();
+                state.errors.employeeId = '';
             }
         );
 
-        Vue.watch(
-            () => state.taxId,
-            (newVal, oldVal) => {
-                taxListLookup.refresh();
-                state.errors.taxId = '';
-            }
-        );
+        //Vue.watch(
+        //    () => state.taxId,
+        //    (newVal, oldVal) => {
+        //        //taxListLookup.refresh();
+        //        state.errors.taxId = '';
+        //    }
+        //);
 
         Vue.watch(
             () => state.orderStatus,
             (newVal, oldVal) => {
-                salesOrderStatusListLookup.refresh();
+                issueRequestsStatusListLookup.refresh();
                 state.errors.orderStatus = '';
             }
         );
@@ -523,7 +523,7 @@ const App = {
                     allowSorting: true,
                     allowSelection: true,
                     allowGrouping: true,
-                    groupSettings: { columns: ['customerName'] },
+                    groupSettings: { columns: ['employeeName'] },
                     allowTextWrap: true,
                     allowResizing: true,
                     allowPaging: true,
@@ -540,9 +540,9 @@ const App = {
                         { field: 'id', isPrimaryKey: true, headerText: 'معرف', visible: false },
                         { field: 'number', headerText: 'رقم الطلب', width: 150, minWidth: 150 },
                         { field: 'orderDate', headerText: 'تاريخ الطلب', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'customerName', headerText: 'الموظف', width: 200, minWidth: 200 },
+                        { field: 'employeeName', headerText: 'الموظف', width: 200, minWidth: 200 },
                         { field: 'orderStatusName', headerText: 'الحالة', width: 150, minWidth: 150 },
-                        { field: 'taxName', headerText: 'الضريبة', width: 150, minWidth: 150 },
+                        //{ field: 'taxName', headerText: 'الضريبة', width: 150, minWidth: 150 },
                         { field: 'afterTaxAmount', headerText: 'الإجمالي', width: 150, minWidth: 150, format: 'N2' },
                         { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء (UTC)', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
@@ -559,7 +559,7 @@ const App = {
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        mainGrid.obj.autoFitColumns(['number', 'orderDate', 'customerName', 'orderStatusName', 'taxName', 'afterTaxAmount', 'createdAtUtc']);
+                        mainGrid.obj.autoFitColumns(['number', 'orderDate', 'employeeName', 'orderStatusName', 'taxName', 'afterTaxAmount', 'createdAtUtc']);
                     },
                     excelExportComplete: () => { },
                     rowSelected: () => {
@@ -605,9 +605,9 @@ const App = {
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
                                 state.description = selectedRecord.description ?? '';
-                                state.customerId = selectedRecord.customerId ?? '';
-                                state.taxId = selectedRecord.taxId ?? '';
-                                taxListLookup.trackingChange = true;
+                                state.employeeId = selectedRecord.employeeId ?? '';
+                                //state.taxId = selectedRecord.taxId ?? '';
+                                //taxListLookup.trackingChange = true;
                                 state.orderStatus = String(selectedRecord.orderStatus ?? '');
                                 state.showComplexDiv = true;
 
@@ -627,8 +627,8 @@ const App = {
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
                                 state.description = selectedRecord.description ?? '';
-                                state.customerId = selectedRecord.customerId ?? '';
-                                state.taxId = selectedRecord.taxId ?? '';
+                                state.employeeId = selectedRecord.employeeId ?? '';
+                               // state.taxId = selectedRecord.taxId ?? '';
                                 state.orderStatus = String(selectedRecord.orderStatus ?? '');
                                 state.showComplexDiv = false;
 
@@ -642,7 +642,7 @@ const App = {
                         if (args.item.id === 'PrintPDFCustom') {
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                window.open('/SalesOrders/SalesOrderPdf?id=' + (selectedRecord.id ?? ''), '_blank');
+                                window.open('/IssueRequests/IssueRequestsPdf?id=' + (selectedRecord.id ?? ''), '_blank');
                             }
                         }
                     }
@@ -808,29 +808,29 @@ const App = {
                     },
                     actionComplete: async (args) => {
                         if (args.requestType === 'save' && args.action === 'add') {
-                            const salesOrderId = state.id;
+                            const IssueRequestsId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
-                            await services.createSecondaryData(data?.unitPrice, data?.quantity, data?.summary, data?.productId, salesOrderId, userId);
-                            await methods.populateSecondaryData(salesOrderId);
+                            await services.createSecondaryData(data?.unitPrice, data?.quantity, data?.summary, data?.productId, IssueRequestsId, userId);
+                            await methods.populateSecondaryData(IssueRequestsId);
                             secondaryGrid.refresh();
                             Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
                         }
                         if (args.requestType === 'save' && args.action === 'edit') {
-                            const salesOrderId = state.id;
+                            const IssueRequestsId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
-                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.quantity, data?.summary, data?.productId, salesOrderId, userId);
-                            await methods.populateSecondaryData(salesOrderId);
+                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.quantity, data?.summary, data?.productId, IssueRequestsId, userId);
+                            await methods.populateSecondaryData(IssueRequestsId);
                             secondaryGrid.refresh();
                             Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
                         }
                         if (args.requestType === 'delete') {
-                            const salesOrderId = state.id;
+                            const IssueRequestsId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data[0];
                             await services.deleteSecondaryData(data?.id, userId);
-                            await methods.populateSecondaryData(salesOrderId);
+                            await methods.populateSecondaryData(IssueRequestsId);
                             secondaryGrid.refresh();
                             Swal.fire({ icon: 'success', title: 'تم الحذف', timer: 2000, showConfirmButton: false });
                         }
@@ -859,7 +859,7 @@ const App = {
 
         Vue.onMounted(async () => {
             try {
-                await SecurityManager.authorizePage(['SalesOrders']);
+                await SecurityManager.authorizePage(['IssueRequests']);
                 await SecurityManager.validateToken();
 
                 await methods.populateMainData();
@@ -867,12 +867,12 @@ const App = {
 
                 mainModal.create();
                 mainModalRef.value?.addEventListener('hidden.bs.modal', methods.onMainModalHidden);
-                await methods.populateCustomerListLookupData();
-                customerListLookup.create();
-                await methods.populateTaxListLookupData();
-                taxListLookup.create();
-                await methods.populateSalesOrderStatusListLookupData();
-                salesOrderStatusListLookup.create();
+                await methods.populateEmployeeListLookupData();
+                employeeListLookup.create();
+               // await methods.populateTaxListLookupData();
+                //taxListLookup.create();
+                await methods.populateIssueRequestsStatusListLookupData();
+                issueRequestsStatusListLookup.create();
                 orderDatePicker.create();
                 numberText.create();
                 await methods.populateProductListLookupData();
@@ -893,8 +893,8 @@ const App = {
             mainModalRef,
             orderDateRef,
             numberRef,
-            customerIdRef,
-            taxIdRef,
+            employeeIdRef,
+            //taxIdRef,
             orderStatusRef,
             secondaryGridRef,
             state,

@@ -31,19 +31,19 @@
                             </tr>
                             <tr>
                                 <td><strong>الاسم:</strong></td>
-                                <td>{{ state.customer.name }}</td>
+                                <td>{{ state.employee.name }}</td>
                             </tr>
                             <tr>
                                 <td><strong>العنوان:</strong></td>
-                                <td>{{ state.customerAddress }}</td>
+                                <td>{{ state.employeeAddress }}</td>
                             </tr>
                             <tr>
                                 <td><strong>البريد الإلكتروني:</strong></td>
-                                <td>{{ state.customer.emailAddress }}</td>
+                                <td>{{ state.employee.emailAddress }}</td>
                             </tr>
                             <tr>
                                 <td><strong>الهاتف:</strong></td>
-                                <td>{{ state.customer.phoneNumber }}</td>
+                                <td>{{ state.employee.phoneNumber }}</td>
                             </tr>
                         </table>
 
@@ -239,5 +239,5 @@
 </style>
 
 @section scripts {
-    <script src="~/FrontEnd/Pages/SalesOrders/SalesOrderPdf.cshtml.js"></script>
+    <script src="~/FrontEnd/Pages/IssueRequests/IssueRequestsPdf.cshtml.js"></script>
 }
