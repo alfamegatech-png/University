@@ -58,7 +58,7 @@ public class CreateIssueRequestsHandler : IRequestHandler<CreateIssueRequests, C
     public async Task<CreateIssueRequestsResult> Handle(CreateIssueRequests request, CancellationToken cancellationToken = default)
     {
 
-        Debugger.Break();
+        
         var entity = new IssueRequests();
         entity.CreatedById = request.CreatedById;
 
