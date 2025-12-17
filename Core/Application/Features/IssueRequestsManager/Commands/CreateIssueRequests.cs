@@ -4,6 +4,8 @@ using Domain.Entities;
 using Domain.Enums;
 using FluentValidation;
 using MediatR;
+using System.Diagnostics;
+
 
 namespace Application.Features.IssueRequestsManager.Commands;
 
@@ -55,6 +57,8 @@ public class CreateIssueRequestsHandler : IRequestHandler<CreateIssueRequests, C
 
     public async Task<CreateIssueRequestsResult> Handle(CreateIssueRequests request, CancellationToken cancellationToken = default)
     {
+
+        Debugger.Break();
         var entity = new IssueRequests();
         entity.CreatedById = request.CreatedById;
 

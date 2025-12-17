@@ -59,7 +59,7 @@ const App = {
             orderStatus: null,
             errors: {
                 orderDate: '',
-                customerId: '',
+                employeeId: '',
                 //taxId: '',
                 orderStatus: '',
                 description: ''
@@ -139,7 +139,7 @@ const App = {
                     throw error;
                 }
             },
-            createMainData: async (orderDate, description, orderStatus, taxId, employeeId, createdById) => {
+            createMainData: async (orderDate, description, orderStatus, /*taxId,*/ employeeId, createdById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequests/CreateIssueRequests', {
                         orderDate, description, orderStatus, /*taxId,*/ employeeId, createdById
@@ -149,7 +149,7 @@ const App = {
                     throw error;
                 }
             },
-            updateMainData: async (id, orderDate, description, orderStatus, taxId, employeeId, updatedById) => {
+            updateMainData: async (id, orderDate, description, orderStatus,/* taxId,*/ employeeId, updatedById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequests/UpdateIssueRequests', {
                         id, orderDate, description, orderStatus, /*taxId,*/ employeeId, updatedById
@@ -262,14 +262,14 @@ const App = {
                     createdAtUtc: new Date(item.createdAtUtc)
                 }));
             },
-            populateSecondaryData: async (salesOrderId) => {
+            populateSecondaryData: async (issueRequests) => {
                 try {
-                    const response = await services.getSecondaryData(salesOrderId);
+                    const response = await services.getSecondaryData(issueRequests);
                     state.secondaryData = response?.data?.content?.data.map(item => ({
                         ...item,
                         createdAtUtc: new Date(item.createdAtUtc)
                     }));
-                    methods.refreshPaymentSummary(salesOrderId);
+                    methods.refreshPaymentSummary(issueRequests);
                 } catch (error) {
                     state.secondaryData = [];
                 }
@@ -312,7 +312,7 @@ const App = {
                             state.number = response?.data?.content?.data.number ?? '';
                             state.orderDate = response?.data?.content?.data.orderDate ? new Date(response.data.content.data.orderDate) : null;
                             state.description = response?.data?.content?.data.description ?? '';
-                            state.customerId = response?.data?.content?.data.employeeId ?? '';
+                            state.employeeId = response?.data?.content?.data.employeeId ?? '';
                             //state.taxId = response?.data?.content?.data.taxId ?? '';
                             //taxListLookup.trackingChange = true;
                             state.orderStatus = String(response?.data?.content?.data.orderStatus ?? '');
@@ -487,13 +487,13 @@ const App = {
             }
         );
 
-        Vue.watch(
-            () => state.employeeId,
-            (newVal, oldVal) => {
-                employeeListLookup.refresh();
-                state.errors.employeeId = '';
-            }
-        );
+        //Vue.watch(
+        //    () => state.employeeId,
+        //    (newVal, oldVal) => {
+        //        employeeListLookup.refresh();
+        //        state.errors.employeeId = '';
+        //    }
+        //);
 
         //Vue.watch(
         //    () => state.taxId,
