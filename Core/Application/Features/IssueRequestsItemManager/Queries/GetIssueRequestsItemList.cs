@@ -12,13 +12,14 @@ public record GetIssueRequestsItemListDto
     public string? Id { get; init; }
     public string? IssueRequestsId { get; init; }
     public string? IssueRequestsNumber { get; init; }
-    public string? CustomerName { get; init; }
+    public string? EmployeeName { get; init; }
     public string? ProductId { get; init; }
     public string? ProductName { get; init; }
     public string? ProductNumber { get; init; }
     public string? Summary { get; init; }
     public double? UnitPrice { get; init; }
     public double? Quantity { get; init; }
+    public double? RequestedQuantity { get; set; } 
     public double? Total { get; init; }
     public DateTime? CreatedAtUtc { get; init; }
 }
@@ -33,7 +34,7 @@ public class GetIssueRequestsItemListProfile : Profile
                 opt => opt.MapFrom(src => src.IssueRequests != null ? src.IssueRequests.Number : string.Empty)
             )
             .ForMember(
-                dest => dest.CustomerName,
+                dest => dest.EmployeeName,
                 opt => opt.MapFrom(src => src.IssueRequests!.Employee != null ? src.IssueRequests.Employee.Name : string.Empty)
             )
             .ForMember(

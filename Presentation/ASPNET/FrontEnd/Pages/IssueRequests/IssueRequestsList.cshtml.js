@@ -94,11 +94,11 @@ const App = {
             let isValid = true;
 
             if (!state.orderDate) {
-                state.errors.orderDate = 'Order date is required.';
+                state.errors.orderDate = 'يجب اختيار تاريخ الطلب';
                 isValid = false;
             }
             if (!state.employeeId) {
-                state.errors.employeeId = 'Employee is required.';
+                state.errors.employeeId = 'يجب اختيار موظف';
                 isValid = false;
             }
             //if (!state.taxId) {
@@ -106,7 +106,7 @@ const App = {
             //    isValid = false;
             //}
             if (!state.orderStatus) {
-                state.errors.orderStatus = 'Order status is required.';
+                state.errors.orderStatus = 'يجب اختيار حالة الطلب';
                 isValid = false;
             }
 
@@ -206,20 +206,20 @@ const App = {
                     throw error;
                 }
             },
-            createSecondaryData: async (unitPrice, quantity, summary, productId, issueRequestsId, createdById) => {
+            createSecondaryData: async (unitPrice, quantity, requestedQuantity ,summary, productId, issueRequestsId, createdById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequestsItem/CreateIssueRequestsItem', {
-                        unitPrice, quantity, summary, productId, issueRequestsId, createdById
+                        unitPrice, quantity, requestedQuantity, summary, productId, issueRequestsId, createdById
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateSecondaryData: async (id, unitPrice, quantity, summary, productId, issueRequestsId, updatedById) => {
+            updateSecondaryData: async (id, unitPrice, quantity, requestedQuantity, summary, productId, issueRequestsId, updatedById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequestsItem/UpdateIssueRequestsItem', {
-                        id, unitPrice, quantity, summary, productId, issueRequestsId, updatedById
+                        id, unitPrice, quantity, requestedQuantity, summary, productId, issueRequestsId, updatedById
                     });
                     return response;
                 } catch (error) {
@@ -380,7 +380,7 @@ const App = {
                     employeeListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.employeeListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Employee',
+                        placeholder: 'اختر موظف',
                         filterBarPlaceholder: 'Search',
                         sortOrder: 'Ascending',
                         allowFiltering: true,
@@ -492,13 +492,13 @@ const App = {
             }
         );
 
-        //Vue.watch(
-        //    () => state.employeeId,
-        //    (newVal, oldVal) => {
-        //        employeeListLookup.refresh();
-        //        state.errors.employeeId = '';
-        //    }
-        //);
+        Vue.watch(
+            () => state.employeeId,
+            (newVal, oldVal) => {
+                employeeListLookup.refresh();
+                state.errors.employeeId = '';
+            }
+        );
 
         //Vue.watch(
         //    () => state.taxId,
@@ -711,6 +711,8 @@ const App = {
                                                 if (numberObj) numberObj.value = selectedProduct.number;
                                                 if (priceObj) priceObj.value = selectedProduct.unitPrice;
                                                 if (summaryObj) summaryObj.value = selectedProduct.description;
+                                                if (requestedQtyObj) requestedQtyObj.value = selectedProduct.requestedQuantity;
+
                                                 if (quantityObj) {
                                                     quantityObj.value = 1;
                                                     if (totalObj) totalObj.value = selectedProduct.unitPrice * quantityObj.value;
@@ -758,6 +760,30 @@ const App = {
                                 }
                             }
                         },
+                        {
+                            field: 'requestedQuantity',
+                            headerText: 'الكمية المطلوبة',
+                            width: 200,
+                            validationRules: {
+                                required: true,
+                                custom: [(args) => args.value > 0, 'يجب أن تكون قيمة موجبة']
+                            },
+                            type: 'number',
+                            format: 'N2',
+                            textAlign: 'Right',
+                            edit: {
+                                create: () => document.createElement('input'),
+                                read: () => requestedQtyObj.value,
+                                destroy: () => requestedQtyObj.destroy(),
+                                write: (args) => {
+                                    requestedQtyObj = new ej.inputs.NumericTextBox({
+                                        value: args.rowData.requestedQuantity ?? 0
+                                    });
+                                    requestedQtyObj.appendTo(args.element);
+                                }
+                            }
+                        },
+
                         {
                             field: 'total', headerText: 'الإجمالي', width: 200, type: 'number', format: 'N2', textAlign: 'Right', edit: {
                                 create: () => document.createElement('input'),
@@ -828,7 +854,7 @@ const App = {
                             const IssueRequestsId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
-                            await services.createSecondaryData(data?.unitPrice, data?.quantity, data?.summary, data?.productId, IssueRequestsId, userId);
+                            await services.createSecondaryData(data?.unitPrice, data?.quantity, data?.requestedQuantity ,data?.summary, data?.productId, IssueRequestsId, userId);
                             await methods.populateSecondaryData(IssueRequestsId);
                             secondaryGrid.refresh();
                             Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
@@ -837,7 +863,7 @@ const App = {
                             const IssueRequestsId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
-                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.quantity, data?.summary, data?.productId, IssueRequestsId, userId);
+                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.quantity, data?.requestedQuantity, data?.summary, data?.productId, IssueRequestsId, userId);
                             await methods.populateSecondaryData(IssueRequestsId);
                             secondaryGrid.refresh();
                             Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
