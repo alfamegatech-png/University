@@ -22,7 +22,7 @@
                         <p>البريد الإلكتروني: {{ state.company.emailAddress }} | الهاتف: {{ state.company.phoneNumber }}</p>
                     </div>
 
-                    <h1>طلب المبيعات</h1>
+                    <h1>طلب و إذن صرف</h1>
 
                     <div class="info-container">
                         <table class="details-table">
@@ -73,6 +73,7 @@
                                 <th>اسم المنتج</th>
                                 <th>سعر الوحدة</th>
                                 <th>الكمية</th>
+                                <th>الكمية المطلوبة</th>
                                 <th>الإجمالي</th>
                             </tr>
                         </thead>
@@ -82,6 +83,7 @@
                                 <td>{{ item?.product?.name }}</td>
                                 <td>{{ item?.unitPrice }}</td>
                                 <td>{{ item?.quantity }}</td>
+                                <td>{{ item?.requestedQuantity }}</td>
                                 <td>{{ item?.total }}</td>
                             </tr>
                         </tbody>

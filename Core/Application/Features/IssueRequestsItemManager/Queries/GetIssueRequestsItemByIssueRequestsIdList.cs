@@ -18,6 +18,7 @@ public record GetIssueRequestsItemByIssueRequestsIdListDto
     public string? Summary { get; init; }
     public double? UnitPrice { get; init; }
     public double? Quantity { get; init; }
+    public double? RequestedQuantity { get; set; } 
     public double? Total { get; init; }
     public DateTime? CreatedAtUtc { get; init; }
 }
