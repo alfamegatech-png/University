@@ -18,6 +18,7 @@ public class CreateIssueRequestsItemRequest : IRequest<CreateIssueRequestsItemRe
     public string? Summary { get; init; }
     public double? UnitPrice { get; init; }
     public double? Quantity { get; init; }
+    public double? RequestedQuantity { get; set; } 
     public string? CreatedById { get; init; }
 }
 
@@ -29,6 +30,7 @@ public class CreateIssueRequestsItemValidator : AbstractValidator<CreateIssueReq
         RuleFor(x => x.ProductId).NotEmpty();
         RuleFor(x => x.UnitPrice).NotEmpty();
         RuleFor(x => x.Quantity).NotEmpty();
+        RuleFor(x => x.RequestedQuantity).NotEmpty();
     }
 }
 
@@ -59,6 +61,7 @@ public class CreateIssueRequestsItemHandler : IRequestHandler<CreateIssueRequest
         entity.Summary = request.Summary;
         entity.UnitPrice = request.UnitPrice;
         entity.Quantity = request.Quantity;
+        entity.RequestedQuantity = request.RequestedQuantity;
 
         entity.Total = entity.Quantity * entity.UnitPrice;
 

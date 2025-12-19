@@ -376,7 +376,7 @@ const App = {
                     vendorListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.vendorListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Vendor',
+                        placeholder: 'اختار المورد',
                         filterBarPlaceholder: 'Search',
                         sortOrder: 'Ascending',
                         allowFiltering: true,
@@ -410,7 +410,7 @@ const App = {
                     taxListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.taxListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Tax',
+                        placeholder: 'اختار الضريبة',
                         change: async (e) => {
                             state.taxId = e.value;
                             if (e.isInteracted && taxListLookup.trackingChange) {
@@ -435,7 +435,7 @@ const App = {
                     purchaseOrderStatusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.purchaseOrderStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select an Order Status',
+                        placeholder: 'اختر حالة الطلب',
                         change: (e) => {
                             state.orderStatus = e.value;
                         }
@@ -593,7 +593,7 @@ const App = {
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'اضافة امر شراء';
+                            state.mainTitle = 'اضافة امر توريد';
                             resetFormState();
                             state.secondaryData = [];
                             secondaryGrid.refresh();
@@ -605,7 +605,7 @@ const App = {
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'تعديل امر شراء';
+                                state.mainTitle = 'تعديل امر توريد';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
@@ -627,7 +627,7 @@ const App = {
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'حذف أمر شراء?';
+                                state.mainTitle = 'حذف أمر توريد?';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
@@ -689,7 +689,7 @@ const App = {
                         },
                         {
                             field: 'productId',
-                            headerText: 'Product',
+                            headerText: 'المنتج',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -736,7 +736,7 @@ const App = {
                                                 }
                                             }
                                         },
-                                        placeholder: 'Select a Product',
+                                        placeholder: 'اختار المنتج',
                                         floatLabelType: 'Never'
                                     });
                                     productObj.appendTo(args.element);
@@ -745,7 +745,7 @@ const App = {
                         },
                         {
                             field: 'unitPrice',
-                            headerText: 'Unit Price',
+                            headerText: 'وحدة المنتج',
                             width: 200, validationRules: { required: true }, type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
                                 create: () => {
@@ -774,7 +774,7 @@ const App = {
                         },
                         {
                             field: 'quantity',
-                            headerText: 'Quantity',
+                            headerText: 'الكمية',
                             width: 200,
                             validationRules: {
                                 required: true,
@@ -810,7 +810,7 @@ const App = {
                         },
                         {
                             field: 'total',
-                            headerText: 'Total',
+                            headerText: 'الاجمالي',
                             width: 200, validationRules: { required: false }, type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
                                 create: () => {
@@ -834,7 +834,7 @@ const App = {
                         },
                         {
                             field: 'productNumber',
-                            headerText: 'Product Number',
+                            headerText: 'اسم المنتج',
                             allowEditing: false,
                             width: 180,
                             edit: {
@@ -858,7 +858,7 @@ const App = {
                         },
                         {
                             field: 'summary',
-                            headerText: 'Summary',
+                            headerText: 'الوصف',
                             width: 200,
                             edit: {
                                 create: () => {

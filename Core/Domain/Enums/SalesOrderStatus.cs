@@ -4,12 +4,12 @@ namespace Domain.Enums;
 
 public enum SalesOrderStatus
 {
-    [Description("Draft")]
+    [Description("مسودة")]
     Draft = 0,
-    [Description("Cancelled")]
+    [Description("ملغي")]
     Cancelled = 1,
-    [Description("Confirmed")]
+    [Description("مؤكد")]
     Confirmed = 2,
-    [Description("Archived")]
+    [Description("مؤرشف")]
     Archived = 3
 }
