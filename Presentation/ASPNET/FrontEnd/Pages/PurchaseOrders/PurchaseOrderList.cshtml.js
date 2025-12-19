@@ -308,7 +308,7 @@ const App = {
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Purchase Order';
+                            state.mainTitle = '⬅️ تعديل أمر التوريد';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             state.orderDate = response?.data?.content?.data.orderDate ? new Date(response.data.content.data.orderDate) : null;
@@ -376,8 +376,8 @@ const App = {
                     vendorListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.vendorListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Vendor',
-                        filterBarPlaceholder: 'Search',
+                        placeholder: 'اختر المورد',
+                        filterBarPlaceholder: 'بحث',
                         sortOrder: 'Ascending',
                         allowFiltering: true,
                         filtering: (e) => {
@@ -410,7 +410,7 @@ const App = {
                     taxListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.taxListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select a Tax',
+                        placeholder: 'اختر الضريبة',
                         change: async (e) => {
                             state.taxId = e.value;
                             if (e.isInteracted && taxListLookup.trackingChange) {
@@ -428,6 +428,7 @@ const App = {
             }
         };
 
+
         const purchaseOrderStatusListLookup = {
             obj: null,
             create: () => {
@@ -435,7 +436,7 @@ const App = {
                     purchaseOrderStatusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.purchaseOrderStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select an Order Status',
+                        placeholder: 'اختر حالة الطلب',
                         change: (e) => {
                             state.orderStatus = e.value;
                         }
@@ -473,7 +474,7 @@ const App = {
             obj: null,
             create: () => {
                 numberText.obj = new ej.inputs.TextBox({
-                    placeholder: '[auto]',
+                    placeholder: '[تلقائي]',
                     readonly: true
                 });
                 numberText.obj.appendTo(numberRef.value);
@@ -512,6 +513,7 @@ const App = {
             }
         );
 
+
         const mainGrid = {
             obj: null,
             create: async (dataSource) => {
@@ -531,7 +533,11 @@ const App = {
                     allowExcelExport: true,
                     filterSettings: { type: 'CheckBox' },
                     sortSettings: { columns: [{ field: 'createdAtUtc', direction: 'Descending' }] },
-                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
+                    pageSettings: {
+                        currentPage: 1,
+                        pageSize: 50,
+                        pageSizes: ["10", "20", "50", "100", "200", "الكل"]
+                    },
                     selectionSettings: { persistSelection: true, type: 'Single' },
                     autoFit: true,
                     showColumnMenu: true,
@@ -539,53 +545,100 @@ const App = {
                     columns: [
                         { type: 'checkbox', width: 60 },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'المعرف', visible: false
+                            field: 'id',
+                            isPrimaryKey: true,
+                            headerText: 'المعرف',
+                            visible: false
                         },
                         { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
                         { field: 'orderDate', headerText: 'تاريخ الطلب', width: 150, format: 'yyyy-MM-dd' },
                         { field: 'vendorName', headerText: 'المورد', width: 200, minWidth: 200 },
                         { field: 'orderStatusName', headerText: 'الحالة', width: 150, minWidth: 150 },
                         { field: 'taxName', headerText: 'الضريبة', width: 150, minWidth: 150 },
-                        { field: 'afterTaxAmount', headerText: 'المبلغ الإجمالي', width: 150, minWidth: 150, format: 'N2' },
-                        { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
+                        {
+                            field: 'afterTaxAmount',
+                            headerText: 'المبلغ الإجمالي',
+                            width: 150,
+                            minWidth: 150,
+                            format: 'N2'
+                        },
+                        {
+                            field: 'createdAtUtc',
+                            headerText: 'تاريخ الإنشاء UTC',
+                            width: 150,
+                            format: 'yyyy-MM-dd HH:mm'
+                        }
                     ],
                     toolbar: [
-                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'MainGrid_excelexport' },
-                        'Search',
+                        {
+                            text: 'تصدير إكسل',
+                            tooltipText: 'تصدير إلى Excel',
+                            prefixIcon: 'e-excelexport',
+                            id: 'MainGrid_excelexport'
+                        },
+                        'بحث',
                         { type: 'Separator' },
                         { text: 'إضافة', tooltipText: 'إضافة', prefixIcon: 'e-add', id: 'AddCustom' },
                         { text: 'تعديل', tooltipText: 'تعديل', prefixIcon: 'e-edit', id: 'EditCustom' },
                         { text: 'حذف', tooltipText: 'حذف', prefixIcon: 'e-delete', id: 'DeleteCustom' },
                         { type: 'Separator' },
-                        { text: 'طباعة PDF', tooltipText: 'طباعة PDF', id: 'PrintPDFCustom' },
+                        { text: 'طباعة PDF', tooltipText: 'طباعة PDF', id: 'PrintPDFCustom' }
                     ],
 
-
                     beforeDataBound: () => { },
+
                     dataBound: function () {
-                        mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        mainGrid.obj.autoFitColumns(['number', 'orderDate', 'vendorName', 'orderStatusName', 'taxName', 'afterTaxAmount', 'createdAtUtc']);
+                        mainGrid.obj.toolbarModule.enableItems(
+                            ['EditCustom', 'DeleteCustom', 'PrintPDFCustom'],
+                            false
+                        );
+                        mainGrid.obj.autoFitColumns([
+                            'number',
+                            'orderDate',
+                            'vendorName',
+                            'orderStatusName',
+                            'taxName',
+                            'afterTaxAmount',
+                            'createdAtUtc'
+                        ]);
                     },
+
                     excelExportComplete: () => { },
+
                     rowSelected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], true);
+                        if (mainGrid.obj.getSelectedRecords().length === 1) {
+                            mainGrid.obj.toolbarModule.enableItems(
+                                ['EditCustom', 'DeleteCustom', 'PrintPDFCustom'],
+                                true
+                            );
                         } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
+                            mainGrid.obj.toolbarModule.enableItems(
+                                ['EditCustom', 'DeleteCustom', 'PrintPDFCustom'],
+                                false
+                            );
                         }
                     },
+
                     rowDeselected: () => {
-                        if (mainGrid.obj.getSelectedRecords().length == 1) {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], true);
+                        if (mainGrid.obj.getSelectedRecords().length === 1) {
+                            mainGrid.obj.toolbarModule.enableItems(
+                                ['EditCustom', 'DeleteCustom', 'PrintPDFCustom'],
+                                true
+                            );
                         } else {
-                            mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
+                            mainGrid.obj.toolbarModule.enableItems(
+                                ['EditCustom', 'DeleteCustom', 'PrintPDFCustom'],
+                                false
+                            );
                         }
                     },
+
                     rowSelecting: () => {
                         if (mainGrid.obj.getSelectedRecords().length) {
                             mainGrid.obj.clearSelection();
                         }
                     },
+
                     toolbarClick: async (args) => {
                         if (args.item.id === 'MainGrid_excelexport') {
                             mainGrid.obj.excelExport();
@@ -593,7 +646,7 @@ const App = {
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'اضافة امر شراء';
+                            state.mainTitle = 'إضافة أمر توريد';
                             resetFormState();
                             state.secondaryData = [];
                             secondaryGrid.refresh();
@@ -605,10 +658,12 @@ const App = {
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'تعديل امر شراء';
+                                state.mainTitle = 'تعديل أمر توريد';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
-                                state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
+                                state.orderDate = selectedRecord.orderDate
+                                    ? new Date(selectedRecord.orderDate)
+                                    : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.vendorId = selectedRecord.vendorId ?? '';
                                 state.taxId = selectedRecord.taxId ?? '';
@@ -627,10 +682,12 @@ const App = {
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'حذف أمر شراء?';
+                                state.mainTitle = 'حذف أمر توريد؟';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
-                                state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
+                                state.orderDate = selectedRecord.orderDate
+                                    ? new Date(selectedRecord.orderDate)
+                                    : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.vendorId = selectedRecord.vendorId ?? '';
                                 state.taxId = selectedRecord.taxId ?? '';
@@ -647,7 +704,11 @@ const App = {
                         if (args.item.id === 'PrintPDFCustom') {
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                window.open('/PurchaseOrders/PurchaseOrderPdf?id=' + (selectedRecord.id ?? ''), '_blank');
+                                window.open(
+                                    '/PurchaseOrders/PurchaseOrderPdf?id=' +
+                                    (selectedRecord.id ?? ''),
+                                    '_blank'
+                                );
                             }
                         }
                     }
@@ -655,10 +716,12 @@ const App = {
 
                 mainGrid.obj.appendTo(mainGridRef.value);
             },
+
             refresh: () => {
                 mainGrid.obj.setProperties({ dataSource: state.mainData });
             }
         };
+
 
         const secondaryGrid = {
             obj: null,
@@ -666,7 +729,14 @@ const App = {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
                     dataSource: dataSource,
-                    editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
+                    editSettings: {
+                        allowEditing: true,
+                        allowAdding: true,
+                        allowDeleting: true,
+                        showDeleteConfirmDialog: true,
+                        mode: 'Normal',
+                        allowEditOnDblClick: true
+                    },
                     allowFiltering: false,
                     allowSorting: true,
                     allowSelection: true,
@@ -677,7 +747,11 @@ const App = {
                     allowExcelExport: true,
                     filterSettings: { type: 'CheckBox' },
                     sortSettings: { columns: [{ field: 'productName', direction: 'Descending' }] },
-                    pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
+                    pageSettings: {
+                        currentPage: 1,
+                        pageSize: 50,
+                        pageSizes: ["10", "20", "50", "100", "200", "الكل"]
+                    },
                     selectionSettings: { persistSelection: true, type: 'Single' },
                     autoFit: false,
                     showColumnMenu: false,
@@ -685,11 +759,14 @@ const App = {
                     columns: [
                         { type: 'checkbox', width: 60 },
                         {
-                            field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
+                            field: 'id',
+                            isPrimaryKey: true,
+                            headerText: 'المعرف',
+                            visible: false
                         },
                         {
                             field: 'productId',
-                            headerText: 'Product',
+                            headerText: 'المنتج',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -718,25 +795,17 @@ const App = {
                                             const selectedProduct = state.productListLookupData.find(item => item.id === e.value);
                                             if (selectedProduct) {
                                                 args.rowData.productId = selectedProduct.id;
-                                                if (numberObj) {
-                                                    numberObj.value = selectedProduct.number;
-                                                }
-                                                if (priceObj) {
-                                                    priceObj.value = selectedProduct.unitPrice;
-                                                }
-                                                if (summaryObj) {
-                                                    summaryObj.value = selectedProduct.description;
-                                                }
+                                                if (numberObj) numberObj.value = selectedProduct.number;
+                                                if (priceObj) priceObj.value = selectedProduct.unitPrice;
+                                                if (summaryObj) summaryObj.value = selectedProduct.description;
                                                 if (quantityObj) {
                                                     quantityObj.value = 1;
                                                     const total = selectedProduct.unitPrice * quantityObj.value;
-                                                    if (totalObj) {
-                                                        totalObj.value = total;
-                                                    }
+                                                    if (totalObj) totalObj.value = total;
                                                 }
                                             }
                                         },
-                                        placeholder: 'Select a Product',
+                                        placeholder: 'اختر منتج',
                                         floatLabelType: 'Never'
                                     });
                                     productObj.appendTo(args.element);
@@ -745,26 +814,22 @@ const App = {
                         },
                         {
                             field: 'unitPrice',
-                            headerText: 'Unit Price',
-                            width: 200, validationRules: { required: true }, type: 'number', format: 'N2', textAlign: 'Right',
+                            headerText: 'سعر الوحدة',
+                            width: 200,
+                            validationRules: { required: true },
+                            type: 'number',
+                            format: 'N2',
+                            textAlign: 'Right',
                             edit: {
-                                create: () => {
-                                    let priceElem = document.createElement('input');
-                                    return priceElem;
-                                },
-                                read: () => {
-                                    return priceObj.value;
-                                },
-                                destroy: () => {
-                                    priceObj.destroy();
-                                },
+                                create: () => document.createElement('input'),
+                                read: () => priceObj.value,
+                                destroy: () => priceObj.destroy(),
                                 write: (args) => {
                                     priceObj = new ej.inputs.NumericTextBox({
                                         value: args.rowData.unitPrice ?? 0,
                                         change: (e) => {
                                             if (quantityObj && totalObj) {
-                                                const total = e.value * quantityObj.value;
-                                                totalObj.value = total;
+                                                totalObj.value = e.value * quantityObj.value;
                                             }
                                         }
                                     });
@@ -774,33 +839,28 @@ const App = {
                         },
                         {
                             field: 'quantity',
-                            headerText: 'Quantity',
+                            headerText: 'الكمية',
                             width: 200,
                             validationRules: {
                                 required: true,
-                                custom: [(args) => {
-                                    return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
+                                custom: [
+                                    (args) => args['value'] > 0,
+                                    'يجب أن تكون قيمة موجبة وأكبر من صفر'
+                                ]
                             },
-                            type: 'number', format: 'N2', textAlign: 'Right',
+                            type: 'number',
+                            format: 'N2',
+                            textAlign: 'Right',
                             edit: {
-                                create: () => {
-                                    let quantityElem = document.createElement('input');
-                                    return quantityElem;
-                                },
-                                read: () => {
-                                    return quantityObj.value;
-                                },
-                                destroy: () => {
-                                    quantityObj.destroy();
-                                },
+                                create: () => document.createElement('input'),
+                                read: () => quantityObj.value,
+                                destroy: () => quantityObj.destroy(),
                                 write: (args) => {
                                     quantityObj = new ej.inputs.NumericTextBox({
                                         value: args.rowData.quantity ?? 0,
                                         change: (e) => {
                                             if (priceObj && totalObj) {
-                                                const total = e.value * priceObj.value;
-                                                totalObj.value = total;
+                                                totalObj.value = e.value * priceObj.value;
                                             }
                                         }
                                     });
@@ -810,19 +870,15 @@ const App = {
                         },
                         {
                             field: 'total',
-                            headerText: 'Total',
-                            width: 200, validationRules: { required: false }, type: 'number', format: 'N2', textAlign: 'Right',
+                            headerText: 'الإجمالي',
+                            width: 200,
+                            type: 'number',
+                            format: 'N2',
+                            textAlign: 'Right',
                             edit: {
-                                create: () => {
-                                    let totalElem = document.createElement('input');
-                                    return totalElem;
-                                },
-                                read: () => {
-                                    return totalObj.value;
-                                },
-                                destroy: () => {
-                                    totalObj.destroy();
-                                },
+                                create: () => document.createElement('input'),
+                                read: () => totalObj.value,
+                                destroy: () => totalObj.destroy(),
                                 write: (args) => {
                                     totalObj = new ej.inputs.NumericTextBox({
                                         value: args.rowData.total ?? 0,
@@ -834,72 +890,62 @@ const App = {
                         },
                         {
                             field: 'productNumber',
-                            headerText: 'Product Number',
+                            headerText: 'رقم المنتج',
                             allowEditing: false,
                             width: 180,
                             edit: {
-                                create: () => {
-                                    let numberElem = document.createElement('input');
-                                    return numberElem;
-                                },
-                                read: () => {
-                                    return numberObj.value;
-                                },
-                                destroy: () => {
-                                    numberObj.destroy();
-                                },
+                                create: () => document.createElement('input'),
+                                read: () => numberObj.value,
+                                destroy: () => numberObj.destroy(),
                                 write: (args) => {
-                                    numberObj = new ej.inputs.TextBox();
-                                    numberObj.value = args.rowData.productNumber;
-                                    numberObj.readonly = true;
+                                    numberObj = new ej.inputs.TextBox({
+                                        value: args.rowData.productNumber,
+                                        readonly: true
+                                    });
                                     numberObj.appendTo(args.element);
                                 }
                             }
                         },
                         {
                             field: 'summary',
-                            headerText: 'Summary',
+                            headerText: 'الوصف',
                             width: 200,
                             edit: {
-                                create: () => {
-                                    let summaryElem = document.createElement('input');
-                                    return summaryElem;
-                                },
-                                read: () => {
-                                    return summaryObj.value;
-                                },
-                                destroy: () => {
-                                    summaryObj.destroy();
-                                },
+                                create: () => document.createElement('input'),
+                                read: () => summaryObj.value,
+                                destroy: () => summaryObj.destroy(),
                                 write: (args) => {
-                                    summaryObj = new ej.inputs.TextBox();
-                                    summaryObj.value = args.rowData.summary;
+                                    summaryObj = new ej.inputs.TextBox({
+                                        value: args.rowData.summary
+                                    });
                                     summaryObj.appendTo(args.element);
                                 }
                             }
-                        },
+                        }
                     ],
                     toolbar: [
-                        'ExcelExport',
+                        'تصدير إكسل',
                         { type: 'Separator' },
-                        'Add', 'Edit', 'Delete', 'Update', 'Cancel',
+                        'إضافة',
+                        'تعديل',
+                        'حذف',
+                        'حفظ',
+                        'إلغاء'
                     ],
                     beforeDataBound: () => { },
-                    dataBound: function () { },
+                    dataBound: () => { },
                     excelExportComplete: () => { },
                     rowSelected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
-                        }
+                        secondaryGrid.obj.toolbarModule.enableItems(
+                            ['Edit'],
+                            secondaryGrid.obj.getSelectedRecords().length === 1
+                        );
                     },
                     rowDeselected: () => {
-                        if (secondaryGrid.obj.getSelectedRecords().length == 1) {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], true);
-                        } else {
-                            secondaryGrid.obj.toolbarModule.enableItems(['Edit'], false);
-                        }
+                        secondaryGrid.obj.toolbarModule.enableItems(
+                            ['Edit'],
+                            secondaryGrid.obj.getSelectedRecords().length === 1
+                        );
                     },
                     rowSelecting: () => {
                         if (secondaryGrid.obj.getSelectedRecords().length) {
@@ -917,7 +963,15 @@ const App = {
                             const userId = StorageManager.getUserId();
                             const data = args.data;
 
-                            await services.createSecondaryData(data?.unitPrice, data?.quantity, data?.summary, data?.productId, purchaseOrderId, userId);
+                            await services.createSecondaryData(
+                                data?.unitPrice,
+                                data?.quantity,
+                                data?.summary,
+                                data?.productId,
+                                purchaseOrderId,
+                                userId
+                            );
+
                             await methods.populateSecondaryData(purchaseOrderId);
                             secondaryGrid.refresh();
 
@@ -928,12 +982,22 @@ const App = {
                                 showConfirmButton: false
                             });
                         }
+
                         if (args.requestType === 'save' && args.action === 'edit') {
                             const purchaseOrderId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
 
-                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.quantity, data?.summary, data?.productId, purchaseOrderId, userId);
+                            await services.updateSecondaryData(
+                                data?.id,
+                                data?.unitPrice,
+                                data?.quantity,
+                                data?.summary,
+                                data?.productId,
+                                purchaseOrderId,
+                                userId
+                            );
+
                             await methods.populateSecondaryData(purchaseOrderId);
                             secondaryGrid.refresh();
 
@@ -944,6 +1008,7 @@ const App = {
                                 showConfirmButton: false
                             });
                         }
+
                         if (args.requestType === 'delete') {
                             const purchaseOrderId = state.id;
                             const userId = StorageManager.getUserId();
@@ -966,6 +1031,7 @@ const App = {
                         await methods.refreshPaymentSummary(state.id);
                     }
                 });
+
                 secondaryGrid.obj.appendTo(secondaryGridRef.value);
             },
             refresh: () => {

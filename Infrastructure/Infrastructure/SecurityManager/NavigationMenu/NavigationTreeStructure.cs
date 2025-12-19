@@ -126,7 +126,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
         
             {
                 "URL": "#",
-                "Name": "المخزون",
+                "Name": "المنتجات",
                 "IsModule": true,
                 "Children": [
                     {
@@ -143,73 +143,8 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "URL": "/Products/ProductList",
                         "Name": "المنتجات",
                         "IsModule": false
-                    },
-                    {
-                        "URL": "/Warehouses/WarehouseList",
-                        "Name": "المخازن",
-                        "IsModule": false
-                    },
-                   
-                    {
-                        "URL": "/SalesReturns/SalesReturnList",
-                        "Name": "مرتجعات المبيعات",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/GoodsReceives/GoodsReceiveList",
-                        "Name": "استلام البضائع",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/PurchaseReturns/PurchaseReturnList",
-                        "Name": "مرتجعات المشتريات",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/TransferOuts/TransferOutList",
-                        "Name": "تحويل صادر",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/TransferIns/TransferInList",
-                        "Name": "تحويل وارد",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/PositiveAdjustments/PositiveAdjustmentList",
-                        "Name": "تسويات موجبة",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/NegativeAdjustments/NegativeAdjustmentList",
-                        "Name": "تسويات سالبة",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/Scrappings/ScrappingList",
-                        "Name": "الإتلاف",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/StockCounts/StockCountList",
-                        "Name": "جرد المخزون",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/TransactionReports/TransactionReportList",
-                        "Name": "تقارير العمليات",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/StockReports/StockReportList",
-                        "Name": "تقارير المخزون",
-                        "IsModule": false
-                    },
-                    {
-                        "URL": "/MovementReports/MovementReportList",
-                        "Name": "تقارير الحركة",
-                        "IsModule": false
                     }
+                   
                 ]
             },
             {
