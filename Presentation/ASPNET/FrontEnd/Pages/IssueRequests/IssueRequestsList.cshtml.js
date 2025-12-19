@@ -6,6 +6,7 @@
             'UnGroup': 'اضغط لإلغاء التجميع',
             'Item': 'عنصر',
             'Items': 'عناصر',
+            'Add': 'إضافة',
             'Edit': 'تعديل',
             'Delete': 'حذف',
             'Update': 'تحديث',
@@ -27,6 +28,8 @@
             "GreaterThan": " أكبر من ",
             "GreaterThanOrEqual": " أكبر أو يساوي "
         },
+        
+     
         'pager': {
             'currentPageInfo': 'صفحة {0} من {1}',
             'firstPageTooltip': 'الصفحة الأولى',
@@ -37,8 +40,10 @@
             'previousPagerTooltip': 'السابق',
             'totalItemsInfo': '({0} عناصر)'
         }
+        
     }
 });
+
 const App = {
     setup() {
         const state = Vue.reactive({
@@ -434,7 +439,7 @@ const App = {
                     issueRequestsStatusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.issueRequestsStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
-                        placeholder: 'Select an Order Status',
+                        placeholder: 'اختر حالة الطلب',
                         change: (e) => {
                             state.orderStatus = e.value;
                         }
@@ -600,7 +605,7 @@ const App = {
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'تعديل طلب المبيعات';
+                                state.mainTitle = 'تعديل طلب وإذن الصرف';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
@@ -661,6 +666,8 @@ const App = {
             create: async (dataSource) => {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
+                    locale: 'ar',        
+                    enableRtl: true,    
                     dataSource: dataSource,
                     editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
                     allowFiltering: false,
@@ -788,7 +795,17 @@ const App = {
                             }
                         },
                     ],
-                    toolbar: ['ExcelExport', { type: 'Separator' }, 'Add', 'Edit', 'Delete', 'Update', 'Cancel'],
+                    toolbar: [
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'secondaryGrid_excelexport' },
+                      /*  'ExcelExport',*/
+                        { type: 'Separator' },
+                        'Add',
+                        'Edit',
+                        'Delete',
+                        'Update',
+                        'Cancel'
+                    ],
+                    /*toolbar: ['ExcelExport', { type: 'Separator' }, 'Add', 'Edit', 'Delete', 'Update', 'Cancel'],*/
                     beforeDataBound: () => { },
                     dataBound: () => { },
                     excelExportComplete: () => { },
