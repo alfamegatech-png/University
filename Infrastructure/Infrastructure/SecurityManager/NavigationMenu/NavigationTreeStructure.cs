@@ -52,7 +52,11 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "URL": "/VendorContacts/VendorContactList",
                         "Name": "جهات اتصال الموردين",
                         "IsModule": false
-                    }
+                    },{
+            "URL": "/Employee/EmployeeList",
+            "Name": " الموظفين ",
+            "IsModule": false
+        }
                     
                 ]
             },
