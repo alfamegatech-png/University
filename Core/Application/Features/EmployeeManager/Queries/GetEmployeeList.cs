@@ -28,10 +28,7 @@ public record GetEmployeeListDto
     public string? Instagram { get; set; }
     public string? TwitterX { get; set; }
     public string? TikTok { get; set; }
-    public string? EmployeeGroupId { get; set; }
-    public string? EmployeeGroupName { get; set; }
-    public string? EmployeeCategoryId { get; set; }
-    public string? EmployeeCategoryName { get; set; }
+
     public string? CreatedById { get; init; }
     public DateTime? CreatedAtUtc { get; init; }
 }

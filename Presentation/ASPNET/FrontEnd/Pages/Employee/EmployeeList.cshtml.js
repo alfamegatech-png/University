@@ -120,7 +120,7 @@ const App = {
             },
             createMainData: async (name, /*customerGroupId, customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, createdById) => {
                 try {
-                    const response = await AxiosManager.post('/Customer/CreateEmployee', {
+                    const response = await AxiosManager.post('/Employee/CreateEmployee', {
                         name, /*customerGroupId, customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, createdById
                     });
                     return response;
@@ -130,7 +130,7 @@ const App = {
             },
             updateMainData: async (id, name, /*customerGroupId, customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, updatedById) => {
                 try {
-                    const response = await AxiosManager.post('/Customer/UpdateEmployee', {
+                    const response = await AxiosManager.post('/Employee/UpdateEmployee', {
                         id, name, /*customerGroupId, customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, updatedById
                     });
                     return response;
@@ -140,7 +140,7 @@ const App = {
             },
             deleteMainData: async (id, deletedById) => {
                 try {
-                    const response = await AxiosManager.post('/Customer/DeleteEmployee', {
+                    const response = await AxiosManager.post('/Employee/DeleteEmployee', {
                         id, deletedById
                     });
                     return response;
@@ -683,7 +683,7 @@ const App = {
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Customer';
+                            state.mainTitle = 'تعديل الموظف';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             state.name = response?.data?.content?.data.name ?? '';
@@ -870,7 +870,7 @@ const App = {
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'Add Customer';
+                            state.mainTitle = 'اضافة موظف';
                             resetFormState();
                             mainModal.obj.show();
                         }
@@ -879,7 +879,7 @@ const App = {
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Edit Customer';
+                                state.mainTitle = 'تعديل الموظف';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';
@@ -909,7 +909,7 @@ const App = {
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'Delete Customer?';
+                                state.mainTitle = 'حذف الموظف؟';
                                 state.id = selectedRecord.id ?? '';
                                 mainModal.obj.show();
                             }
@@ -1115,8 +1115,8 @@ const App = {
             instagramRef,
             twitterXRef,
             tikTokRef,
-            customerGroupIdRef,
-            customerCategoryIdRef,
+            //customerGroupIdRef,
+            //customerCategoryIdRef,
             state,
             handler,
         };

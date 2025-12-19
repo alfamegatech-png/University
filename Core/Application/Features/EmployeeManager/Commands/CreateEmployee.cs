@@ -30,8 +30,7 @@ public class CreateEmployeeRequest : IRequest<CreateEmployeeResult>
     public string? Instagram { get; set; }
     public string? TwitterX { get; set; }
     public string? TikTok { get; set; }
-    public string? EmployeeGroupId { get; set; }
-    public string? EmployeeCategoryId { get; set; }
+
     public string? CreatedById { get; init; }
 }
 
@@ -46,8 +45,7 @@ public class CreateEmployeeValidator : AbstractValidator<CreateEmployeeRequest>
         RuleFor(x => x.ZipCode).NotEmpty();
         RuleFor(x => x.PhoneNumber).NotEmpty();
         RuleFor(x => x.EmailAddress).NotEmpty();
-        RuleFor(x => x.EmployeeGroupId).NotEmpty();
-        RuleFor(x => x.EmployeeCategoryId).NotEmpty();
+
     }
 }
 

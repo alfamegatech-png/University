@@ -79,12 +79,12 @@
                     company.country
                 ].filter(Boolean).join(', ');
 
-                state.customerAddress = [
-                    state.customer.street,
-                    state.customer.city,
-                    state.customer.state,
-                    state.customer.zipCode,
-                    state.customer.country
+                state.employeeAddress = [
+                    state.employee.street,
+                    state.employee.city,
+                    state.employee.state,
+                    state.employee.zipCode,
+                    state.employee.country
                 ].filter(Boolean).join(', ');
             }
         };
