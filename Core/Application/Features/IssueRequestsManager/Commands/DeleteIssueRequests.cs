@@ -3,36 +3,34 @@ using Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Application.Features.CustomerContactManager.Commands;
+namespace Application.Features.IssueRequestsManager.Commands;
 
-public class DeleteCustomerContactResult
+public class DeleteIssueRequestsResult
 {
-    public CustomerContact? Data { get; set; }
+    public IssueRequests? Data { get; set; }
 }
 
-public class DeleteCustomerContactRequest : IRequest<DeleteCustomerContactResult>
+public class DeleteIssueRequestsRequest : IRequest<DeleteIssueRequestsResult>
 {
     public string? Id { get; init; }
     public string? DeletedById { get; init; }
 }
 
-
-
-public class DeleteCustomerContactValidator : AbstractValidator<DeleteCustomerContactRequest>
+public class DeleteIssueRequestsValidator : AbstractValidator<DeleteIssueRequestsRequest>
 {
-    public DeleteCustomerContactValidator()
+    public DeleteIssueRequestsValidator()
     {
         RuleFor(x => x.Id).NotEmpty();
     }
 }
 
-public class DeleteCustomerContactHandler : IRequestHandler<DeleteCustomerContactRequest, DeleteCustomerContactResult>
+public class DeleteIssueRequestsHandler : IRequestHandler<DeleteIssueRequestsRequest, DeleteIssueRequestsResult>
 {
-    private readonly ICommandRepository<CustomerContact> _repository;
+    private readonly ICommandRepository<IssueRequests> _repository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteCustomerContactHandler(
-        ICommandRepository<CustomerContact> repository,
+    public DeleteIssueRequestsHandler(
+        ICommandRepository<IssueRequests> repository,
         IUnitOfWork unitOfWork
         )
     {
@@ -40,7 +38,7 @@ public class DeleteCustomerContactHandler : IRequestHandler<DeleteCustomerContac
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<DeleteCustomerContactResult> Handle(DeleteCustomerContactRequest request, CancellationToken cancellationToken)
+    public async Task<DeleteIssueRequestsResult> Handle(DeleteIssueRequestsRequest request, CancellationToken cancellationToken)
     {
 
         var entity = await _repository.GetAsync(request.Id ?? string.Empty, cancellationToken);
@@ -55,7 +53,7 @@ public class DeleteCustomerContactHandler : IRequestHandler<DeleteCustomerContac
         _repository.Delete(entity);
         await _unitOfWork.SaveAsync(cancellationToken);
 
-        return new DeleteCustomerContactResult
+        return new DeleteIssueRequestsResult
         {
             Data = entity
         };

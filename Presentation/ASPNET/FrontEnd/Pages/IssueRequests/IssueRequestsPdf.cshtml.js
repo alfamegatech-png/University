@@ -12,7 +12,7 @@
                 country: ''
             },
             companyAddress: '',
-            customer: {
+            employee: {
                 name: '',
                 street: '',
                 city: '',
@@ -22,7 +22,7 @@
                 emailAddress: '',
                 phoneNumber: ''
             },
-            customerAddress: '',
+            employeeAddress: '',
             orderNumber: '',
             orderDate: '',
             orderCurrency: '',
@@ -36,7 +36,7 @@
         const services = {
             getPDFData: async (id) => {
                 try {
-                    const response = await AxiosManager.get('/SalesOrder/GetSalesOrderSingle?id=' + id, {});
+                    const response = await AxiosManager.get('/IssueRequests/GetIssueRequestsSingle?id=' + id, {});
                     return response;
                 } catch (error) {
                     throw error;
@@ -48,8 +48,8 @@
             populatePDFData: async (id) => {
                 const response = await services.getPDFData(id);
                 const pdfData = response?.data?.content?.data || {};
-                state.items = pdfData.salesOrderItemList || [];
-                state.customer = pdfData.customer || {};
+                state.items = pdfData.issueRequestsItemList || [];
+                state.employee = pdfData.employee || {};
                 state.orderNumber = pdfData.number || '';
                 state.orderDate = DateFormatManager.formatToLocale(pdfData.orderDate) || '';
                 state.orderCurrency = StorageManager.getCompany()?.currency || '';
@@ -79,12 +79,12 @@
                     company.country
                 ].filter(Boolean).join(', ');
 
-                state.customerAddress = [
-                    state.customer.street,
-                    state.customer.city,
-                    state.customer.state,
-                    state.customer.zipCode,
-                    state.customer.country
+                state.employeeAddress = [
+                    state.employee.street,
+                    state.employee.city,
+                    state.employee.state,
+                    state.employee.zipCode,
+                    state.employee.country
                 ].filter(Boolean).join(', ');
             }
         };
@@ -110,7 +110,7 @@
                         let position = 0;
 
                         doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                        doc.save(`sales-order-${state.orderNumber || 'unknown'}.pdf`);
+                        doc.save(`issue-request-${state.orderNumber || 'unknown'}.pdf`);
                     });
                 } catch (error) {
                     console.error('Error generating PDF:', error);
@@ -122,7 +122,7 @@
 
         Vue.onMounted(async () => {
             try {
-                await SecurityManager.authorizePage(['SalesOrders']);
+                await SecurityManager.authorizePage(['IssueRequests']);
                 var urlParams = new URLSearchParams(window.location.search);
                 var id = urlParams.get('id');
                 await methods.populatePDFData(id ?? '');
