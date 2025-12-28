@@ -7,6 +7,7 @@ ej.base.L10n.load({
             'UnGroup': 'اضغط لإلغاء التجميع',
             'Item': 'عنصر',
             'Items': 'عناصر',
+            'Add': 'إضافة',
             'Edit': 'تعديل',
             'Delete': 'حذف',
             'Update': 'تحديث',
@@ -28,6 +29,8 @@ ej.base.L10n.load({
             "GreaterThan": " أكبر من ",
             "GreaterThanOrEqual": " أكبر أو يساوي "
         },
+
+
         'pager': {
             'currentPageInfo': 'صفحة {0} من {1}',
             'firstPageTooltip': 'الصفحة الأولى',
@@ -38,6 +41,7 @@ ej.base.L10n.load({
             'previousPagerTooltip': 'السابق',
             'totalItemsInfo': '({0} عناصر)'
         }
+
     }
 });
 const App = {
@@ -308,7 +312,7 @@ const App = {
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Purchase Order';
+                            state.mainTitle = 'تعديل امر التوريد';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             state.orderDate = response?.data?.content?.data.orderDate ? new Date(response.data.content.data.orderDate) : null;
@@ -666,6 +670,8 @@ const App = {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
                     dataSource: dataSource,
+                    locale: 'ar',
+                    enableRtl: true,
                     editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
                     allowFiltering: false,
                     allowSorting: true,
@@ -858,7 +864,7 @@ const App = {
                         },
                         {
                             field: 'summary',
-                            headerText: 'الوصف',
+                            headerText: 'الشروط',
                             width: 200,
                             edit: {
                                 create: () => {
@@ -880,9 +886,14 @@ const App = {
                         },
                     ],
                     toolbar: [
-                        'ExcelExport',
+                        { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'secondaryGrid_excelexport' },
+                        /*  'ExcelExport',*/
                         { type: 'Separator' },
-                        'Add', 'Edit', 'Delete', 'Update', 'Cancel',
+                        'Add',
+                        'Edit',
+                        'Delete',
+                        'Update',
+                        'Cancel'
                     ],
                     beforeDataBound: () => { },
                     dataBound: function () { },
