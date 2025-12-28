@@ -107,6 +107,11 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "IsModule": false
                     },
                     {
+                        "URL": "/Reports/ScrappingReport",
+                        "Name": "دفتر الشطب",
+                        "IsModule": false
+                    },
+                    {
                         "URL": "/PositiveAdjustments/PositiveAdjustmentList",
                         "Name": "تسويات موجبة",
                         "IsModule": false
