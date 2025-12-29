@@ -119,6 +119,8 @@ const App = {
             state.number = '';
             state.ExamineDate = '';
             state.description = '';
+            state.CommiteeDate = '';
+            state.CommitteeDesionNumber = '';
             state.purchaseOrderId = null;
             state.status = null;
             state.errors = {
@@ -260,12 +262,14 @@ const App = {
                     throw error;
                 }
             },
-            createMainData: async (ExamineDate, description, status, purchaseOrderId, committee, createdById) => {
+            createMainData: async (ExamineDate, description, CommiteeDate, CommitteeDesionNumber,status, purchaseOrderId,committee, createdById) => {
                 try {
                     const response = await AxiosManager.post('/GoodsExamine/CreateGoodsExamine', {
                         ExamineDate,
                         status,
                         description,
+                        CommiteeDate,
+                        CommitteeDesionNumber,
                         purchaseOrderId,
                         committee,
                         createdById
@@ -277,11 +281,21 @@ const App = {
             },
 
 
-            updateMainData: async (id, ExamineDate, description, status, purchaseOrderId, updatedById) => {
+            updateMainData: async (id, ExamineDate, description, CommiteeDate, CommitteeDesionNumber, status, purchaseOrderId, committee, updatedById) => {
+ 
                 try {
                     const response = await AxiosManager.post('/GoodsExamine/UpdateGoodsExamine', {
-                        id, ExamineDate, description, status, purchaseOrderId, updatedById
+                        id,
+                        ExamineDate,
+                        description,
+                        CommiteeDate,
+                        CommitteeDesionNumber,
+                        status,
+                        purchaseOrderId,
+                        committee,     // ✅ أضف هذا
+                        updatedById
                     });
+
                     return response;
                 } catch (error) {
                     throw error;
@@ -635,6 +649,20 @@ const App = {
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
+                                state.status = String(selectedRecord.status ?? '');
+
+                                // ⭐⭐ إضافة مهمة
+                                state.committee = {
+                                    number: selectedRecord.committee?.number ?? '',
+                                    goodsExamineId: selectedRecord.id ?? '',
+                                    employeeID: selectedRecord.committee?.employeeID ?? null,
+                                    employeePositionID: selectedRecord.committee?.employeePositionID ?? null,
+                                    employeeName: selectedRecord.committee?.employeeName ?? '',
+                                    employeePositionName: selectedRecord.committee?.employeePositionName ?? '',
+                                    employeeType: selectedRecord.committee?.employeeType ?? null,
+                                    description: selectedRecord.committee?.description ?? ''
+                                };
+
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = true;
@@ -688,6 +716,8 @@ const App = {
                     allowSelection: true,
                     allowGrouping: false,
                     allowTextWrap: true,
+                    locale: 'ar',
+                    enableRtl: true,
                     allowResizing: true,
                     allowPaging: false,
                     allowExcelExport: true,
@@ -705,7 +735,7 @@ const App = {
                         },
                         {
                             field: 'warehouseId',
-                            headerText: 'Warehouse',
+                            headerText: 'المخزن',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -739,7 +769,7 @@ const App = {
                         },
                         {
                             field: 'productId',
-                            headerText: 'Product',
+                            headerText: 'المنتج',
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
@@ -778,7 +808,7 @@ const App = {
                         },
                         {
                             field: 'movement',
-                            headerText: 'Movement',
+                            headerText: 'الحركة',
                             width: 200,
                             validationRules: {
                                 required: true,
@@ -841,12 +871,30 @@ const App = {
                         }
                     },
                     actionComplete: async (args) => {
+
+                        if (!state.id && (args.requestType === 'save' || args.requestType === 'delete')) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'تنبيه',
+                                text: 'يجب حفظ إذن الاستلام أولاً قبل إضافة المنتجات'
+                            });
+                            secondaryGrid.obj.refresh();
+                            return;
+                        }
                         if (args.requestType === 'save' && args.action === 'add') {
                             try {
-                                const response = await services.createSecondaryData(state.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
-                                await methods.populateSecondaryData(state.id);
-                                secondaryGrid.refresh();
+                                const response = await services.createSecondaryData(
+                                    state.id,
+                                    args.data.warehouseId,
+                                    args.data.productId,
+                                    args.data.movement,
+                                    StorageManager.getUserId()
+                                );
+
                                 if (response.data.code === 200) {
+                                    await methods.populateSecondaryData(state.id);
+                                    secondaryGrid.refresh();
+
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'تم الحفظ',
@@ -854,22 +902,24 @@ const App = {
                                         showConfirmButton: false
                                     });
                                 } else {
+                                    secondaryGrid.refresh(); // يرجع البيانات الأصلية
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Save Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
-                                        confirmButtonText: 'حاول مرة أخرى'
+                                        title: 'فشل الحفظ',
+                                        text: response.data.message ?? 'يرجى التحقق من البيانات',
                                     });
                                 }
+
                             } catch (error) {
+                                secondaryGrid.refresh();
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
+                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى'
                                 });
                             }
                         }
+
                         if (args.requestType === 'save' && args.action === 'edit') {
                             try {
                                 const response = await services.updateSecondaryData(args.data.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
@@ -934,6 +984,13 @@ const App = {
                 secondaryGrid.obj.appendTo(secondaryGridRef.value);
 
             },
+            dataBound: function () {
+                secondaryGrid.obj.toolbarModule.enableItems(
+                    ['Add'],
+                    !!state.id // يفعل الإضافة فقط بعد الحفظ
+                );
+            },
+
             refresh: () => {
                 secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
             }

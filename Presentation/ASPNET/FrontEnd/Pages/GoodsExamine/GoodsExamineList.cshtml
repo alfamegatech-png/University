@@ -57,7 +57,21 @@
                                                 <label class="text-danger">{{ state.errors.status }}</label>
                                             </div>
                                         </div>
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <label for="CommitteeDesionNumber"> رقم قرار اللجنه</label>
+                                                <input ref ="CommitteeDesionNumberRef" />
+                                                
+                                                <label class="text-danger">{{ state.errors.purchaseOrderId }}</label>
+                                            </div>
 
+                                            <div class="col-md-6">
+                                                <label for="CommiteeDate">تاريخ اللجنه</label>
+                                                <input ref="CommiteeDateRef">
+                                                
+                                                <label class="text-danger">{{ state.errors.status }}</label>
+                                            </div>
+                                        </div>
                                         <div class="row mb-2">
                                             <div class="col-md-12">
                                                 <label for="Description">الوصف</label>
@@ -165,19 +179,26 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
 
+           
+
                     <button type="button"
                             id="MainSaveButton"
                             class="btn"
-                            v-bind:class="state.deleteMode ? 'btn-danger' : 'btn-primary'"
-                            v-on:click="handler.handleSubmit"
-                            v-bind:disabled="state.isSubmitting">
+                            :class="state.deleteMode ? 'btn-danger' : 'btn-primary'"
+                            v-on:click="handleSubmit"
+                            :disabled="state.isSubmitting">
 
-                        <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
+                        <span class="spinner-border spinner-border-sm me-2"
+                              v-if="state.isSubmitting"></span>
 
-                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'حذف' : 'حفظ' }}</span>
-                        <span v-else>{{ state.deleteMode ? 'جاري الحذف...' : 'جاري الحفظ...' }}</span>
-
+                        <span v-if="!state.isSubmitting">
+                            {{ state.deleteMode ? 'حذف' : 'حفظ' }}
+                        </span>
+                        <span v-else>
+                            {{ state.deleteMode ? 'جاري الحذف...' : 'جاري الحفظ...' }}
+                        </span>
                     </button>
+
                 </div>
 
             </div>

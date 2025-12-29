@@ -12,7 +12,7 @@ namespace Domain.Entities
     {
         public string? Number { get; set; }
      
-        public GoodsExamine? GoodsReceive { get; set; }
+        public GoodsExamine? GoodsExamine { get; set; }
      
         public int? EmployeeID { get; set; }
         public int? EmployeePositionID { get; set; }

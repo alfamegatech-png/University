@@ -20,6 +20,7 @@ public class UpdateGoodsExamineRequest : IRequest<UpdateGoodsExamineResult>
     public string? Description { get; init; }
     public string? PurchaseOrderId { get; init; }
     public string? UpdatedById { get; init; }
+    public ExamineCommiteeDto? Committee { get; init; }
 }
 
 public class UpdateGoodsExamineValidator : AbstractValidator<UpdateGoodsExamineRequest>
@@ -66,7 +67,7 @@ public class UpdateGoodsExamineHandler : IRequestHandler<UpdateGoodsExamineReque
         entity.Status = (GoodsExamineStatus)int.Parse(request.Status!);
         entity.Description = request.Description;
         entity.PurchaseOrderId = request.PurchaseOrderId;
-
+       
         _repository.Update(entity);
         await _unitOfWork.SaveAsync(cancellationToken);
 

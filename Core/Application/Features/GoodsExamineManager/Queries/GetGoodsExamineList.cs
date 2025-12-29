@@ -18,7 +18,18 @@ public record GetGoodsExamineListDto
     public string? Description { get; init; }
     public string? PurchaseOrderId { get; init; }
     public string? PurchaseOrderNumber { get; init; }
+
     public DateTime? CreatedAtUtc { get; init; }
+    public ExamineCommiteeDto? Committee { get; init; }
+}
+public class ExamineCommiteeDto
+{
+    public int? EmployeeID { get; init; }
+    public int? EmployeePositionID { get; init; }
+    public string? EmployeeName { get; init; }
+    public string? EmployeePositionName { get; init; }
+    public bool? EmployeeType { get; init; }
+    public string? Description { get; init; }
 }
 
 public class GetGoodsExamineListProfile : Profile
@@ -66,7 +77,9 @@ public class GetGoodsExamineListHandler : IRequestHandler<GetGoodsExamineListReq
             .GoodsExamine
             .AsNoTracking()
             .ApplyIsDeletedFilter(request.IsDeleted)
+            
             .Include(x => x.PurchaseOrder)
+            
             .AsQueryable();
 
         var entities = await query.ToListAsync(cancellationToken);
