@@ -1,243 +1,202 @@
 ﻿@page
 @{
-    ViewData["Title"] = "فاتورة طلب الشراء PDF";
+    ViewData["Title"] = "أمر توريد";
 }
 
-<div id="app" class="row">
-    <div class="col-12">
-        <div class="print-indicator" v-cloak>
-            <div class="content-wrapper">
-                <div>
-                    <button id="download-pdf" class="btn btn-danger d-flex align-items-center" v-on:click="handler.downloadPDF" v-bind:disabled="state.isDownloading">
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" v-if="state.isDownloading"></span>
-                        <span class="button-text" v-if="!state.isDownloading">
-                            <i class="bi bi-file-earmark-pdf-fill me-2"></i> تحميل PDF
-                        </span>
-                    </button>
-                </div>
-                <div id="content" class="print-area">
-                    <div class="company-info">
-                        <h2>{{ state.company.name }}</h2>
-                        <p>{{ state.companyAddress }}</p>
-                        <p>البريد الإلكتروني: {{ state.company.emailAddress }} | الهاتف: {{ state.company.phoneNumber }}</p>
-                    </div>
-
-                    <h1>طلب شراء</h1>
-
-                    <div class="info-container">
-                        <table class="details-table">
-                            <tr>
-                                <th colspan="2">معلومات المورد</th>
-                            </tr>
-                            <tr>
-                                <td><strong>الاسم:</strong></td>
-                                <td>{{ state.vendor.name }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>العنوان:</strong></td>
-                                <td>{{ state.vendorAddress }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>البريد الإلكتروني:</strong></td>
-                                <td>{{ state.vendor.emailAddress }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>الهاتف:</strong></td>
-                                <td>{{ state.vendor.phoneNumber }}</td>
-                            </tr>
-                        </table>
-
-                        <table class="details-table">
-                            <tr>
-                                <th colspan="2">معلومات الطلب</th>
-                            </tr>
-                            <tr>
-                                <td><strong>رقم الطلب:</strong></td>
-                                <td>{{ state.orderNumber }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>تاريخ الطلب:</strong></td>
-                                <td>{{ state.orderDate }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>العملة:</strong></td>
-                                <td>{{ state.orderCurrency }}</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <table class="product-table" border="1" style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-                                <th>رقم المنتج</th>
-                                <th>اسم المنتج</th>
-                                <th>سعر الوحدة</th>
-                                <th>الكمية</th>
-                                <th>الإجمالي</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in state.items" :key="item.productNumber">
-                                <td>{{ item?.product?.number }}</td>
-                                <td>{{ item?.product?.name }}</td>
-                                <td>{{ item?.unitPrice }}</td>
-                                <td>{{ item?.quantity }}</td>
-                                <td>{{ item?.total }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="payment-summary">
-                        <div class="column"></div>
-                        <div class="column">
-                            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                                <tr>
-                                    <td style="font-weight: bold;">المجموع الفرعي:</td>
-                                    <td style="text-align: right;">{{ state.subTotal }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: bold;">الضريبة:</td>
-                                    <td style="text-align: right;">{{ state.tax }}</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: bold; font-size: 1.2em;">المبلغ الإجمالي:</td>
-                                    <td style="text-align: right; font-weight: bold; font-size: 1.2em; color: #2c3e50;">
-                                        {{ state.totalAmount }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- CSS -->
 <style>
-    body, .print-area, .details-table, .product-table, .payment-summary {
+    body {
         direction: rtl;
-        text-align: right;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: "Times New Roman", serif;
+        background: #f5fI5F5;
     }
 
-    .print-indicator {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        height: 100vh;
-        background-color: #f8f9fa;
-        position: relative;
-        overflow-y: auto;
-        padding: 30px;
-    }
-
-    .content-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
+    #content, #content * {
+        direction: rtl !important;
+        text-align: right !important;
     }
 
     .print-area {
         width: 210mm;
-        padding: 10mm;
-        background-color: white;
-        border: 1px dashed #cccccc;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-height: 297mm;
+        background: #fff;
+        padding: 15mm;
+        margin: auto;
+        border: 1px solid #000;
     }
 
-    #download-pdf {
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .company-info {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-        .company-info h2 {
-            font-size: 24px;
-            margin: 0;
-        }
-
-        .company-info p {
-            margin: 5px 0;
-            font-size: 14px;
-            color: #555;
-        }
-
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 28px;
-        color: #333;
-    }
-
-    .info-container {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        gap: 10px;
-    }
-
-    .details-table {
-        flex: 1;
-        padding: 5px 8px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
-
-        .details-table th, .details-table td {
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-            text-align: right;
-        }
-
-        .details-table th {
-            background-color: #f2f2f2;
-            height: 35px;
-            vertical-align: middle;
-        }
-
-    .product-table {
+    table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
         font-size: 14px;
     }
 
-        .product-table th, .product-table td {
-            padding: 8px;
-            text-align: right;
-        }
-
-        .product-table th {
-            background-color: #f2f2f2;
-        }
-
-    .payment-summary {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-        font-size: 14px;
+    td, th {
+        border: 1px solid #000;
+        padding: 6px;
+        vertical-align: middle;
     }
 
-        .payment-summary .column {
-            width: 48%;
-        }
+    .no-border td {
+        border: none;
+    }
 
-        .payment-summary p {
-            margin: 5px 0;
-            text-align: right;
+    .center {
+        text-align: center !important;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .title {
+        font-size: 20px;
+        text-decoration: underline;
+        margin: 5px 0;
+    }
+
+    .section {
+        margin-top: 10px;
+        font-size: 14px;
+        line-height: 1.9;
+    }
+
+    .signature td {
+        height: 70px;
+        text-align: center;
+        vertical-align: bottom;
+        font-weight: bold;
+    }
+
+    @@media print {
+        .no-print {
+            display: none;
         }
+    }
 </style>
+
+<div id="app">
+
+    <div class="no-print text-center mb-3">
+        <button class="btn btn-danger" v-on:click="handler.downloadPDF">
+            تحميل PDF
+        </button>
+    </div>
+
+    <div id="content" class="print-area">
+
+        <!-- ===== Header ===== -->
+        <table class="no-border">
+            <tr>
+                <td style="width:25%">
+                    <img src="/images/logo.png" height="70" />
+                </td>
+                <td class="center">@* 
+                    <div class="bold">جامعة الزقازيق</div> *@
+                    <div>الإدارة العامة للمشتريات والمخازن</div>
+                    <div class="title">أمر توريد</div>
+                </td>
+                <td style="width:25%">
+                    رقم: {{ state.orderNumber }}<br />
+                    التاريخ: {{ state.orderDate }}
+                </td>
+            </tr>
+        </table>
+
+        <!-- ===== السادة / العنوان ===== -->
+        <div class="section">
+            <div class="bold">
+                السادة / {{ state.vendor.name }} المحترمين
+            </div>
+            <div>
+                العنوان : {{ state.vendorAddress }}
+            </div>
+        </div>
+
+        <!-- ===== نص تمهيدي رسمي ===== -->
+        <div class="section">@* 
+            إشارة إلى العرض المقدم منكم والمؤيد بالمستندات القانونية والفنية،
+            وبعد الفحص والدراسة، فقد تقرر التعاقد معكم على توريد الأصناف الموضحة
+            
+            بالجدول التالي طبقًا للأسعار والكميات الموضحة: *@
+            رجاء سرعة توريد الاصناف التالية وفقاً للعرض المقدم من سيادتكم:
+        </div>
+
+        <!-- ===== جدول الأصناف ===== -->
+        <table>
+            <thead>
+                <tr class="center bold">
+                    <th>م</th>
+                    <th>الصنف</th>
+                    <th>الكمية</th>
+                    <th>سعر الوحدة</th>
+                    <th>الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item,index) in state.items" :key="index">
+                    <td class="center">{{ index + 1 }}</td>
+                    <td>{{ item.product.name }}</td>
+                    <td class="center">{{ item.quantity }}</td>
+                    <td class="center">{{ item.unitPrice }}</td>
+                    <td class="center">{{ item.total }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ===== الإجماليات ===== -->
+        <table style="width:60%; margin-top:10px;">
+            <tr>
+                <td>الإجمالي</td>
+                <td>{{ state.subTotal }}</td>
+            </tr>
+            <tr>
+                <td>ضريبة القيمة المضافة 14%</td>
+                <td>{{ state.tax }}</td>
+            </tr>
+            <tr class="bold">
+                <td>الإجمالي شامل الضريبة</td>
+                <td>{{ state.totalAmount }}</td>
+            </tr>
+        </table>
+
+        <div class="section bold">
+            ووفقًا للعرض المقدم منكم والمقبول فنيًا بإجمالي مبلغ
+            ({{ totalAmountInWords }} جنيه مصري فقط لا غير)
+            والأسعار شاملة ضريبة القيمة المضافة
+        </div>
+
+
+        <!-- ===== الشروط (ثابتة مثل الصورة) ===== -->
+        <div class="section">
+            <span class="bold">وذلك بالشروط التالية:</span>
+            <ol>
+                <li>التوريد خلال أسبوع من تاريخ استلام أمر التوريد.</li>
+                <li>الأسعار شاملة جميع الضرائب.</li>
+                <li>السداد بعد الفحص والاستلام.</li>
+                <li>الدفع إلكتروني لحساب / الخزينة الموحدة.</li>
+                <li>الاستلام بمخازن الجامعة.</li>
+                <li>خصم 0.5% تأمين نهائي.</li>
+            </ol>
+        </div>
+
+        <!-- ===== التوقيعات ===== -->
+        <table class="signature">
+            <tr>
+                <td>توقيع المورد</td>
+                <td>يعتمد</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>أمين عام الجامعة</td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+
+
 
 @section scripts {
     <script src="~/FrontEnd/Pages/PurchaseOrders/PurchaseOrderPdf.cshtml.js"></script>
 }
+
