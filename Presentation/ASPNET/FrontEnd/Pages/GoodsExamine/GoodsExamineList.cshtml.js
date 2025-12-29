@@ -45,20 +45,36 @@ const App = {
             mainData: [],
             deleteMode: false,
             purchaseOrderListLookupData: [],
-            goodsReceiveStatusListLookupData: [],
+            goodsExamineStatusListLookupData: [],
             secondaryData: [],
             productListLookupData: [],
             warehouseListLookupData: [],
             mainTitle: null,
             id: '',
+                // بيانات اللجنة
+                committee: {
+                    number: '',
+                    goodsExamineId: '',
+                    employeeID: null,
+                    employeePositionID: null,
+                    employeeName: '',
+                    employeePositionName: '',
+                    employeeType: null,
+                    description: ''
+                },
+
+              
+           
+
             number: '',
-            receiveDate: '',
+            ExamineDate: '',
             description: '',
             purchaseOrderId: null,
             status: null,
             errors: {
-                receiveDate: '',
+                ExamineDate: '',
                 purchaseOrderId: '',
+
                 status: '',
                 description: ''
             },
@@ -70,20 +86,20 @@ const App = {
         const mainGridRef = Vue.ref(null);
         const mainModalRef = Vue.ref(null);
         const secondaryGridRef = Vue.ref(null);
-        const receiveDateRef = Vue.ref(null);
+        const ExamineDateRef = Vue.ref(null);
         const purchaseOrderIdRef = Vue.ref(null);
         const statusRef = Vue.ref(null);
         const numberRef = Vue.ref(null);
 
         const validateForm = function () {
-            state.errors.receiveDate = '';
+            state.errors.ExamineDate = '';
             state.errors.purchaseOrderId = '';
             state.errors.status = '';
 
             let isValid = true;
 
-            if (!state.receiveDate) {
-                state.errors.receiveDate = 'Receive date is required.';
+            if (!state.ExamineDate) {
+                state.errors.ExamineDate = 'Examine date is required.';
                 isValid = false;
             }
             if (!state.purchaseOrderId) {
@@ -101,44 +117,55 @@ const App = {
         const resetFormState = () => {
             state.id = '';
             state.number = '';
-            state.receiveDate = '';
+            state.ExamineDate = '';
             state.description = '';
             state.purchaseOrderId = null;
             state.status = null;
             state.errors = {
-                receiveDate: '',
+                ExamineDate: '',
                 purchaseOrderId: '',
                 status: '',
                 description: ''
             };
+            state.committee = {
+                number: '',
+                goodsExamineId: '',
+                employeeID: null,
+                employeePositionID: null,
+                employeeName: '',
+                employeePositionName: '',
+                employeeType: null,
+                description: ''
+            };
+
             state.secondaryData = [];
         };
 
-        const receiveDatePicker = {
+        const ExamineDatePicker = {
             obj: null,
             create: () => {
-                receiveDatePicker.obj = new ej.calendars.DatePicker({
+                ExamineDatePicker.obj = new ej.calendars.DatePicker({
                     placeholder: 'اختر التاريخ',
                     format: 'yyyy-MM-dd',
-                    value: state.receiveDate ? new Date(state.receiveDate) : null,
+                    value: state.ExamineDate ? new Date(state.ExamineDate) : null,
                     change: (e) => {
-                        state.receiveDate = e.value;
+                        state.ExamineDate = e.value;
                     }
                 });
-                receiveDatePicker.obj.appendTo(receiveDateRef.value);
+                ExamineDatePicker.obj.appendTo(ExamineDateRef.value);
             },
             refresh: () => {
-                if (receiveDatePicker.obj) {
-                    receiveDatePicker.obj.value = state.receiveDate ? new Date(state.receiveDate) : null;
+                if (ExamineDatePicker.obj) {
+                    ExamineDatePicker.obj.value = state.ExamineDate ? new Date(state.ExamineDate) : null;
                 }
             }
         };
 
         Vue.watch(
-            () => state.receiveDate,
+            () => state.ExamineDate,
             (newVal, oldVal) => {
-                receiveDatePicker.refresh();
-                state.errors.receiveDate = '';
+                ExamineDatePicker.refresh();
+                state.errors.ExamineDate = '';
             }
         );
 
@@ -193,12 +220,12 @@ const App = {
             }
         );
 
-        const goodsReceiveStatusListLookup = {
+        const goodsExamineStatusListLookup = {
             obj: null,
             create: () => {
-                if (state.goodsReceiveStatusListLookupData && Array.isArray(state.goodsReceiveStatusListLookupData)) {
-                    goodsReceiveStatusListLookup.obj = new ej.dropdowns.DropDownList({
-                        dataSource: state.goodsReceiveStatusListLookupData,
+                if (state.goodsExamineStatusListLookupData && Array.isArray(state.goodsExamineStatusListLookupData)) {
+                    goodsExamineStatusListLookup.obj = new ej.dropdowns.DropDownList({
+                        dataSource: state.goodsExamineStatusListLookupData,
                         fields: { value: 'id', text: 'name' },
                         placeholder: 'اختر الحالة',
                         allowFiltering: false,
@@ -206,12 +233,12 @@ const App = {
                             state.status = e.value;
                         }
                     });
-                    goodsReceiveStatusListLookup.obj.appendTo(statusRef.value);
+                    goodsExamineStatusListLookup.obj.appendTo(statusRef.value);
                 }
             },
             refresh: () => {
-                if (goodsReceiveStatusListLookup.obj) {
-                    goodsReceiveStatusListLookup.obj.value = state.status
+                if (goodsExamineStatusListLookup.obj) {
+                    goodsExamineStatusListLookup.obj.value = state.status
                 }
             },
         };
@@ -219,7 +246,7 @@ const App = {
         Vue.watch(
             () => state.status,
             (newVal, oldVal) => {
-                goodsReceiveStatusListLookup.refresh();
+                goodsExamineStatusListLookup.refresh();
                 state.errors.status = '';
             }
         );
@@ -227,26 +254,33 @@ const App = {
         const services = {
             getMainData: async () => {
                 try {
-                    const response = await AxiosManager.get('/GoodsReceive/GetGoodsReceiveList', {});
+                    const response = await AxiosManager.get('/GoodsExamine/GetGoodsExamineList', {});
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            createMainData: async (receiveDate, description, status, purchaseOrderId, createdById) => {
+            createMainData: async (ExamineDate, description, status, purchaseOrderId, committee, createdById) => {
                 try {
-                    const response = await AxiosManager.post('/GoodsReceive/CreateGoodsReceive', {
-                        receiveDate, description, status, purchaseOrderId, createdById
+                    const response = await AxiosManager.post('/GoodsExamine/CreateGoodsExamine', {
+                        ExamineDate,
+                        status,
+                        description,
+                        purchaseOrderId,
+                        committee,
+                        createdById
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateMainData: async (id, receiveDate, description, status, purchaseOrderId, updatedById) => {
+
+
+            updateMainData: async (id, ExamineDate, description, status, purchaseOrderId, updatedById) => {
                 try {
-                    const response = await AxiosManager.post('/GoodsReceive/UpdateGoodsReceive', {
-                        id, receiveDate, description, status, purchaseOrderId, updatedById
+                    const response = await AxiosManager.post('/GoodsExamine/UpdateGoodsExamine', {
+                        id, ExamineDate, description, status, purchaseOrderId, updatedById
                     });
                     return response;
                 } catch (error) {
@@ -255,7 +289,7 @@ const App = {
             },
             deleteMainData: async (id, deletedById) => {
                 try {
-                    const response = await AxiosManager.post('/GoodsReceive/DeleteGoodsReceive', {
+                    const response = await AxiosManager.post('/GoodsExamine/DeleteGoodsExamine', {
                         id, deletedById
                     });
                     return response;
@@ -271,9 +305,9 @@ const App = {
                     throw error;
                 }
             },
-            getGoodsReceiveStatusListLookupData: async () => {
+            getGoodsExamineStatusListLookupData: async () => {
                 try {
-                    const response = await AxiosManager.get('/GoodsReceive/GetGoodsReceiveStatusList', {});
+                    const response = await AxiosManager.get('/GoodsExamine/GetGoodsExamineStatusList', {});
                     return response;
                 } catch (error) {
                     throw error;
@@ -281,7 +315,7 @@ const App = {
             },
             getSecondaryData: async (moduleId) => {
                 try {
-                    const response = await AxiosManager.get('/InventoryTransaction/GoodsReceiveGetInvenTransList?moduleId=' + moduleId, {});
+                    const response = await AxiosManager.get('/InventoryTransaction/GoodsExamineGetInvenTransList?moduleId=' + moduleId, {});
                     return response;
                 } catch (error) {
                     throw error;
@@ -289,7 +323,7 @@ const App = {
             },
             createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById) => {
                 try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveCreateInvenTrans', {
+                    const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineCreateInvenTrans', {
                         moduleId, warehouseId, productId, movement, createdById
                     });
                     return response;
@@ -299,7 +333,7 @@ const App = {
             },
             updateSecondaryData: async (id, warehouseId, productId, movement, updatedById) => {
                 try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveUpdateInvenTrans', {
+                    const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineUpdateInvenTrans', {
                         id, warehouseId, productId, movement, updatedById
                     });
                     return response;
@@ -309,7 +343,7 @@ const App = {
             },
             deleteSecondaryData: async (id, deletedById) => {
                 try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveDeleteInvenTrans', {
+                    const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineDeleteInvenTrans', {
                         id, deletedById
                     });
                     return response;
@@ -340,7 +374,7 @@ const App = {
                 const response = await services.getMainData();
                 state.mainData = response?.data?.content?.data.map(item => ({
                     ...item,
-                    receiveDate: new Date(item.receiveDate),
+                    ExamineDate: new Date(item.ExamineDate),
                     createdAtUtc: new Date(item.createdAtUtc)
                 }));
             },
@@ -348,9 +382,9 @@ const App = {
                 const response = await services.getPurchaseOrderListLookupData();
                 state.purchaseOrderListLookupData = response?.data?.content?.data;
             },
-            populateGoodsReceiveStatusListLookupData: async () => {
-                const response = await services.getGoodsReceiveStatusListLookupData();
-                state.goodsReceiveStatusListLookupData = response?.data?.content?.data;
+            populateGoodsExamineStatusListLookupData: async () => {
+                const response = await services.getGoodsExamineStatusListLookupData();
+                state.goodsExamineStatusListLookupData = response?.data?.content?.data;
             },
             populateProductListLookupData: async () => {
                 const response = await services.getProductListLookupData();
@@ -365,9 +399,9 @@ const App = {
                 const response = await services.getWarehouseListLookupData();
                 state.warehouseListLookupData = response?.data?.content?.data.filter(warehouse => warehouse.systemWarehouse === false) || [];
             },
-            populateSecondaryData: async (goodsReceiveId) => {
+            populateSecondaryData: async (goodsExamineId) => {
                 try {
-                    const response = await services.getSecondaryData(goodsReceiveId);
+                    const response = await services.getSecondaryData(goodsExamineId);
                     state.secondaryData = response?.data?.content?.data.map(item => ({
                         ...item,
                         createdAtUtc: new Date(item.createdAtUtc)
@@ -382,7 +416,7 @@ const App = {
                 state.totalMovementFormatted = NumberFormatManager.formatToLocale(totalMovement);
             },
             onMainModalHidden: () => {
-                state.errors.receiveDate = '';
+                state.errors.ExamineDate = '';
                 state.errors.purchaseOrderId = '';
                 state.errors.status = '';
             }
@@ -399,18 +433,35 @@ const App = {
                     }
 
                     const response = state.id === ''
-                        ? await services.createMainData(state.receiveDate, state.description, state.status, state.purchaseOrderId, StorageManager.getUserId())
+                        ? await services.createMainData(
+                            state.ExamineDate,
+                            state.description,
+                            state.status,
+                            state.purchaseOrderId,
+                            state.committee,
+                            StorageManager.getUserId()
+                        )
+
                         : state.deleteMode
                             ? await services.deleteMainData(state.id, StorageManager.getUserId())
-                            : await services.updateMainData(state.id, state.receiveDate, state.description, state.status, state.purchaseOrderId, StorageManager.getUserId());
+                            :  await services.updateMainData(
+                                state.id,
+                                state.ExamineDate,
+                                state.description,
+                                state.status,
+                                state.purchaseOrderId,
+                                state.committee,
+                                StorageManager.getUserId()
+                            );
 
                     if (response.data.code === 200) {
                         await methods.populateMainData();
                         mainGrid.refresh();
 
                         if (!state.deleteMode) {
-                            state.mainTitle = 'Edit Goods Receive';
+                            state.mainTitle = 'تعديل طلب الفحص';
                             state.id = response?.data?.content?.data.id ?? '';
+                            state.committee.goodsExamineId = state.id;
                             state.number = response?.data?.content?.data.number ?? '';
                             await methods.populateSecondaryData(state.id);
                             secondaryGrid.refresh();
@@ -461,7 +512,7 @@ const App = {
 
         Vue.onMounted(async () => {
             try {
-                await SecurityManager.authorizePage(['GoodsReceives']);
+                await SecurityManager.authorizePage(['GoodsExamine']);
                 await SecurityManager.validateToken();
 
                 await methods.populateMainData();
@@ -470,11 +521,11 @@ const App = {
                 mainModal.create();
                 mainModalRef.value?.addEventListener('hidden.bs.modal', methods.onMainModalHidden);
                 await methods.populatePurchaseOrderListLookupData();
-                await methods.populateGoodsReceiveStatusListLookupData();
+                await methods.populateGoodsExamineStatusListLookupData();
                 numberText.create();
-                receiveDatePicker.create();
+                ExamineDatePicker.create();
                 purchaseOrderListLookup.create();
-                goodsReceiveStatusListLookup.create();
+                goodsExamineStatusListLookup.create();
 
                 await secondaryGrid.create(state.secondaryData);
                 await methods.populateProductListLookupData();
@@ -518,7 +569,7 @@ const App = {
                         { type: 'checkbox', width: 60 },
                         { field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false },
                         { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'receiveDate', headerText: 'تاريخ الاستلام', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'ExamineDate', headerText: 'تاريخ الاستلام', width: 150, format: 'yyyy-MM-dd' },
                         { field: 'purchaseOrderNumber', headerText: 'رقم أمر التوريد', width: 150, minWidth: 150 },
                         { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
                         { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
@@ -538,7 +589,7 @@ const App = {
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        mainGrid.obj.autoFitColumns(['number', 'receiveDate', 'purchaseOrderNumber', 'statusName', 'createdAtUtc']);
+                        mainGrid.obj.autoFitColumns(['number', 'ExamineDate', 'purchaseOrderNumber', 'statusName', 'createdAtUtc']);
                     },
                     excelExportComplete: () => { },
                     rowSelected: () => {
@@ -580,7 +631,7 @@ const App = {
                                 state.mainTitle = 'تعديل اذن الاستلام';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
-                                state.receiveDate = selectedRecord.receiveDate ? new Date(selectedRecord.receiveDate) : null;
+                                state.ExamineDate = selectedRecord.ExamineDate ? new Date(selectedRecord.ExamineDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
@@ -598,7 +649,7 @@ const App = {
                                 state.mainTitle = 'حذف اذن الاستلام?';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
-                                state.receiveDate = selectedRecord.receiveDate ? new Date(selectedRecord.receiveDate) : null;
+                                state.ExamineDate = selectedRecord.ExamineDate ? new Date(selectedRecord.ExamineDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
@@ -612,7 +663,7 @@ const App = {
                         if (args.item.id === 'PrintPDFCustom') {
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                window.open('/GoodsReceives/GoodsReceivePdf?id=' + (selectedRecord.id ?? ''), '_blank');
+                                window.open('/GoodsExamines/GoodsExaminePdf?id=' + (selectedRecord.id ?? ''), '_blank');
                             }
                         }
                     }
@@ -903,7 +954,7 @@ const App = {
             mainModalRef,
             secondaryGridRef,
             numberRef,
-            receiveDateRef,
+            ExamineDateRef,
             purchaseOrderIdRef,
             statusRef,
             state,

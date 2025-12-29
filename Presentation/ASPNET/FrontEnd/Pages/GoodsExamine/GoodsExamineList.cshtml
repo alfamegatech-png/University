@@ -1,6 +1,6 @@
 ﻿@page
 @{
-    ViewData["Title"] = "قائمة استلام البضائع";
+    ViewData["Title"] = "قائمة فحص البضائع";
 }
 
 <div id="app" v-cloak>
@@ -33,9 +33,9 @@
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="ReceiveDate">تاريخ الاستلام</label>
-                                                <input ref="receiveDateRef">
-                                                <label class="text-danger">{{ state.errors.receiveDate }}</label>
+                                                <label for="ExamineDate">تاريخ الاستلام</label>
+                                                <input ref="ExamineDateRef">
+                                                <label class="text-danger">{{ state.errors.ExamineDate }}</label>
                                             </div>
 
                                             <div class="col-md-6">
@@ -65,6 +65,50 @@
                                                 <label class="text-danger">{{ state.errors.description }}</label>
                                             </div>
                                         </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h5>بيانات لجنة الفحص</h5>
+                                                    </div>
+
+                                                    <div class="card-body">
+                                                        <div class="row mb-2">
+                                                            <div class="col-md-6">
+                                                                <label>اسم الموظف</label>
+                                                                <input class="form-control"
+                                                                       v-model="state.committee.employeeName">
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <label>الوظيفة</label>
+                                                                <input class="form-control"
+                                                                       v-model="state.committee.employeePositionName">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-2">
+                                                            <div class="col-md-6">
+                                                                <label>نوع الموظف</label>
+                                                                <select class="form-select"
+                                                                        v-model="state.committee.employeeType">
+                                                                    <option :value="true">رئيس</option>
+                                                                    <option :value="false">عضو</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <label>ملاحظات</label>
+                                                                <textarea class="form-control"
+                                                                          v-model="state.committee.description"
+                                                                          rows="2"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -143,5 +187,5 @@
 </div>
 
 @section scripts {
-    <script src="~/FrontEnd/Pages/GoodsReceives/GoodsReceiveList.cshtml.js"></script>
+    <script src="~/FrontEnd/Pages/GoodsExamine/GoodsExamineList.cshtml.js"></script>
 }

@@ -86,10 +86,15 @@ namespace Infrastructure.SecurityManager.NavigationMenu
         },
          {
             "URL": "/GoodsReceives/GoodsReceiveList",
-            "Name": "فحص واستلام ",
+            "Name": "استلام ",
             "IsModule": false
         },
-                  
+         {
+            "URL": "/GoodsExamine/GoodsExamineList",
+            "Name": "فحص  ",
+            "IsModule": false
+        },
+                     
          
                     {
                         "URL": "/PurchaseReturns/PurchaseReturnList",

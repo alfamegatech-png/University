@@ -1,0 +1,150 @@
+﻿using Application.Common.Extensions;
+using Application.Common.Repositories;
+using Application.Features.InventoryTransactionManager;
+using Application.Features.NumberSequenceManager;
+using Domain.Entities;
+using Domain.Enums;
+using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace Application.Features.GoodsExamineManager.Commands;
+
+public class CreateGoodsExamineResult
+{
+    public GoodsExamine? Data { get; set; }
+}
+
+public class CreateGoodsExamineRequest : IRequest<CreateGoodsExamineResult>
+{
+    public DateTime? ExamineDate { get; init; }
+    public string? Status { get; init; }
+    public string? Description { get; init; }
+    public string? PurchaseOrderId { get; init; }
+    public string? CreatedById { get; init; }
+    // ✅ إضافة بيانات اللجنة
+    public ExamineCommiteeDto? Committee { get; init; }
+}
+public class ExamineCommiteeDto
+{
+    public int? EmployeeID { get; init; }
+    public int? EmployeePositionID { get; init; }
+    public string? EmployeeName { get; init; }
+    public string? EmployeePositionName { get; init; }
+    public bool? EmployeeType { get; init; }
+    public string? Description { get; init; }
+}
+
+public class CreateGoodsExamineValidator : AbstractValidator<CreateGoodsExamineRequest>
+{
+    public CreateGoodsExamineValidator()
+    {
+        RuleFor(x => x.ExamineDate).NotEmpty();
+        RuleFor(x => x.Status).NotEmpty();
+        RuleFor(x => x.PurchaseOrderId).NotEmpty();
+    }
+}
+
+public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineRequest, CreateGoodsExamineResult>
+{
+    private readonly ICommandRepository<GoodsExamine> _deliveryOrderRepository;
+    private readonly ICommandRepository<PurchaseOrderItem> _purchaseOrderItemRepository;
+    private readonly ICommandRepository<Warehouse> _warehouseRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly NumberSequenceService _numberSequenceService;
+    private readonly InventoryTransactionService _inventoryTransactionService;
+    private readonly ICommandRepository<ExamineCommitee> _examineCommiteeRepository;
+
+    public CreateGoodsExamineHandler(
+        ICommandRepository<GoodsExamine> deliveryOrderRepository,
+        ICommandRepository<PurchaseOrderItem> purchaseOrderItemRepository,
+        ICommandRepository<Warehouse> warehouseRepository,
+        IUnitOfWork unitOfWork,
+        ICommandRepository<ExamineCommitee> examineCommiteeRepository,
+        NumberSequenceService numberSequenceService,
+        InventoryTransactionService inventoryTransactionService
+        )
+    {
+         _examineCommiteeRepository = examineCommiteeRepository; 
+        _deliveryOrderRepository = deliveryOrderRepository;
+        _purchaseOrderItemRepository = purchaseOrderItemRepository;
+        _warehouseRepository = warehouseRepository;
+        _unitOfWork = unitOfWork;
+        _numberSequenceService = numberSequenceService;
+        _inventoryTransactionService = inventoryTransactionService;
+    }
+
+    public async Task<CreateGoodsExamineResult> Handle(CreateGoodsExamineRequest request, CancellationToken cancellationToken = default)
+    {
+        var entity = new GoodsExamine();
+        entity.CreatedById = request.CreatedById;
+
+        entity.Number = _numberSequenceService.GenerateNumber(nameof(GoodsExamine), "", "GR");
+        entity.ExamineDate = request.ExamineDate;
+        entity.Status = (GoodsExamineStatus)int.Parse(request.Status!);
+        entity.Description = request.Description;
+        entity.PurchaseOrderId = request.PurchaseOrderId;
+
+        await _deliveryOrderRepository.CreateAsync(entity, cancellationToken);
+        await _unitOfWork.SaveAsync(cancellationToken);
+
+
+       
+
+        // ✅ هنا بالظبط نضيف اللجنة
+        if (request.Committee != null)
+        {
+            var committee = new ExamineCommitee
+            {
+                GoodsExamineId = entity.Id,
+                EmployeeID = request.Committee.EmployeeID,
+                EmployeePositionID = request.Committee.EmployeePositionID,
+                EmployeeName = request.Committee.EmployeeName,
+                EmployeePositionName = request.Committee.EmployeePositionName,
+                EmployeeType = request.Committee.EmployeeType,
+                Description = request.Committee.Description,
+                CreatedById = request.CreatedById
+            };
+
+            await _examineCommiteeRepository.CreateAsync(committee, cancellationToken);
+            await _unitOfWork.SaveAsync(cancellationToken);
+        }
+
+        var defaultWarehouse = await _warehouseRepository
+            .GetQuery()
+            .ApplyIsDeletedFilter(false)
+            .Where(x => x.SystemWarehouse == false)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (defaultWarehouse != null)
+        {
+            var items = await _purchaseOrderItemRepository
+                .GetQuery()
+                .ApplyIsDeletedFilter(false)
+                .Where(x => x.PurchaseOrderId == entity.PurchaseOrderId)
+                .Include(x => x.Product)
+                .ToListAsync(cancellationToken);
+
+            foreach (var item in items)
+            {
+                if (item?.Product?.Physical ?? false)
+                {
+                    await _inventoryTransactionService.GoodsExamineCreateInvenTrans(
+                        entity.Id,
+                        defaultWarehouse.Id,
+                        item.ProductId,
+                        item.Quantity,
+                        entity.CreatedById,
+                        cancellationToken
+                        );
+
+                }
+            }
+        }
+
+        return new CreateGoodsExamineResult
+        {
+            Data = entity
+        };
+    }
+}
