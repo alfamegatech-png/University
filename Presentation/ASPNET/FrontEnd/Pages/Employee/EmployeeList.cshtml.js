@@ -1057,7 +1057,7 @@ const App = {
 
         Vue.onMounted(async () => {
             try {
-                await SecurityManager.authorizePage(['Customers']);
+                await SecurityManager.authorizePage(['Employee']);
                 await SecurityManager.validateToken();
 
                 await methods.populateMainData();
