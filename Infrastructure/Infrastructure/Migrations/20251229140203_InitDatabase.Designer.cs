@@ -4,6 +4,7 @@ using Infrastructure.DataAccessManager.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251229140203_InitDatabase")]
+    partial class InitDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -520,57 +523,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Employee");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ExamineCommitee", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("EmployeeID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmployeeName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("EmployeePositionID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmployeePositionName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("EmployeeType")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("GoodsExamineId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Number")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GoodsExamineId");
-
-                    b.ToTable("ExamineCommitee");
-                });
-
             modelBuilder.Entity("Domain.Entities.FileDocument", b =>
                 {
                     b.Property<string>("Id")
@@ -683,54 +635,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OriginalName");
 
                     b.ToTable("FileImage");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GoodsExamine", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("CommiteeDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CommitteeDesionNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ExamineDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Number")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PurchaseOrderId")
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PurchaseOrderId");
-
-                    b.ToTable("GoodsExamine");
                 });
 
             modelBuilder.Entity("Domain.Entities.GoodsReceive", b =>
@@ -2618,24 +2522,6 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("SalesOrderId");
 
                     b.Navigation("SalesOrder");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ExamineCommitee", b =>
-                {
-                    b.HasOne("Domain.Entities.GoodsExamine", "GoodsReceive")
-                        .WithMany()
-                        .HasForeignKey("GoodsExamineId");
-
-                    b.Navigation("GoodsReceive");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GoodsExamine", b =>
-                {
-                    b.HasOne("Domain.Entities.PurchaseOrder", "PurchaseOrder")
-                        .WithMany()
-                        .HasForeignKey("PurchaseOrderId");
-
-                    b.Navigation("PurchaseOrder");
                 });
 
             modelBuilder.Entity("Domain.Entities.GoodsReceive", b =>
