@@ -52,20 +52,13 @@ const App = {
             mainTitle: null,
             id: '',
                 // بيانات اللجنة
-                committee: {
-                    number: '',
-                    goodsExamineId: '',
-                    employeeID: null,
-                    employeePositionID: null,
-                    employeeName: '',
-                    employeePositionName: '',
-                    employeeType: null,
-                    description: ''
-                },
+            committeeList: [],
+
 
               
            
-
+            CommiteeDate: null,
+            CommitteeDesionNumber: '',
             number: '',
             ExamineDate: '',
             description: '',
@@ -90,6 +83,14 @@ const App = {
         const purchaseOrderIdRef = Vue.ref(null);
         const statusRef = Vue.ref(null);
         const numberRef = Vue.ref(null);
+        const emptyCommitteeMember = () => ({
+            id: null,
+            goodsExamineId: '',
+            employeeName: '',
+            employeePositionName: '',
+            employeeType: true, // رئيس / عضو
+            description: ''
+        });
 
         const validateForm = function () {
             state.errors.ExamineDate = '';
@@ -113,7 +114,7 @@ const App = {
 
             return isValid;
         };
-
+       
         const resetFormState = () => {
             state.id = '';
             state.number = '';
@@ -129,16 +130,8 @@ const App = {
                 status: '',
                 description: ''
             };
-            state.committee = {
-                number: '',
-                goodsExamineId: '',
-                employeeID: null,
-                employeePositionID: null,
-                employeeName: '',
-                employeePositionName: '',
-                employeeType: null,
-                description: ''
-            };
+            
+            state.committeeList = [];
 
             state.secondaryData = [];
         };
@@ -450,6 +443,8 @@ const App = {
                         ? await services.createMainData(
                             state.ExamineDate,
                             state.description,
+                            state.CommiteeDate ?? null,
+                            state.CommitteeDesionNumber ?? null,
                             state.status,
                             state.purchaseOrderId,
                             state.committee,
@@ -458,15 +453,18 @@ const App = {
 
                         : state.deleteMode
                             ? await services.deleteMainData(state.id, StorageManager.getUserId())
-                            :  await services.updateMainData(
+                            : await services.updateMainData(
                                 state.id,
                                 state.ExamineDate,
                                 state.description,
+                                state.CommiteeDate ?? null,
+                                state.CommitteeDesionNumber ?? null,
                                 state.status,
                                 state.purchaseOrderId,
                                 state.committee,
                                 StorageManager.getUserId()
                             );
+
 
                     if (response.data.code === 200) {
                         await methods.populateMainData();

@@ -79,49 +79,50 @@
                                                 <label class="text-danger">{{ state.errors.description }}</label>
                                             </div>
                                         </div>
-                                        <div class="row mt-3">
-                                            <div class="col-md-12">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <h5>بيانات لجنة الفحص</h5>
+                                        <div class="card-body">
+                                            <div v-for="(member, index) in state.committeeList" :key="index" class="border p-3 mb-3">
+
+                                                <div class="row mb-2">
+                                                    <div class="col-md-6">
+                                                        <label>اسم الموظف</label>
+                                                        <input class="form-control" v-model="member.employeeName">
                                                     </div>
 
-                                                    <div class="card-body">
-                                                        <div class="row mb-2">
-                                                            <div class="col-md-6">
-                                                                <label>اسم الموظف</label>
-                                                                <input class="form-control"
-                                                                       v-model="state.committee.employeeName">
-                                                            </div>
-
-                                                            <div class="col-md-6">
-                                                                <label>الوظيفة</label>
-                                                                <input class="form-control"
-                                                                       v-model="state.committee.employeePositionName">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="row mb-2">
-                                                            <div class="col-md-6">
-                                                                <label>نوع الموظف</label>
-                                                                <select class="form-select"
-                                                                        v-model="state.committee.employeeType">
-                                                                    <option :value="true">رئيس</option>
-                                                                    <option :value="false">عضو</option>
-                                                                </select>
-                                                            </div>
-
-                                                            <div class="col-md-6">
-                                                                <label>ملاحظات</label>
-                                                                <textarea class="form-control"
-                                                                          v-model="state.committee.description"
-                                                                          rows="2"></textarea>
-                                                            </div>
-                                                        </div>
+                                                    <div class="col-md-6">
+                                                        <label>الوظيفة</label>
+                                                        <input class="form-control" v-model="member.employeePositionName">
                                                     </div>
                                                 </div>
+
+                                                <div class="row mb-2">
+                                                    <div class="col-md-6">
+                                                        <label>نوع الموظف</label>
+                                                        <select class="form-select" v-model="member.employeeType">
+                                                            <option :value="true">رئيس</option>
+                                                            <option :value="false">عضو</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label>ملاحظات</label>
+                                                        <textarea class="form-control" v-model="member.description"></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <button class="btn btn-danger btn-sm"
+                                                        v-if="state.committeeList.length > 1"
+                                                        v-on:click="state.committeeList.splice(index,1)">
+                                                    حذف العضو
+                                                </button>
+
                                             </div>
+
+                                            <button class="btn btn-success btn-sm"
+                                                    v-on:click="state.committeeList.push(emptyCommitteeMember())">
+                                                + إضافة عضو
+                                            </button>
                                         </div>
+
 
                                     </div>
                                 </div>
@@ -185,7 +186,7 @@
                             id="MainSaveButton"
                             class="btn"
                             :class="state.deleteMode ? 'btn-danger' : 'btn-primary'"
-                            v-on:click="handleSubmit"
+                            v-on:click="handler.handleSubmit"
                             :disabled="state.isSubmitting">
 
                         <span class="spinner-border spinner-border-sm me-2"
