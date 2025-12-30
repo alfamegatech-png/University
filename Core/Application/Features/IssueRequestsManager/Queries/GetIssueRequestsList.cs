@@ -17,7 +17,10 @@ public record GetIssueRequestsListDto
     public string? OrderStatusName { get; init; }
     public string? Description { get; init; }
     public string? EmployeeId { get; init; }
-    public string? CustomerName { get; init; }
+    public string? EmployeeName { get; init; }
+
+    public string? DepartmentId { get; init; }
+    public string? DepartmentName { get; init; }
     public string? TaxId { get; init; }
     public string? TaxName { get; init; }
     public double? BeforeTaxAmount { get; init; }
@@ -31,18 +34,36 @@ public class GetIssueRequestsListProfile : Profile
     public GetIssueRequestsListProfile()
     {
         CreateMap<IssueRequests, GetIssueRequestsListDto>()
-            .ForMember(
-                dest => dest.CustomerName,
-                opt => opt.MapFrom(src => src.Employee != null ? src.Employee.Name : string.Empty)
-            )
-            .ForMember(
-                dest => dest.TaxName,
-                opt => opt.MapFrom(src => src.Tax != null ? src.Tax.Name : string.Empty)
-            )
-            .ForMember(
-                dest => dest.OrderStatusName,
-                opt => opt.MapFrom(src => src.OrderStatus.HasValue ? src.OrderStatus.Value.ToFriendlyName() : string.Empty)
-            );
+        .ForMember(dest => dest.EmployeeId,
+            opt => opt.MapFrom(src => src.EmployeeId))
+
+        .ForMember(dest => dest.EmployeeName,
+            opt => opt.MapFrom(src =>
+                src.Employee != null ? src.Employee.Name : string.Empty))
+
+        .ForMember(dest => dest.DepartmentId,
+            opt => opt.MapFrom(src =>
+                src.Employee != null
+                    ? src.Employee.DepartmentId.ToString()
+                    : null))
+
+        .ForMember(dest => dest.DepartmentName,
+            opt => opt.MapFrom(src =>
+                src.Employee != null && src.Employee.Department != null
+                    ? src.Employee.Department.Name
+                    : string.Empty))
+
+        .ForMember(dest => dest.OrderStatusName,
+            opt => opt.MapFrom(src =>
+                src.OrderStatus.HasValue
+                    ? src.OrderStatus.Value.ToFriendlyName()
+                    : string.Empty));
+
+
+
+
+
+
 
     }
 }
@@ -76,7 +97,8 @@ public class GetIssueRequestsListHandler : IRequestHandler<GetIssueRequestsListR
             .AsNoTracking()
             .ApplyIsDeletedFilter(request.IsDeleted)
             .Include(x => x.Employee)
-            .Include(x => x.Tax)
+            .ThenInclude(e => e.Department)
+          
             .AsQueryable();
 
         var entities = await query.ToListAsync(cancellationToken);

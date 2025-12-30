@@ -50,6 +50,8 @@ const App = {
             mainData: [],
             deleteMode: false,
             employeeListLookupData: [],
+            departmentId: null,
+            departmentListLookupData: [],
            // taxListLookupData: [],
             issueRequestsStatusListLookupData: [],
             secondaryData: [],
@@ -81,6 +83,8 @@ const App = {
         const orderDateRef = Vue.ref(null);
         const numberRef = Vue.ref(null);
         const employeeIdRef = Vue.ref(null);
+        const departmentIdRef = Vue.ref(null);
+
         //const taxIdRef = Vue.ref(null);
         const orderStatusRef = Vue.ref(null);
         const secondaryGridRef = Vue.ref(null);
@@ -118,12 +122,14 @@ const App = {
             state.number = '';
             state.orderDate = '';
             state.description = '';
+            state.departmentId = null;
             state.employeeId = null;
             //state.taxId = null;
             state.orderStatus = null;
             state.errors = {
                 orderDate: '',
                 employeeId: '',
+                departmentId: '',
                // taxId: '',
                 orderStatus: '',
                 description: ''
@@ -144,7 +150,7 @@ const App = {
                     throw error;
                 }
             },
-            createMainData: async (orderDate, description, orderStatus, /*taxId,*/ employeeId, createdById) => {
+            createMainData: async (orderDate, description, orderStatus, /*depId,*/ employeeId, createdById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequests/CreateIssueRequests', {
                         orderDate, description, orderStatus, /*taxId,*/ employeeId, createdById
@@ -174,6 +180,9 @@ const App = {
                     throw error;
                 }
             },
+            getDepartmentListLookupData: async () => {
+                return await AxiosManager.get('/Department/GetDepartmentList', {});
+            },
             getEmployeeListLookupData: async () => {
                 try {
                     const response = await AxiosManager.get('/Employee/GetEmployeeList', {});
@@ -182,6 +191,7 @@ const App = {
                     throw error;
                 }
             },
+          
             //getTaxListLookupData: async () => {
             //    try {
             //        const response = await AxiosManager.get('/Tax/GetTaxList', {});
@@ -247,6 +257,11 @@ const App = {
         };
 
         const methods = {
+            populateDepartmentListLookupData: async () => {
+                const response = await services.getDepartmentListLookupData();
+                state.departmentListLookupData = response?.data?.content?.data;
+            },
+
             populateEmployeeListLookupData: async () => {
                 const response = await services.getEmployeeListLookupData();
                 state.employeeListLookupData = response?.data?.content?.data;
@@ -255,6 +270,7 @@ const App = {
             //    const response = await services.getTaxListLookupData();
             //    state.taxListLookupData = response?.data?.content?.data;
             //},
+          
             populateIssueRequestsStatusListLookupData: async () => {
                 const response = await services.getIssueRequestsStatusListLookupData();
                 state.issueRequestsStatusListLookupData = response?.data?.content?.data;
@@ -302,10 +318,10 @@ const App = {
 
                 try {
                     const response = state.id === ''
-                        ? await services.createMainData(state.orderDate, state.description, state.orderStatus,/* state.taxId,*/ state.employeeId, StorageManager.getUserId())
+                        ? await services.createMainData(state.orderDate, state.description, state.orderStatus, state.employeeId, StorageManager.getUserId())
                         : state.deleteMode
                             ? await services.deleteMainData(state.id, StorageManager.getUserId())
-                            : await services.updateMainData(state.id, state.orderDate, state.description, state.orderStatus,/* state.taxId,*/ state.employeeId, StorageManager.getUserId());
+                            : await services.updateMainData(state.id, state.orderDate, state.description, state.orderStatus, state.employeeId, StorageManager.getUserId());
 
                     if (response.data.code === 200) {
                         await methods.populateMainData();
@@ -317,7 +333,9 @@ const App = {
                             state.number = response?.data?.content?.data.number ?? '';
                             state.orderDate = response?.data?.content?.data.orderDate ? new Date(response.data.content.data.orderDate) : null;
                             state.description = response?.data?.content?.data.description ?? '';
+                            state.departmentId = response?.data?.content?.data.departmentId ?? '';
                             state.employeeId = response?.data?.content?.data.employeeId ?? '';
+                            
                             //state.taxId = response?.data?.content?.data.taxId ?? '';
                             //taxListLookup.trackingChange = true;
                             state.orderStatus = String(response?.data?.content?.data.orderStatus ?? '');
@@ -372,6 +390,39 @@ const App = {
                 //taxListLookup.trackingChange = false;
             }
         };
+        const departmentListLookup = {
+            obj: null,
+            create: () => {
+                if (Array.isArray(state.departmentListLookupData)) {
+                    departmentListLookup.obj = new ej.dropdowns.DropDownList({
+                        dataSource: state.departmentListLookupData,
+                        fields: { value: 'id', text: 'name' },
+                        placeholder: 'اختر الإدارة',
+                        allowFiltering: true,
+                        sortOrder: 'Ascending',
+
+                        change: async (e) => {
+                            state.departmentId = e.value;
+                            state.employeeId = null;
+
+                            // فلترة الموظفين حسب الإدارة
+                            const filtered = state.employeeListLookupData
+                                .filter(emp => emp.departmentId === e.value);
+
+                            employeeListLookup.obj.dataSource = filtered;
+                            employeeListLookup.obj.value = null;
+                        }
+                    });
+
+                    departmentListLookup.obj.appendTo(departmentIdRef.value);
+                }
+            },
+            refresh: () => {
+                if (departmentListLookup.obj) {
+                    departmentListLookup.obj.value = state.departmentId;
+                }
+            }
+        };
 
         const employeeListLookup = {
             obj: null,
@@ -404,6 +455,7 @@ const App = {
                     employeeListLookup.obj.value = state.employeeId;
                 }
             }
+
         };
 
         //const taxListLookup = {
@@ -491,6 +543,13 @@ const App = {
                 state.errors.orderDate = '';
             }
         );
+        Vue.watch(
+            () => state.departmentId,
+            () => {
+                departmentListLookup.refresh();
+                state.errors.departmentId = '';
+            }
+        );
 
         Vue.watch(
             () => state.employeeId,
@@ -545,7 +604,9 @@ const App = {
                         { field: 'id', isPrimaryKey: true, headerText: 'معرف', visible: false },
                         { field: 'number', headerText: 'رقم الطلب', width: 150, minWidth: 150 },
                         { field: 'orderDate', headerText: 'تاريخ الطلب', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'departmentName', headerText: 'الادارة', width: 200, minWidth: 200 },
                         { field: 'employeeName', headerText: 'الموظف', width: 200, minWidth: 200 },
+                       
                         { field: 'orderStatusName', headerText: 'الحالة', width: 150, minWidth: 150 },
                         //{ field: 'taxName', headerText: 'الضريبة', width: 150, minWidth: 150 },
                         { field: 'afterTaxAmount', headerText: 'الإجمالي', width: 150, minWidth: 150, format: 'N2' },
@@ -603,18 +664,32 @@ const App = {
 
                         if (args.item.id === 'EditCustom') {
                             state.deleteMode = false;
+
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
+
                                 state.mainTitle = 'تعديل طلب وإذن الصرف';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.employeeId = selectedRecord.employeeId ?? '';
-                                //state.taxId = selectedRecord.taxId ?? '';
-                                //taxListLookup.trackingChange = true;
                                 state.orderStatus = String(selectedRecord.orderStatus ?? '');
+                                state.departmentId = selectedRecord.departmentId ?? null;
                                 state.showComplexDiv = true;
+
+                                departmentListLookup.obj.value = state.departmentId;
+                                departmentListLookup.obj.dataBind();
+
+                                const filtered = state.employeeListLookupData
+                                    .filter(emp => emp.departmentId === state.departmentId);
+
+                                employeeListLookup.obj.dataSource = filtered;
+                                employeeListLookup.obj.dataBind();
+
+                                setTimeout(() => {
+                                    employeeListLookup.obj.value = state.employeeId;
+                                }, 0);
 
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
@@ -622,6 +697,7 @@ const App = {
                                 mainModal.obj.show();
                             }
                         }
+
 
                         if (args.item.id === 'DeleteCustom') {
                             state.deleteMode = true;
@@ -632,10 +708,21 @@ const App = {
                                 state.number = selectedRecord.number ?? '';
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
                                 state.description = selectedRecord.description ?? '';
-                                state.employeeId = selectedRecord.employeeId ?? '';
+                               state.employeeId = selectedRecord.employeeId ?? '';
                                // state.taxId = selectedRecord.taxId ?? '';
                                 state.orderStatus = String(selectedRecord.orderStatus ?? '');
                                 state.showComplexDiv = false;
+
+                                state.departmentId = selectedRecord.departmentId ?? null;
+
+                                // فلترة الموظفين حسب الإدارة
+                                const filtered = state.employeeListLookupData
+                                    .filter(emp => emp.departmentId === state.departmentId);
+
+                                employeeListLookup.obj.dataSource = filtered;
+                                employeeListLookup.obj.value = state.employeeId;
+
+
 
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
@@ -910,8 +997,13 @@ const App = {
 
                 mainModal.create();
                 mainModalRef.value?.addEventListener('hidden.bs.modal', methods.onMainModalHidden);
+
+                await methods.populateDepartmentListLookupData();
+                departmentListLookup.create();
+
                 await methods.populateEmployeeListLookupData();
                 employeeListLookup.create();
+
                // await methods.populateTaxListLookupData();
                 //taxListLookup.create();
                 await methods.populateIssueRequestsStatusListLookupData();
@@ -937,6 +1029,7 @@ const App = {
             orderDateRef,
             numberRef,
             employeeIdRef,
+            departmentIdRef,
             //taxIdRef,
             orderStatusRef,
             secondaryGridRef,
