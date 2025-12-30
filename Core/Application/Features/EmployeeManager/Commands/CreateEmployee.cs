@@ -15,6 +15,7 @@ public class CreateEmployeeRequest : IRequest<CreateEmployeeResult>
 {
     public string? Name { get; set; }
     public string? Description { get; set; }
+    public string? DepartmentId { get; set; }
     public string? Street { get; set; }
     public string? City { get; set; }
     public string? State { get; set; }
@@ -45,6 +46,7 @@ public class CreateEmployeeValidator : AbstractValidator<CreateEmployeeRequest>
         RuleFor(x => x.ZipCode).NotEmpty();
         RuleFor(x => x.PhoneNumber).NotEmpty();
         RuleFor(x => x.EmailAddress).NotEmpty();
+        RuleFor(x => x.DepartmentId).NotEmpty();
 
     }
 }
@@ -89,7 +91,7 @@ public class CreateEmployeeHandler : IRequestHandler<CreateEmployeeRequest, Crea
         entity.Instagram = request.Instagram;
         entity.TwitterX = request.TwitterX;
         entity.TikTok = request.TikTok;
-        //entity.EmployeeGroupId = request.EmployeeGroupId;
+        entity.DepartmentId = request.DepartmentId;
         //entity.EmployeeCategoryId = request.EmployeeCategoryId;
 
         await _repository.CreateAsync(entity, cancellationToken);

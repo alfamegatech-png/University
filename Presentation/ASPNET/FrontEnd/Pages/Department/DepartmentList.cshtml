@@ -1,0 +1,109 @@
+﻿@page
+@{
+    ViewData["Title"] = "قائمة الادارات";
+}
+
+<div id="app" v-cloak>
+    <div class="row">
+        <div class="col-12">
+            <div class="grid-container">
+                <div ref="mainGridRef"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" ref="mainModalRef" id="MainModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" v-text="state.mainTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" v-model="state.id" id="Id" name="Id" />
+                    <form id="MainForm">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5>المعلومات الأساسية</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="Name">الاسم</label>
+                                        <input ref="nameRef" v-model="state.name" class="form-control" placeholder="" />
+                                        <label class="text-danger" v-text="state.errors.name"></label>
+                                    </div>
+                                    
+                                </div>
+                    
+                                <div class="row mb-2">
+                                    <div class="col-12">
+                                        <label for="Description">الوصف</label>
+                                        <textarea v-model="state.description" class="form-control" rows="3" placeholder=""></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+              
+                 
+
+               
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    <button type="button"
+                            id="MainSaveButton"
+                            class="btn"
+                            v-bind:class="state.deleteMode ? 'btn-danger' : 'btn-primary'"
+                            v-on:click="handler.handleSubmit"
+                            v-bind:disabled="state.isSubmitting">
+                        <span class="spinner-border spinner-border-sm me-2" v-if="state.isSubmitting" role="status" aria-hidden="true"></span>
+                        <span v-if="!state.isSubmitting">{{ state.deleteMode ? 'حذف' : 'حفظ' }}</span>
+                        <span v-else>{{ state.deleteMode ? 'جارٍ الحذف...' : 'جارٍ الحفظ...' }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" ref="manageContactModalRef" id="ManageContactModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" v-text="state.manageContactTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" v-model="state.id" id="Id" name="Id" />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>جهات اتصال العميل</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="grid-container">
+                                                <div ref="secondaryGridRef"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/FrontEnd/Pages/Department/DepartmentList.cshtml.js"></script>
+}

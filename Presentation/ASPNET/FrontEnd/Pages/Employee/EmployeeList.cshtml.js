@@ -44,7 +44,7 @@ const App = {
         const state = Vue.reactive({
             mainData: [],
             deleteMode: false,
-            //customerGroupListLookupData: [],
+            departmentListLookupData: [],
             //customerCategoryListLookupData: [],
             secondaryData: [],
             mainTitle: null,
@@ -52,7 +52,7 @@ const App = {
             id: '',
             name: '',
             number: '',
-            //customerGroupId: null,
+            departmentId: null,
             //customerCategoryId: null,
             description: '',
             street: '',
@@ -72,7 +72,7 @@ const App = {
             tikTok: '',
             errors: {
                 name: '',
-                //customerGroupId: '',
+                departmentId: '',
                 //customerCategoryId: '',
                 street: '',
                 city: '',
@@ -106,7 +106,7 @@ const App = {
         const instagramRef = Vue.ref(null);
         const twitterXRef = Vue.ref(null);
         const tikTokRef = Vue.ref(null);
-        //const customerGroupIdRef = Vue.ref(null);
+        const departmentIdRef = Vue.ref(null);
         //const customerCategoryIdRef = Vue.ref(null);
 
         const services = {
@@ -118,20 +118,20 @@ const App = {
                     throw error;
                 }
             },
-            createMainData: async (name, /*customerGroupId, customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, createdById) => {
+            createMainData: async (name, departmentId,/* customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, createdById) => {
                 try {
                     const response = await AxiosManager.post('/Employee/CreateEmployee', {
-                        name, /*customerGroupId, customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, createdById
+                        name, departmentId,/* customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, createdById
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateMainData: async (id, name, /*customerGroupId, customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, updatedById) => {
+            updateMainData: async (id, name, departmentId, /*customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, updatedById) => {
                 try {
                     const response = await AxiosManager.post('/Employee/UpdateEmployee', {
-                        id, name, /*customerGroupId, customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, updatedById
+                        id, name, departmentId,/* customerCategoryId,*/ description, street, city, state, zipCode, country, phoneNumber, faxNumber, emailAddress, website, whatsApp, linkedIn, facebook, instagram, twitterX, tikTok, updatedById
                     });
                     return response;
                 } catch (error) {
@@ -148,15 +148,15 @@ const App = {
                     throw error;
                 }
             },
-            //getCustomerGroupListLookupData: async () => {
-            //    try {
-            //        const response = await AxiosManager.get('/CustomerGroup/GetCustomerGroupList', {});
-            //        return response;
-            //    } catch (error) {
-            //        throw error;
-            //    }
-            //},
-            //getCustomerCategoryListLookupData: async () => {
+            getdepartmentListLookupData: async () => {
+                try {
+                    const response = await AxiosManager.get('/Department/GetDepartmentList', {});
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            //,getCustomerCategoryListLookupData: async () => {
             //    try {
             //        const response = await AxiosManager.get('/CustomerCategory/GetCustomerCategoryList', {});
             //        return response;
@@ -205,15 +205,18 @@ const App = {
         };
 
         const methods = {
-            //populateCustomerGroupListLookupData: async () => {
-            //    const response = await services.getCustomerGroupListLookupData();
-            //    state.customerGroupListLookupData = response?.data?.content?.data;
-            //},
-            //populateCustomerCategoryListLookupData: async () => {
+            populatedepartmentListLookupData: async () => {
+                const response = await services.getdepartmentListLookupData();
+                state.departmentListLookupData = response?.data?.content?.data.map(d => ({
+                    id: String(d.id),      
+                    name: d.name
+                }));
+            }
+            //,populateCustomerCategoryListLookupData: async () => {
             //    const response = await services.getCustomerCategoryListLookupData();
             //    state.customerCategoryListLookupData = response?.data?.content?.data;
-            //},
-            populateMainData: async () => {
+            //}
+            ,populateMainData: async () => {
                 const response = await services.getMainData();
                 state.mainData = response?.data?.content?.data.map(item => ({
                     ...item,
@@ -229,29 +232,39 @@ const App = {
             //},
         };
 
-        //const customerGroupListLookup = {
-        //    obj: null,
-        //    create: () => {
-        //        if (state.customerGroupListLookupData && Array.isArray(state.customerGroupListLookupData)) {
-        //            customerGroupListLookup.obj = new ej.dropdowns.DropDownList({
-        //                dataSource: state.customerGroupListLookupData,
-        //                fields: { value: 'id', text: 'name' },
-        //                placeholder: 'اختر مجموعة العملاء',
-        //                change: (e) => {
-        //                    state.customerGroupId = e.value;
-        //                }
-        //            });
-        //            customerGroupListLookup.obj.appendTo(customerGroupIdRef.value);
-        //        } else {
-        //            console.error('Customer Group list lookup data is not available or invalid.');
-        //        }
-        //    },
-        //    refresh: () => {
-        //        if (customerGroupListLookup.obj) {
-        //            customerGroupListLookup.obj.value = state.customerGroupId;
-        //        }
-        //    },
-        //};
+        const departmentListLookup = {
+            obj: null,
+            create: () => {
+               
+                if (state.departmentListLookupData && Array.isArray(state.departmentListLookupData)) {
+                    departmentListLookup.obj = new ej.dropdowns.DropDownList({
+                        dataSource: state.departmentListLookupData,
+                        fields: { value: 'id', text: 'name' },
+                        placeholder: 'اختر الادارة',
+                        allowFiltering: true,
+                        sortOrder: 'Ascending',
+
+                        dataBound: () => {
+                            if (state.departmentId) {
+                                departmentListLookup.obj.value = state.departmentId;
+                            }
+                        },
+
+                        change: (e) => {
+                            state.departmentId = e.value ? String(e.value) : '';
+                        }
+                    });
+                    departmentListLookup.obj.appendTo(departmentIdRef.value);
+                } else {
+                    console.error('Department list lookup data is not available or invalid.');
+                }
+            },
+            refresh: () => {
+                if (departmentListLookup.obj) {
+                    departmentListLookup.obj.value = state.departmentId;
+                }
+            },
+        };
 
         //const customerCategoryListLookup = {
         //    obj: null,
@@ -548,13 +561,13 @@ const App = {
             }
         );
 
-        //Vue.watch(
-        //    () => state.customerGroupId,
-        //    (newVal, oldVal) => {
-        //        state.errors.customerGroupId = '';
-        //        customerGroupListLookup.refresh();
-        //    }
-        //);
+        Vue.watch(
+            () => state.departmentId,
+            (newVal, oldVal) => {
+                state.errors.departmentId = '';
+                departmentListLookup.refresh();
+            }
+        );
 
         //Vue.watch(
         //    () => state.customerCategoryId,
@@ -632,10 +645,10 @@ const App = {
                         state.errors.name = 'الاسم مطلوب.';
                         isValid = false;
                     }
-                    //if (!state.customerGroupId) {
-                    //    state.errors.customerGroupId = 'مجموعة العملاء مطلوبة.';
-                    //    isValid = false;
-                    //}
+                    if (!state.departmentId) {
+                        state.errors.departmentId = 'مجموعة العملاء مطلوبة.';
+                        isValid = false;
+                    }
                     //if (!state.customerCategoryId) {
                     //    state.errors.customerCategoryId = 'فئة العميل مطلوبة.';
                     //    isValid = false;
@@ -673,10 +686,10 @@ const App = {
                     if (!isValid) return;
 
                     const response = state.id === ''
-                        ? await services.createMainData(state.name, /*state.customerGroupId, state.customerCategoryId,*/ state.description, state.street, state.city, state.state, state.zipCode, state.country, state.phoneNumber, state.faxNumber, state.emailAddress, state.website, state.whatsApp, state.linkedIn, state.facebook, state.instagram, state.twitterX, state.tikTok, StorageManager.getUserId())
+                        ? await services.createMainData(state.name, state.departmentId, /*state.customerCategoryId,*/ state.description, state.street, state.city, state.state, state.zipCode, state.country, state.phoneNumber, state.faxNumber, state.emailAddress, state.website, state.whatsApp, state.linkedIn, state.facebook, state.instagram, state.twitterX, state.tikTok, StorageManager.getUserId())
                         : state.deleteMode
                             ? await services.deleteMainData(state.id, StorageManager.getUserId())
-                            : await services.updateMainData(state.id, state.name, /*state.customerGroupId, state.customerCategoryId,*/ state.description, state.street, state.city, state.state, state.zipCode, state.country, state.phoneNumber, state.faxNumber, state.emailAddress, state.website, state.whatsApp, state.linkedIn, state.facebook, state.instagram, state.twitterX, state.tikTok, StorageManager.getUserId());
+                            : await services.updateMainData(state.id, state.name, state.departmentId, /*state.customerCategoryId,*/ state.description, state.street, state.city, state.state, state.zipCode, state.country, state.phoneNumber, state.faxNumber, state.emailAddress, state.website, state.whatsApp, state.linkedIn, state.facebook, state.instagram, state.twitterX, state.tikTok, StorageManager.getUserId());
 
                     if (response.data.code === 200) {
                         await methods.populateMainData();
@@ -687,7 +700,7 @@ const App = {
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             state.name = response?.data?.content?.data.name ?? '';
-                            //state.customerGroupId = response?.data?.content?.data.customerGroupId ?? null;
+                            state.departmentId = response?.data?.content?.data.departmentId ?? '';
                             //state.customerCategoryId = response?.data?.content?.data.customerCategoryId ?? null;
                             state.description = response?.data?.content?.data.description ?? '';
                             state.street = response?.data?.content?.data.street ?? '';
@@ -757,7 +770,7 @@ const App = {
             state.id = '';
             state.number = '';
             state.name = '';
-            //state.customerGroupId = null;
+            state.departmentId = '';
             //state.customerCategoryId = null;
             state.description = '';
             state.street = '';
@@ -777,7 +790,7 @@ const App = {
             state.tikTok = '';
             state.errors = {
                 name: '',
-                //customerGroupId: '',
+                departmentId: '',
                 //customerCategoryId: '',
                 street: '',
                 city: '',
@@ -820,7 +833,7 @@ const App = {
                         },
                         { field: 'number', headerText: 'الرقم', width: 150, minWidth: 150 },
                         { field: 'name', headerText: 'الاسم', width: 200, minWidth: 200 },
-                        //{ field: 'customerGroupName', headerText: 'المجموعة', width: 200, minWidth: 200 },
+                        { field: 'departmentName', headerText: 'الادارة', width: 200, minWidth: 200 },
                         //{ field: 'customerCategoryName', headerText: 'الفئة', width: 200, minWidth: 200 },
                         { field: 'street', headerText: 'الشارع', width: 200, minWidth: 200 },
                         { field: 'phoneNumber', headerText: 'الهاتف', width: 200, minWidth: 200 },
@@ -841,7 +854,7 @@ const App = {
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom'/*, 'ManageContactCustom'*/], false);
-                        mainGrid.obj.autoFitColumns(['name',/* 'customerGroupName', 'customerCategoryName',*/ 'street', 'phoneNumber', 'emailAddress', 'createdAtUtc']);
+                        mainGrid.obj.autoFitColumns(['name', 'departmentName', /*'customerCategoryName',*/ 'street', 'phoneNumber', 'emailAddress', 'createdAtUtc']);
                     },
                     excelExportComplete: () => { },
                     rowSelected: () => {
@@ -883,7 +896,8 @@ const App = {
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.name = selectedRecord.name ?? '';
-                                //state.customerGroupId = selectedRecord.customerGroupId ?? null;
+                                //state.departmentId = selectedRecord.departmentId ?? '';
+                                state.departmentId = selectedRecord.departmentId? String(selectedRecord.departmentId): '';
                                 //state.customerCategoryId = selectedRecord.customerCategoryId ?? null;
                                 state.description = selectedRecord.description ?? '';
                                 state.street = selectedRecord.street ?? '';
@@ -902,6 +916,7 @@ const App = {
                                 state.twitterX = selectedRecord.twitterX ?? '';
                                 state.tikTok = selectedRecord.tikTok ?? '';
                                 mainModal.obj.show();
+                                
                             }
                         }
 
@@ -1062,8 +1077,8 @@ const App = {
 
                 await methods.populateMainData();
                 await mainGrid.create(state.mainData);
-                /*await methods.populateCustomerGroupListLookupData();*/
-                //customerGroupListLookup.create();
+                await methods.populatedepartmentListLookupData();
+                departmentListLookup.create();
                 //await methods.populateCustomerCategoryListLookupData();
                 //customerCategoryListLookup.create();
                 nameText.create();
@@ -1115,7 +1130,7 @@ const App = {
             instagramRef,
             twitterXRef,
             tikTokRef,
-            //customerGroupIdRef,
+            departmentIdRef,
             //customerCategoryIdRef,
             state,
             handler,

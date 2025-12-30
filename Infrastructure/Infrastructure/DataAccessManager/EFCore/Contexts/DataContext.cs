@@ -56,6 +56,8 @@ public class DataContext : IdentityDbContext<ApplicationUser>, IEntityDbSet
     public DbSet<IssueRequests> IssueRequests { get; set; }
     public DbSet<IssueRequestsItem> IssueRequestsItem { get; set; }
     public DbSet<Employee> Employee { get; set; }
+    public DbSet<Department> Departments { get; set; }
+
     ///
 
 
@@ -106,6 +108,8 @@ public class DataContext : IdentityDbContext<ApplicationUser>, IEntityDbSet
         modelBuilder.ApplyConfiguration(new IssueRequestsConfiguration());
         modelBuilder.ApplyConfiguration(new IssueRequestsItemConfiguration());
         modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+        modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+
         ///
 
     }

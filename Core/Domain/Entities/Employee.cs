@@ -24,5 +24,7 @@ public class Employee : BaseEntity
     public string? TwitterX { get; set; }
     public string? TikTok { get; set; }
 
+    public string? DepartmentId { get; set; }
+    public Department? Department { get; set; }
     public ICollection<IssueRequests> IssueRequestsList { get; set; } = new List<IssueRequests>();
 }

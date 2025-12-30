@@ -47,5 +47,7 @@ public interface IEntityDbSet
     public DbSet<IssueRequests> IssueRequests { get; set; }
     public DbSet<IssueRequestsItem> IssueRequestsItem { get; set; }
     public DbSet<Employee> Employee { get; set; }
+    public DbSet<Department> Departments { get; set; }
+
 }
 

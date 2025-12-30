@@ -54,10 +54,15 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "IsModule": false
                     },
                     {
-            "URL": "/Employee/EmployeeList",
-            "Name": " الموظفين ",
-            "IsModule": false
-        }
+                       "URL": "/Employee/EmployeeList",
+                       "Name": " الموظفين ",
+                       "IsModule": false
+                    },
+                    {
+                       "URL": "/Department/DepartmentList",
+                       "Name": " الادارة ",
+                       "IsModule": false
+                    }
                     
                 ]
             },

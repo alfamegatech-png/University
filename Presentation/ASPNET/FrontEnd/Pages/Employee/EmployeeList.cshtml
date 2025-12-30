@@ -38,18 +38,19 @@
                                         <input ref="numberRef" v-model="state.number" class="form-control" placeholder="" readonly />
                                     </div>
                                 </div>
-                           @*      <div class="row mb-2">
+
+                                <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label for="CustomerGroupId">مجموعة العملاء</label>
-                                        <div ref="customerGroupIdRef"></div>
-                                        <label class="text-danger" v-text="state.errors.customerGroupId"></label>
+                                        <label for="departmentId">الادارة</label>
+                                        <div ref="departmentIdRef"></div>
+                                        <label class="text-danger">{{ state.errors.departmentId }}</label>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="CustomerCategoryId">فئة العملاء</label>
-                                        <div ref="customerCategoryIdRef"></div>
-                                        <label class="text-danger" v-text="state.errors.customerCategoryId"></label>
-                                    </div>
-                                </div> *@
+                                @*     <div class="col-md-6">
+                                        <label for="DepartmentId">الادارة</label>
+                                        <div ref="departmentIdRef"></div>
+                                        <label class="text-danger" v-text="state.errors.DepartmentId"></label>
+                                    </div> *@
+                         
                                 <div class="row mb-2">
                                     <div class="col-12">
                                         <label for="Description">الوصف</label>

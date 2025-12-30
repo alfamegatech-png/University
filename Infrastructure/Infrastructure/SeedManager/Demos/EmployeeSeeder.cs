@@ -8,32 +8,30 @@ namespace Infrastructure.SeedManager.Demos;
 public class EmployeeSeeder
 {
     private readonly ICommandRepository<Employee> _EmployeeRepository;
-    //private readonly ICommandRepository<EmployeeGroup> _groupRepository;
-    //private readonly ICommandRepository<EmployeeCategory> _categoryRepository;
+    private readonly ICommandRepository<Department> _departmentRepository;
+
     private readonly NumberSequenceService _numberSequenceService;
     private readonly IUnitOfWork _unitOfWork;
 
     public EmployeeSeeder(
         ICommandRepository<Employee> EmployeeRepository,
-        //ICommandRepository<EmployeeGroup> groupRepository,
-        //ICommandRepository<EmployeeCategory> categoryRepository,
+         ICommandRepository<Department> departmentRepository,
         NumberSequenceService numberSequenceService,
         IUnitOfWork unitOfWork
     )
     {
         _EmployeeRepository = EmployeeRepository;
-        //_groupRepository = groupRepository;
-        //_categoryRepository = categoryRepository;
+        _departmentRepository = departmentRepository;
         _numberSequenceService = numberSequenceService;
         _unitOfWork = unitOfWork;
     }
 
     public async Task GenerateDataAsync()
     {
-  //      var groups = (await _groupRepository.GetQuery().ToListAsync()).Select(x => x.Id).ToArray();
-		//var categories = (await _categoryRepository.GetQuery().ToListAsync()).Select(x => x.Id).ToArray();
 
-		var cities = new string[] { "القاهرة", "الإسكندرية", "الجيزة", "المنصورة" };
+        var departments = (await _departmentRepository.GetQuery().ToListAsync()).Select(x => x.Id).ToArray();
+
+        var cities = new string[] { "القاهرة", "الإسكندرية", "الجيزة", "المنصورة" };
 		var streets = new string[] { "شارع التحرير", "شارع الجمهورية", "شارع سعد زغلول", "شارع عبد الرحمن حسن" };
 		var states = new string[] { "القاهرة", "الإسكندرية", "الجيزة", "الدقهلية" };
 		var zipCodes = new string[] { "11511", "21511", "12511", "34511" };
@@ -72,8 +70,7 @@ new Employee { Name = "العميل 21" }
         foreach (var Employee in Employees)
         {
             Employee.Number = _numberSequenceService.GenerateNumber(nameof(Employee), "", "CST");
-            //Employee.EmployeeGroupId = GetRandomValue(groups, random);
-            //Employee.EmployeeCategoryId = GetRandomValue(categories, random);
+            Employee.DepartmentId = GetRandomValue(departments, random);
             Employee.City = GetRandomString(cities, random);
             Employee.Street = GetRandomString(streets, random);
             Employee.State = GetRandomString(states, random);
