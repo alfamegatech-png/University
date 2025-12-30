@@ -185,7 +185,7 @@
                             id="MainSaveButton"
                             class="btn"
                             :class="state.deleteMode ? 'btn-danger' : 'btn-primary'"
-                            v-on:click="handleSubmit"
+                            v-on:click="handler.handleSubmit"
                             :disabled="state.isSubmitting">
 
                         <span class="spinner-border spinner-border-sm me-2"
