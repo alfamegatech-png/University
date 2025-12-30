@@ -23,7 +23,8 @@ public class CreateGoodsExamineRequest : IRequest<CreateGoodsExamineResult>
     public string? PurchaseOrderId { get; init; }
     public string? CreatedById { get; init; }
     // ✅ إضافة بيانات اللجنة
-    public ExamineCommiteeDto? Committee { get; init; }
+    public List<ExamineCommiteeDto>? committeeList { get; init; }
+
 }
 public class ExamineCommiteeDto
 {
@@ -89,26 +90,30 @@ public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineReque
         await _unitOfWork.SaveAsync(cancellationToken);
 
 
-       
 
-        // ✅ هنا بالظبط نضيف اللجنة
-        if (request.Committee != null)
+
+        if (request.committeeList != null && request.committeeList.Any())
         {
-            var committee = new ExamineCommitee
+            foreach (var committeeDto in request.committeeList)
             {
-                GoodsExamineId = entity.Id,
-                EmployeeID = request.Committee.EmployeeID,
-                EmployeePositionID = request.Committee.EmployeePositionID,
-                EmployeeName = request.Committee.EmployeeName,
-                EmployeePositionName = request.Committee.EmployeePositionName,
-                EmployeeType = request.Committee.EmployeeType,
-                Description = request.Committee.Description,
-                CreatedById = request.CreatedById
-            };
+                var committee = new ExamineCommitee
+                {
+                    GoodsExamineId = entity.Id,
+                    EmployeeID = committeeDto.EmployeeID,
+                    EmployeePositionID = committeeDto.EmployeePositionID,
+                    EmployeeName = committeeDto.EmployeeName,
+                    EmployeePositionName = committeeDto.EmployeePositionName,
+                    EmployeeType = committeeDto.EmployeeType,
+                    Description = committeeDto.Description,
+                    CreatedById = request.CreatedById
+                };
 
-            await _examineCommiteeRepository.CreateAsync(committee, cancellationToken);
+                await _examineCommiteeRepository.CreateAsync(committee, cancellationToken);
+            }
+
             await _unitOfWork.SaveAsync(cancellationToken);
         }
+
 
         var defaultWarehouse = await _warehouseRepository
             .GetQuery()

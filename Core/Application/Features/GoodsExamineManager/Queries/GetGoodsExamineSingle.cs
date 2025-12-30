@@ -51,6 +51,7 @@ public class GetGoodsExamineSingleHandler : IRequestHandler<GetGoodsExamineSingl
         var queryData = _context
             .GoodsExamine
             .AsNoTracking()
+            .Include(x => x.Committees)
             .Include(x => x.PurchaseOrder)
                 .ThenInclude(x => x.Vendor)
             .Where(x => x.Id == request.Id)
