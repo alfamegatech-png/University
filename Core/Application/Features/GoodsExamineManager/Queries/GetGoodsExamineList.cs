@@ -87,7 +87,7 @@ public class GetGoodsExamineListHandler : IRequestHandler<GetGoodsExamineListReq
             .ApplyIsDeletedFilter(request.IsDeleted)
             
             .Include(x => x.PurchaseOrder)
-            .Include(x => x.Committees) // ✅ جلب جميع اللجان
+            .Include(x => x.Committees).Where(x=>x.IsDeleted==false) // ✅ جلب جميع اللجان
 
             .AsQueryable();
 
