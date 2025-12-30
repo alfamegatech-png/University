@@ -4,6 +4,7 @@ using Infrastructure.DataAccessManager.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251229142131_InitDatabase2")]
+    partial class InitDatabase2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -414,48 +417,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("DeliveryOrder");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Department", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedById")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedById")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Departments");
-                });
-
             modelBuilder.Entity("Domain.Entities.Employee", b =>
                 {
                     b.Property<string>("Id")
@@ -476,9 +437,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CreatedById")
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DepartmentId")
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(4000)
@@ -557,8 +515,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("Name");
 
@@ -2685,15 +2641,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("PurchaseOrder");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Employee", b =>
-            {
-                b.HasOne("Domain.Entities.Department", "Department")
-                    .WithMany("Employees")
-                    .HasForeignKey("DepartmentId")
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                b.Navigation("Department");
-            });
             modelBuilder.Entity("Domain.Entities.GoodsReceive", b =>
                 {
                     b.HasOne("Domain.Entities.PurchaseOrder", "PurchaseOrder")
@@ -2982,11 +2929,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Customer", b =>
                 {
                     b.Navigation("CustomerContactList");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Department", b =>
-                {
-                    b.Navigation("Employees");
                 });
 
             modelBuilder.Entity("Domain.Entities.Employee", b =>

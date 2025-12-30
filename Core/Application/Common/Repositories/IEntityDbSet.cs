@@ -33,6 +33,8 @@ public interface IEntityDbSet
     public DbSet<PurchaseOrderItem> PurchaseOrderItem { get; set; }
     public DbSet<InventoryTransaction> InventoryTransaction { get; set; }
     public DbSet<DeliveryOrder> DeliveryOrder { get; set; }
+    public DbSet<GoodsExamine> GoodsExamine { get; set; }
+    public DbSet<ExamineCommitee> ExamineCommitee { get; set; }
     public DbSet<GoodsReceive> GoodsReceive { get; set; }
     public DbSet<SalesReturn> SalesReturn { get; set; }
     public DbSet<PurchaseReturn> PurchaseReturn { get; set; }
