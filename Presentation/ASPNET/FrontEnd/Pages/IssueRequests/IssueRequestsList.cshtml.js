@@ -403,15 +403,20 @@ const App = {
 
                         change: async (e) => {
                             state.departmentId = e.value;
-                            state.employeeId = null;
 
-                            // فلترة الموظفين حسب الإدارة
-                            const filtered = state.employeeListLookupData
-                                .filter(emp => emp.departmentId === e.value);
+                            // 🚨 only reset employee if USER changed department
+                            if (e.isInteracted) {
+                                state.employeeId = null;
 
-                            employeeListLookup.obj.dataSource = filtered;
-                            employeeListLookup.obj.value = null;
+                                const filtered = state.employeeListLookupData
+                                    .filter(emp => emp.departmentId === e.value);
+
+                                employeeListLookup.obj.dataSource = filtered;
+                                employeeListLookup.obj.dataBind();
+                                employeeListLookup.obj.value = null;
+                            }
                         }
+
                     });
 
                     departmentListLookup.obj.appendTo(departmentIdRef.value);
@@ -575,6 +580,26 @@ const App = {
             }
         );
 
+        async function syncDepartmentAndEmployee(departmentId, employeeId) {
+            // wait until employees are loaded
+            while (!state.employeeListLookupData || state.employeeListLookupData.length === 0) {
+                await new Promise(r => setTimeout(r, 50));
+            }
+
+            const filtered = state.employeeListLookupData
+                .filter(e => e.departmentId === departmentId);
+
+            employeeListLookup.obj.dataSource = filtered;
+            employeeListLookup.obj.dataBind();
+
+            // IMPORTANT: wait for databind cycle
+            requestAnimationFrame(() => {
+                employeeListLookup.obj.value = employeeId;
+            });
+        }
+
+
+
         const mainGrid = {
             obj: null,
             create: async (dataSource) => {
@@ -679,17 +704,9 @@ const App = {
                                 state.showComplexDiv = true;
 
                                 departmentListLookup.obj.value = state.departmentId;
-                                departmentListLookup.obj.dataBind();
+                                
 
-                                const filtered = state.employeeListLookupData
-                                    .filter(emp => emp.departmentId === state.departmentId);
-
-                                employeeListLookup.obj.dataSource = filtered;
-                                employeeListLookup.obj.dataBind();
-
-                                setTimeout(() => {
-                                    employeeListLookup.obj.value = state.employeeId;
-                                }, 0);
+                                await syncDepartmentAndEmployee(state.departmentId, state.employeeId);
 
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
