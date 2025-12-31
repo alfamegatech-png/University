@@ -36,7 +36,7 @@ public class GoodsExamineGetInvenTransListHandler : IRequestHandler<GoodsExamine
 
     public async Task<GoodsExamineGetInvenTransListResult> Handle(GoodsExamineGetInvenTransListRequest request, CancellationToken cancellationToken = default)
     {
-        var entity = await _inventoryTransactionService.GoodsReceiveGetInvenTransList(
+        var entity = await _inventoryTransactionService.GoodsExamineGetInvenTransList(
             request.ModuleId,
             nameof(GoodsExamine),
             cancellationToken);
