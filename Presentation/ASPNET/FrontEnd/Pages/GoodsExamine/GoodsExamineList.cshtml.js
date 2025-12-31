@@ -400,20 +400,28 @@ const App = {
                     throw error;
                 }
             },
-            createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById) => {
+            createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById, percentage,
+                reasons,
+                status,) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineCreateInvenTrans', {
-                        moduleId, warehouseId, productId, movement, createdById
+                        moduleId, warehouseId, productId, movement, createdById, percentage,
+                        reasons,
+                        status,
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById) => {
+            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById, percentage,
+                reasons,
+                status,) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineUpdateInvenTrans', {
-                        id, warehouseId, productId, movement, updatedById
+                        id, warehouseId, productId, movement, updatedById, percentage,
+                        reasons,
+                        status,
                     });
                     return response;
                 } catch (error) {
@@ -463,11 +471,26 @@ const App = {
             populateMainData: async () => {
                 const response = await services.getMainData();
                 state.mainData = response?.data?.content?.data.map(item => ({
-                    ...item,
-                    ExamineDate: new Date(item.ExamineDate),
-                    createdAtUtc: new Date(item.createdAtUtc)
+                    id: item.id,
+                    number: item.number,
+                    description: item.description,
+                    purchaseOrderId: item.purchaseOrderId,
+                    purchaseOrderNumber: item.purchaseOrderNumber,
+                    status: item.status,
+                    statusName: item.statusName,
+
+                    // ✅ دول المهمين
+                    CommitteeDesionNumber: item.CommitteeDesionNumber ?? '',
+                    CommiteeDate: item.CommiteeDate ? new Date(item.CommiteeDate) : null,
+
+                    ExamineDate: item.ExamineDate ? new Date(item.ExamineDate) : null,
+                    createdAtUtc: item.createdAtUtc ? new Date(item.createdAtUtc) : null,
+
+                    committeeList: item.committeeList ?? []
                 }));
             },
+
+
             populatePurchaseOrderListLookupData: async () => {
                 const response = await services.getPurchaseOrderListLookupData();
                 state.purchaseOrderListLookupData = response?.data?.content?.data;
@@ -736,11 +759,12 @@ const App = {
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
-                                state.status = String(selectedRecord.status ?? '');
-
+                                state.CommiteeDate = selectedRecord.CommiteeDate ? new Date(selectedRecord.CommiteeDate) : null;
+                                state.CommitteeDesionNumber = selectedRecord.CommitteeDesionNumber ?? '';
+                            
                                 state.committeeList = selectedRecord.committeeList?.length
                                     ? selectedRecord.committeeList.map(c => ({
-                                        id: c.id ?? null,
+                                        id: null,                    // ✅ مهم جدًا
                                         goodsExamineId: selectedRecord.id,
                                         employeeName: c.employeeName ?? '',
                                         employeePositionName: c.employeePositionName ?? '',
@@ -754,8 +778,10 @@ const App = {
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = true;
                                 mainModal.obj.show();
+                                console.log('Selected Record:', selectedRecord);
                             }
                         }
+                      
 
                         if (args.item.id === 'DeleteCustom') {
                             state.deleteMode = true;
@@ -768,6 +794,8 @@ const App = {
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
+                                state.CommiteeDate = selectedRecord.CommiteeDate ? new Date(selectedRecord.CommiteeDate) : null;
+                                state.CommitteeDesionNumber = String(selectedRecord.CommitteeDesionNumber ?? '');
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = false;
@@ -796,6 +824,8 @@ const App = {
             create: async (dataSource) => {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
                     allowFiltering: false,
@@ -893,6 +923,7 @@ const App = {
                                 }
                             }
                         },
+
                         {
                             field: 'movement',
                             headerText: 'الحركة',
@@ -901,7 +932,7 @@ const App = {
                                 required: true,
                                 custom: [(args) => {
                                     return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
+                                }, 'يجب ان يكون الرقم اكبر من 0']
                             },
                             type: 'number',
                             format: 'N2', textAlign: 'Right',
@@ -924,6 +955,42 @@ const App = {
                                 }
                             }
                         },
+                        {
+                            field: 'percentage',
+                            headerText: ' النسبة المئوية',
+                            width: 120,
+                            editType: 'stringedit'
+                        },
+                        {
+                            field: 'reasons',
+                            headerText: 'الأسباب',
+                            width: 250,
+                            editType: 'stringedit'
+                        },
+                        {
+                            field: 'status',
+                            headerText: 'الحالة',
+                            width: 150,
+                            editType: 'dropdownedit',
+                            edit: {
+                                create: () => document.createElement('input'),
+                                write: (args) => {
+                                    statusObj = new ej.dropdowns.DropDownList({
+                                        dataSource: [
+                                            { text: 'مقبول', value: true },
+                                            { text: 'مرفوض', value: false }
+                                        ],
+                                        fields: { text: 'text', value: 'value' },
+                                        value: args.rowData.status
+                                    });
+                                    statusObj.appendTo(args.element);
+                                },
+                                read: () => statusObj.value,
+                                destroy: () => statusObj.destroy()
+                            }
+                        }
+
+
                     ],
                     toolbar: [
                         'ExcelExport',
@@ -975,6 +1042,9 @@ const App = {
                                     args.data.warehouseId,
                                     args.data.productId,
                                     args.data.movement,
+                                    args.data.percentage,
+                                    args.data.reasons,
+                                    args.data.status,
                                     StorageManager.getUserId()
                                 );
 
@@ -1009,7 +1079,9 @@ const App = {
 
                         if (args.requestType === 'save' && args.action === 'edit') {
                             try {
-                                const response = await services.updateSecondaryData(args.data.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
+                                const response = await services.updateSecondaryData(args.data.id, args.data.warehouseId, args.data.productId, args.data.movement, args.data.percentage,
+                                    args.data.reasons,
+                                    args.data.status, StorageManager.getUserId());
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
                                 if (response.data.code === 200) {

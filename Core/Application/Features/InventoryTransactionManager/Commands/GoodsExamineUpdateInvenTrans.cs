@@ -16,7 +16,9 @@ public class GoodsExamineUpdateInvenTransRequest : IRequest<GoodsExamineUpdateIn
     public string? ProductId { get; init; }
     public double? Movement { get; init; }
     public string? UpdatedById { get; init; }
-
+    public string? Percentage { get; set; }
+    public string? Reasons { get; set; }
+    public bool? Status { get; set; }
 }
 
 public class GoodsExamineUpdateInvenTransValidator : AbstractValidator<GoodsExamineUpdateInvenTransRequest>
@@ -49,7 +51,12 @@ public class GoodsExamineUpdateInvenTransHandler : IRequestHandler<GoodsExamineU
             request.WarehouseId,
             request.ProductId,
             request.Movement,
+            request.Percentage,
+            request.Status,
+            request.Reasons,
+            
             request.UpdatedById,
+            
             cancellationToken);
 
         return new GoodsExamineUpdateInvenTransResult

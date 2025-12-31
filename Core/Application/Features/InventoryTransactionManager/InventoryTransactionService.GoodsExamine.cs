@@ -11,9 +11,14 @@ public partial class InventoryTransactionService
         string? moduleId,
         string? warehouseId,
         string? productId,
+        string? Percentage,
+          bool? Status,
+        string? Reasons,
+      
         double? movement,
         string? createdById,
-        CancellationToken cancellationToken = default
+     
+    CancellationToken cancellationToken = default
         )
     {
         var parent = await _queryContext
@@ -53,8 +58,12 @@ public partial class InventoryTransactionService
         string? id,
         string? warehouseId,
         string? productId,
-        double? movement,
+        double? movement, 
+        string? Percentage,
+          bool? Status,
+        string? Reasons,
         string? updatedById,
+         
         CancellationToken cancellationToken = default
         )
     {

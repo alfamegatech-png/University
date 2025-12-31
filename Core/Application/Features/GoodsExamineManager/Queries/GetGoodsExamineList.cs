@@ -19,6 +19,8 @@ public record GetGoodsExamineListDto
     public string? PurchaseOrderId { get; init; }
     public string? PurchaseOrderNumber { get; init; }
     public DateTime? CreatedAtUtc { get; init; }
+    public DateTime? CommiteeDate { get; set; }
+    public string? CommitteeDesionNumber { get; set; }
 
     // ✅ لازم List
     public List<ExamineCommiteeDto> committeeList { get; init; } = new();

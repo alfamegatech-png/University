@@ -22,12 +22,14 @@ public class CreateGoodsExamineRequest : IRequest<CreateGoodsExamineResult>
     public string? Description { get; init; }
     public string? PurchaseOrderId { get; init; }
     public string? CreatedById { get; init; }
+    public DateTime? CommiteeDate { get; set; }
+    public string? CommitteeDesionNumber { get; set; }
     // ✅ إضافة بيانات اللجنة
     public List<ExamineCommiteeDto>? committeeList { get; init; }
 
 }
 public class ExamineCommiteeDto
-{
+{     public string? Id { get; init; }
     public int? EmployeeID { get; init; }
     public int? EmployeePositionID { get; init; }
     public string? EmployeeName { get; init; }
@@ -85,7 +87,8 @@ public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineReque
         entity.Status = (GoodsExamineStatus)int.Parse(request.Status!);
         entity.Description = request.Description;
         entity.PurchaseOrderId = request.PurchaseOrderId;
-
+        entity.CommitteeDesionNumber = request.CommitteeDesionNumber;
+        entity.CommiteeDate = request.CommiteeDate;
         await _deliveryOrderRepository.CreateAsync(entity, cancellationToken);
         await _unitOfWork.SaveAsync(cancellationToken);
 
@@ -138,6 +141,9 @@ public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineReque
                         entity.Id,
                         defaultWarehouse.Id,
                         item.ProductId,
+                        item.Percentage,
+                        item.Status,
+                        item.Reasons,
                         item.Quantity,
                         entity.CreatedById,
                         cancellationToken

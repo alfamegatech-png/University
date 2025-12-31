@@ -1,4 +1,5 @@
-﻿using Application.Common.Repositories;
+﻿using System.Linq;
+using Application.Common.Repositories;
 using Application.Features.InventoryTransactionManager;
 using Domain.Entities;
 using Domain.Enums;
@@ -21,6 +22,8 @@ public class UpdateGoodsExamineRequest : IRequest<UpdateGoodsExamineResult>
     public string? Description { get; init; }
     public string? PurchaseOrderId { get; init; }
     public string? UpdatedById { get; init; }
+    public DateTime? CommiteeDate { get; set; }
+    public string? CommitteeDesionNumber { get; set; }
     public List<ExamineCommiteeDto>? committeeList { get; init; }
 
 }
@@ -66,46 +69,64 @@ public class UpdateGoodsExamineHandler : IRequestHandler<UpdateGoodsExamineReque
         }
 
         entity.UpdatedById = request.UpdatedById;
-
+        entity.CommiteeDate = request.CommiteeDate;
+        entity.CommitteeDesionNumber = request.CommitteeDesionNumber;
         entity.ExamineDate = request.ExamineDate;
         entity.Status = (GoodsExamineStatus)int.Parse(request.Status!);
         entity.Description = request.Description;
         entity.PurchaseOrderId = request.PurchaseOrderId;
-       
+       entity.CommiteeDate = request.CommiteeDate;
+        entity.CommitteeDesionNumber=request.CommitteeDesionNumber;
         _repository.Update(entity);
-       
-        // 🧹 حذف اللجان القديمة
-        var oldCommittees = await _committeeRepository
-            .GetQuery()
-            .Where(x => x.GoodsExamineId == entity.Id)
-            .ToListAsync(cancellationToken);
 
-        foreach (var old in oldCommittees)
+        // 🧹 حذف اللجان القديمة
+        // 🧹 حذف اللجان القديمة
+        var existingCommittees = await _committeeRepository
+      .GetQuery()
+      .Where(x => x.GoodsExamineId == entity.Id)
+      .ToListAsync(cancellationToken);
+
+        // حذف اللي اتشال
+        var requestIds = request.committeeList
+            .Where(x => x.Id != null)
+            .Select(x => x.Id)
+            .ToList();
+
+        var toDelete = existingCommittees
+            .Where(x => !requestIds.Contains( x.Id))
+            .ToList();
+
+        foreach (var item in toDelete)
         {
-            _committeeRepository.Delete(old);
+            _committeeRepository.Delete(item);
         }
 
-        // ➕ إضافة اللجان الجديدة
-        if (request.committeeList != null && request.committeeList.Any())
+        // Add / Update
+        foreach (var dto in request.committeeList)
         {
-            foreach (var committeeDto in request.committeeList)
+            if (dto.Id == null)
             {
-                var committee = new ExamineCommitee
+                await _committeeRepository.CreateAsync(new ExamineCommitee
                 {
                     GoodsExamineId = entity.Id,
-                    EmployeeID = committeeDto.EmployeeID,
-                    EmployeePositionID = committeeDto.EmployeePositionID,
-                    EmployeeName = committeeDto.EmployeeName,
-                    EmployeePositionName = committeeDto.EmployeePositionName,
-                    EmployeeType = committeeDto.EmployeeType,
-                    Description = committeeDto.Description,
+                    EmployeeName = dto.EmployeeName,
+                    EmployeePositionName = dto.EmployeePositionName,
+                    EmployeeType = dto.EmployeeType,
+                    Description = dto.Description,
                     CreatedById = request.UpdatedById
-                };
-
-                await _committeeRepository.CreateAsync(committee, cancellationToken);
+                }, cancellationToken);
+            }
+            else
+            {
+                var old = existingCommittees.First(x => x.Id == dto.Id);
+                old.EmployeeName = dto.EmployeeName;
+                old.EmployeePositionName = dto.EmployeePositionName;
+                old.EmployeeType = dto.EmployeeType;
+                old.Description = dto.Description;
             }
         }
-        
+
+
         await _unitOfWork.SaveAsync(cancellationToken);
 
         await _inventoryTransactionService.PropagateParentUpdate(

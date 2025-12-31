@@ -16,6 +16,9 @@ public class GoodsExamineCreateInvenTransRequest : IRequest<GoodsExamineCreateIn
     public string? ProductId { get; init; }
     public double? Movement { get; init; }
     public string? CreatedById { get; init; }
+    public string? Percentage { get; set; }
+    public string? Reasons { get; set; }
+    public bool? Status { get; set; }
 }
 
 public class GoodsExamineCreateInvenTransValidator : AbstractValidator<GoodsExamineCreateInvenTransRequest>
@@ -47,7 +50,11 @@ public class GoodsExamineCreateInvenTransHandler : IRequestHandler<GoodsExamineC
             request.ModuleId,
             request.WarehouseId,
             request.ProductId,
+             request.Percentage,
+            request.Status,
+            request.Reasons,
             request.Movement,
+           
             request.CreatedById,
             cancellationToken);
 

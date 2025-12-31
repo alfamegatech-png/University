@@ -54,6 +54,9 @@ public partial class InventoryTransactionService
         string? productId,
         double? movement,
         string? updatedById,
+        string? Percentage,
+        string? Reasons,
+        bool? Status,
         CancellationToken cancellationToken = default
         )
     {

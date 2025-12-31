@@ -81,7 +81,7 @@
                                         </div>
                                         <div class="card-body">
                                             <div v-for="(member, index) in state.committeeList" :key="index" class="border p-3 mb-3">
-
+                                                <input type="hidden" v-model="member.id"  name="Id" />
                                                 <div class="row mb-2">
                                                     <div class="col-md-6">
                                                         <label>اسم الموظف</label>
