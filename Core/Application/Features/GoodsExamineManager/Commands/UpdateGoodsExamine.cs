@@ -79,32 +79,16 @@ public class UpdateGoodsExamineHandler : IRequestHandler<UpdateGoodsExamineReque
         entity.CommitteeDesionNumber=request.CommitteeDesionNumber;
         _repository.Update(entity);
 
-        // 🧹 حذف اللجان القديمة
+       
         // 🧹 حذف اللجان القديمة
         var existingCommittees = await _committeeRepository
       .GetQuery()
       .Where(x => x.GoodsExamineId == entity.Id)
       .ToListAsync(cancellationToken);
 
-        // حذف اللي اتشال
-        var requestIds = request.committeeList
-            .Where(x => x.Id != null)
-            .Select(x => x.Id)
-            .ToList();
-
-        var toDelete = existingCommittees
-            .Where(x => !requestIds.Contains( x.Id))
-            .ToList();
-
-        foreach (var item in toDelete)
-        {
-            _committeeRepository.Delete(item);
-        }
-
-        // Add / Update
         foreach (var dto in request.committeeList)
         {
-            if (dto.Id == null)
+            if (string.IsNullOrEmpty(dto.Id))
             {
                 await _committeeRepository.CreateAsync(new ExamineCommitee
                 {

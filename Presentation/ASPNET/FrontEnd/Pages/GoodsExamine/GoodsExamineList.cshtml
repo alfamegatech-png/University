@@ -33,9 +33,12 @@
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col-md-6">
-                                                <label for="ExamineDate">تاريخ الاستلام</label>
-                                                <input ref="ExamineDateRef">
-                                                <label class="text-danger">{{ state.errors.ExamineDate }}</label>
+                                                <label for="examineDate">تاريخ الاستلام</label>
+                                                <input ref="examineDateRef" />
+
+                                                
+
+                                                <label class="text-danger">{{ state.errors.examineDate }}</label>
                                             </div>
 
                                             <div class="col-md-6">
@@ -53,23 +56,23 @@
 
                                             <div class="col-md-6">
                                                 <label for="Status">الحالة</label>
-                                                <div ref="ItemStatusRef"></div>
+                                                <div ref="statusRef"></div>
                                                 <label class="text-danger">{{ state.errors.status }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
                                                 <label for="CommitteeDesionNumber"> رقم قرار اللجنه</label>
-                                                <input class="form-control" v-model="state.CommitteeDesionNumber" />
-                                                
-                                                <label class="text-danger">{{ state.errors.purchaseOrderId }}</label>
+                                                <input ref="committeeDesionNumberRef" v-model="state.committeeDesionNumber" class="form-control" />
+                                                <label class="text-danger">{{ state.errors.committeeDesionNumber }}</label>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <label for="CommiteeDate">تاريخ اللجنه</label>
-                                                <input type="date" class="form-control" v-model="state.CommiteeDate" />
+                                                <input ref="commiteeDateRef" type="date" v-model="state.commiteeDate" class="form-control" />
+
                                                 
-                                                <label class="text-danger">{{ state.errors.status }}</label>
+                                                <label class="text-danger">{{ state.errors.commiteeDate }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
@@ -80,8 +83,9 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
-                                            <div v-for="(member, index) in state.committeeList" :key="index" class="border p-3 mb-3">
-                                                <input type="hidden" v-model="member.id"  name="Id" />
+                                            <div v-for="(member, index) in state.committeeList" :key="member.id || index"
+                                                 class="border p-3 mb-3">
+                                                <input type="hidden" v-model="member.id"  />
                                                 <div class="row mb-2">
                                                     <div class="col-md-6">
                                                         <label>اسم الموظف</label>

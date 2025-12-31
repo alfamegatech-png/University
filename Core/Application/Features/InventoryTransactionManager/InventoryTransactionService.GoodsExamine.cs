@@ -12,10 +12,11 @@ public partial class InventoryTransactionService
         string? warehouseId,
         string? productId,
         string? Percentage,
-          bool? Status,
+       
         string? Reasons,
-      
-        double? movement,
+
+     bool? ItemStatus ,
+    double? movement,
         string? createdById,
      
     CancellationToken cancellationToken = default
@@ -41,7 +42,9 @@ public partial class InventoryTransactionService
         child.ModuleNumber = parent.Number;
         child.MovementDate = parent.ExamineDate;
         child.Status = (InventoryTransactionStatus?)parent.Status;
-
+        child.Reasons = Reasons;
+        child.ItemStatus = ItemStatus;
+        child.Percentage = Percentage;
         child.WarehouseId = warehouseId;
         child.ProductId = productId;
         child.Movement = movement;

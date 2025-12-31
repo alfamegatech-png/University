@@ -45,14 +45,26 @@ const App = {
         const mainGridRef = Vue.ref(null);
         const mainModalRef = Vue.ref(null);
         const secondaryGridRef = Vue.ref(null);
-        const ExamineDateRef = Vue.ref(null);
+        const examineDateRef = Vue.ref(null);
         const purchaseOrderIdRef = Vue.ref(null);
-        const ItemStatusRef = Vue.ref(null);
+        const itemStatusRef = Vue.ref(null);
         const numberRef = Vue.ref(null);
         const statusRef = Vue.ref(null);
         // ✅ دول لازم هنا
-        const CommitteeDesionNumberRef = Vue.ref(null);
-        const CommiteeDateRef = Vue.ref(null);
+        const committeeDesionNumberRef = Vue.ref(null);
+        const commiteeDateRef = Vue.ref(null);
+
+        const refreshFormControls = async () => {
+            await Vue.nextTick();
+
+            examineDatePicker.obj?.dataBind();
+
+            commiteeDatePicker.obj?.dataBind();
+            committeeDesionNumberText.obj?.dataBind();
+
+            purchaseOrderListLookup.obj?.dataBind();
+            goodsExamineStatusListLookup.obj?.dataBind();
+        };
 
 
 
@@ -71,17 +83,17 @@ const App = {
 
 
               
-            CommitteeDesionNumberRef,
-            CommiteeDateRef,
-            CommiteeDate: null,
-            CommitteeDesionNumber: '',
+            committeeDesionNumberRef,
+            commiteeDateRef,
+            commiteeDate: null,
+            committeeDesionNumber: '',
             number: '',
-            ExamineDate: '',
+            examineDate: '',
             description: '',
             purchaseOrderId: null,
             status: null,
             errors: {
-                ExamineDate: '',
+                examineDate: '',
                 purchaseOrderId: '',
 
                 status: '',
@@ -95,13 +107,15 @@ const App = {
         
 
         const emptyCommitteeMember = () => ({
-            id: null,
+            id: null,                     // DB Id
+            tempId: crypto.randomUUID(),  // ✅ ID مؤقت
             goodsExamineId: '',
             employeeName: '',
             employeePositionName: '',
-            employeeType: true, // رئيس / عضو
+            employeeType: true,
             description: ''
         });
+
         const addCommitteeMember = () => {
             state.committeeList.push(emptyCommitteeMember());
         };
@@ -119,8 +133,8 @@ const App = {
 
             let isValid = true;
 
-            if (!state.ExamineDate) {
-                state.errors.ExamineDate = 'Examine date is required.';
+            if (!state.examineDate) {
+                state.errors.examineDate = 'Examine date is required.';
                 isValid = false;
             }
             if (!state.purchaseOrderId) {
@@ -138,79 +152,81 @@ const App = {
         const resetFormState = () => {
             state.id = '';
             state.number = '';
-            state.ExamineDate = '';
+            state.examineDate = '';
             state.description = '';
-            state.CommiteeDate = '';
-            state.CommitteeDesionNumber = '';
+            state.commiteeDate = '';
+            state.committeeDesionNumber = '';
             state.purchaseOrderId = null;
             state.status = null;
             state.errors = {
-                ExamineDate: '',
+                examineDate: '',
                 purchaseOrderId: '',
                 status: '',
                 description: ''
             };
             state.committeeList = [emptyCommitteeMember()];
 
-            state.committeeList = [];
+            
 
             state.secondaryData = [];
+            refreshFormControls();
+
         };
-        const CommitteeDesionNumberText = {
+        const committeeDesionNumberText = {
             obj: null,
             create: () => {
-                CommitteeDesionNumberText.obj = new ej.inputs.TextBox({
+                committeeDesionNumberText.obj = new ej.inputs.TextBox({
                     placeholder: 'رقم قرار اللجنة',
-                    value: state.CommitteeDesionNumber,
+                    value: state.committeeDesionNumber,
                     input: (e) => {
-                        state.CommitteeDesionNumber = e.value;
+                        state.committeeDesionNumber = e.value;
                     }
                 });
-                CommitteeDesionNumberText.obj.appendTo(CommitteeDesionNumberRef.value);
+                committeeDesionNumberText.obj.appendTo(committeeDesionNumberRef.value);
             },
             refresh: () => {
-                if (CommitteeDesionNumberText.obj) {
-                    CommitteeDesionNumberText.obj.value = state.CommitteeDesionNumber;
+                if (committeeDesionNumberText.obj) {
+                    committeeDesionNumberText.obj.value = state.committeeDesionNumber;
                 }
             }
         };
-        const CommiteeDatePicker = {
+        const commiteeDatePicker = {
             obj: null,
             create: () => {
-                CommiteeDatePicker.obj = new ej.calendars.DatePicker({
+                commiteeDatePicker.obj = new ej.calendars.DatePicker({
                     placeholder: 'اختر تاريخ اللجنة',
                     format: 'yyyy-MM-dd',
-                    value: state.CommiteeDate ? new Date(state.CommiteeDate) : null,
+                    value: state.commiteeDate ? new Date(state.commiteeDate) : null,
                     change: (e) => {
-                        state.CommiteeDate = e.value;
+                        state.commiteeDate = e.value;
                     }
                 });
-                CommiteeDatePicker.obj.appendTo(CommiteeDateRef.value);
+                commiteeDatePicker.obj.appendTo(commiteeDateRef.value);
             },
             refresh: () => {
-                if (CommiteeDatePicker.obj) {
-                    CommiteeDatePicker.obj.value =
-                        state.CommiteeDate ? new Date(state.CommiteeDate) : null;
+                if (commiteeDatePicker.obj) {
+                    commiteeDatePicker.obj.value =
+                        state.commiteeDate ? new Date(state.commiteeDate) : null;
                 }
             }
         };
 
-        const ExamineDatePicker = {
+        const examineDatePicker = {
             obj: null,
             create: () => {
-                ExamineDatePicker.obj = new ej.calendars.DatePicker({
+                examineDatePicker.obj = new ej.calendars.DatePicker({
                     placeholder: 'اختر التاريخ',
                     format: 'yyyy-MM-dd',
-                    value: state.ExamineDate ? new Date(state.ExamineDate) : null,
+                    value: state.examineDate ? new Date(state.examineDate) : null,
                     change: (e) => {
-                        state.ExamineDate = e.value;
+                        state.examineDate = e.value;
                     }
                 });
-                ExamineDatePicker.obj.appendTo(ExamineDateRef.value);
+                examineDatePicker.obj.appendTo(examineDateRef.value);
             },
             refresh: () => {
-                if (ExamineDatePicker.obj) {
-                    ExamineDatePicker.obj.value = state.ExamineDate ? new Date(state.ExamineDate) : null;
+                if (examineDatePicker.obj) {
+                    examineDatePicker.obj.value = state.examineDate ? new Date(state.examineDate) : null;
                 }
             }
         };
@@ -219,19 +235,19 @@ const App = {
 
 
 
-        Vue.watch(() => state.CommiteeDate, () => {
-            CommiteeDatePicker.refresh();
+        Vue.watch(() => state.commiteeDate, () => {
+            commiteeDatePicker.refresh();
         });
 
-        Vue.watch(() => state.CommitteeDesionNumber, () => {
-            CommitteeDesionNumberText.refresh();
+        Vue.watch(() => state.committeeDesionNumber, () => {
+            committeeDesionNumberText.refresh();
         });
 
         Vue.watch(
-            () => state.ExamineDate,
+            () => state.examineDate,
             (newVal, oldVal) => {
-                ExamineDatePicker.refresh();
-                state.errors.ExamineDate = '';
+                examineDatePicker.refresh();
+                state.errors.examineDate = '';
             }
         );
 
@@ -330,11 +346,11 @@ const App = {
             createMainData: async (ExamineDate, description, CommiteeDate, CommitteeDesionNumber, status, purchaseOrderId, committeeList, createdById) => {
                 try {
                     const response = await AxiosManager.post('/GoodsExamine/CreateGoodsExamine', {
-                        ExamineDate,
+                        examineDate,
                         status,
                         description,
-                        CommiteeDate,
-                        CommitteeDesionNumber,
+                        commiteeDate,
+                        committeeDesionNumber,
                         purchaseOrderId,
                         committeeList,
                         createdById
@@ -346,15 +362,15 @@ const App = {
             },
 
 
-            updateMainData: async (id, ExamineDate, description, CommiteeDate, CommitteeDesionNumber, status, purchaseOrderId, committeeList, updatedById) => {
+            updateMainData: async (id, examineDate, description, commiteeDate, committeeDesionNumber, status, purchaseOrderId, committeeList, updatedById) => {
  
                 try {
                     const response = await AxiosManager.post('/GoodsExamine/UpdateGoodsExamine', {
                         id,
-                        ExamineDate,
+                        examineDate,
                         description,
-                        CommiteeDate,
-                        CommitteeDesionNumber,
+                        commiteeDate,
+                        committeeDesionNumber,
                         status,
                         purchaseOrderId,
                         committeeList,     // ✅ أضف هذا
@@ -407,7 +423,7 @@ const App = {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineCreateInvenTrans', {
                         moduleId, warehouseId, productId, movement, createdById, percentage,
                         reasons,
-                        ItemStatus,
+                        itemStatus,
                     });
                     return response;
                 } catch (error) {
@@ -416,12 +432,12 @@ const App = {
             },
             updateSecondaryData: async (id, warehouseId, productId, movement, updatedById, percentage,
                 reasons,
-                ItemStatus,) => {
+                itemStatus,) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineUpdateInvenTrans', {
                         id, warehouseId, productId, movement, updatedById, percentage,
                         reasons,
-                        ItemStatus,
+                        itemStatus,
                     });
                     return response;
                 } catch (error) {
@@ -480,10 +496,10 @@ const App = {
                     statusName: item.statusName,
 
                     // ✅ دول المهمين
-                    CommitteeDesionNumber: item.CommitteeDesionNumber ?? '',
-                    CommiteeDate: item.CommiteeDate ? new Date(item.CommiteeDate) : null,
+                    committeeDesionNumber: item.committeeDesionNumber ?? '',
+                    commiteeDate: item.commiteeDate ? new Date(item.commiteeDate) : null,
 
-                    ExamineDate: item.ExamineDate ? new Date(item.ExamineDate) : null,
+                    examineDate: item.examineDate ? new Date(item.examineDate) : null,
                     createdAtUtc: item.createdAtUtc ? new Date(item.createdAtUtc) : null,
 
                     committeeList: item.committeeList ?? []
@@ -529,7 +545,7 @@ const App = {
                 state.totalMovementFormatted = NumberFormatManager.formatToLocale(totalMovement);
             },
             onMainModalHidden: () => {
-                state.errors.ExamineDate = '';
+                state.errors.examineDate = '';
                 state.errors.purchaseOrderId = '';
                 state.errors.status = '';
             }
@@ -545,32 +561,39 @@ const App = {
                         return;
                     }
 
+                    // ⚡ نسخ نظيفة للجان قبل الإرسال
+                    const cleanCommitteeList = state.committeeList.map(member => ({
+                        id: member.id || null,
+                        employeeName: member.employeeName,
+                        employeePositionName: member.employeePositionName,
+                        employeeType: member.employeeType,
+                        description: member.description
+                    }));
+
                     const response = state.id === ''
                         ? await services.createMainData(
-                            state.ExamineDate,
+                            state.examineDate,
                             state.description,
-                            state.CommiteeDate ?? null,
-                            state.CommitteeDesionNumber ?? null,
+                            state.commiteeDate ?? null,
+                            state.committeeDesionNumber ?? null,
                             state.status,
                             state.purchaseOrderId,
-                            state.committeeList,
+                            cleanCommitteeList,
                             StorageManager.getUserId()
                         )
-
                         : state.deleteMode
                             ? await services.deleteMainData(state.id, StorageManager.getUserId())
                             : await services.updateMainData(
                                 state.id,
-                                state.ExamineDate,
+                                state.examineDate,
                                 state.description,
-                                state.CommiteeDate ?? null,
-                                state.CommitteeDesionNumber ?? null,
+                                state.commiteeDate ?? null,
+                                state.committeeDesionNumber ?? null,
                                 state.status,
                                 state.purchaseOrderId,
-                                state.committeeList,
+                                cleanCommitteeList,
                                 StorageManager.getUserId()
                             );
-
 
                     if (response.data.code === 200) {
                         await methods.populateMainData();
@@ -579,7 +602,6 @@ const App = {
                         if (!state.deleteMode) {
                             state.mainTitle = 'تعديل طلب الفحص';
                             state.id = response?.data?.content?.data.id ?? '';
-                            
                             state.number = response?.data?.content?.data.number ?? '';
                             await methods.populateSecondaryData(state.id);
                             secondaryGrid.refresh();
@@ -609,8 +631,8 @@ const App = {
                     } else {
                         Swal.fire({
                             icon: 'error',
-    title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
-                                text: response.data.message ?? 'يرجى التحقق من البيانات.',
+                            title: state.deleteMode ? 'فشل الحذف' : 'فشل الحفظ',
+                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
                             confirmButtonText: 'حاول مرة أخرى'
                         });
                     }
@@ -628,6 +650,7 @@ const App = {
             },
         };
 
+
         Vue.onMounted(async () => {
             try {
 
@@ -637,15 +660,16 @@ const App = {
                 await methods.populateMainData();
                 await mainGrid.create(state.mainData);
 
-                CommitteeDesionNumberText.create();
-                CommiteeDatePicker.create();
+                committeeDesionNumberText.create();
+                commiteeDatePicker.create();
+                examineDatePicker.create();
 
                 mainModal.create();
                 mainModalRef.value?.addEventListener('hidden.bs.modal', methods.onMainModalHidden);
                 await methods.populatePurchaseOrderListLookupData();
                 await methods.populateGoodsExamineStatusListLookupData();
                 numberText.create();
-                ExamineDatePicker.create();
+                
                 purchaseOrderListLookup.create();
                 goodsExamineStatusListLookup.create();
 
@@ -691,11 +715,11 @@ const App = {
                         { type: 'checkbox', width: 60 },
                         { field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false },
                         { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'ExamineDate', headerText: 'تاريخ الاستلام', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'examineDate', headerText: 'تاريخ الاستلام', width: 150, format: 'yyyy-MM-dd' },
                         { field: 'purchaseOrderNumber', headerText: 'رقم أمر التوريد', width: 150, minWidth: 150 },
                         { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
-                        { field: 'CommitteeDesionNumber', headerText: 'رقم القرار', width: 150, minWidth: 150 },
-                        { field: 'CommiteeDate', headerText: 'تاريخ اللجنة UTC', width: 150, format: 'yyyy-MM-dd HH:mm' },
+                        { field: 'committeeDesionNumber', headerText: 'رقم القرار', width: 150, minWidth: 150 },
+                        { field: 'commiteeDate', headerText: 'تاريخ اللجنة UTC', width: 150, format: 'yyyy-MM-dd HH:mm' },
                         { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
@@ -713,7 +737,7 @@ const App = {
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        mainGrid.obj.autoFitColumns(['number', 'ExamineDate', 'purchaseOrderNumber', 'statusName', 'CommitteeDesionNumber','CommiteeDate','createdAtUtc']);
+                        mainGrid.obj.autoFitColumns(['number', 'examineDate', 'purchaseOrderNumber', 'statusName', 'committeeDesionNumber','commiteeDate','createdAtUtc']);
                     },
                     excelExportComplete: () => { },
                     rowSelected: () => {
@@ -750,21 +774,46 @@ const App = {
 
                         if (args.item.id === 'EditCustom') {
                             state.deleteMode = false;
+
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
+
                                 state.mainTitle = 'تعديل طلب فحص';
+
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
-                                state.ExamineDate = selectedRecord.ExamineDate ? new Date(selectedRecord.ExamineDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
-                                state.CommiteeDate = selectedRecord.CommiteeDate ? new Date(selectedRecord.CommiteeDate) : null;
-                                state.CommitteeDesionNumber = selectedRecord.CommitteeDesionNumber ?? '';
-                            
+
+                                // ✅ التواريخ والنصوص
+                                state.examineDate = selectedRecord.examineDate
+                                    ? new Date(selectedRecord.examineDate)
+                                    : null;
+
+                                state.commiteeDate = selectedRecord.commiteeDate ? selectedRecord.commiteeDate.toISOString().split('T')[0] : null;
+
+
+                                state.committeeDesionNumber = selectedRecord.committeeDesionNumber ?? '';
+                                console.log(
+                                    'committeeDesionNumber:', state.committeeDesionNumber,
+                                    'commiteeDate:', state.commiteeDate
+                                );
+
+                               
+                              
+
+
+                                //// ✅ أهم 3 أسطر 🔥🔥🔥
+                                //examineDatePicker.refresh();
+                                //commiteeDatePicker.refresh();
+                                //committeeDesionNumberText.refresh();
+                                
+                                // اللجنة
                                 state.committeeList = selectedRecord.committeeList?.length
                                     ? selectedRecord.committeeList.map(c => ({
-                                        id: null,                    // ✅ مهم جدًا
+                                        id: c.id,
+                                        tempId: crypto.randomUUID(),
                                         goodsExamineId: selectedRecord.id,
                                         employeeName: c.employeeName ?? '',
                                         employeePositionName: c.employeePositionName ?? '',
@@ -773,15 +822,19 @@ const App = {
                                     }))
                                     : [emptyCommitteeMember()];
 
-
                                 await methods.populateSecondaryData(selectedRecord.id);
-                                secondaryGrid.refresh();
+                                await Vue.nextTick();
+                                refreshFormControls();
+
+
                                 state.showComplexDiv = true;
                                 mainModal.obj.show();
-                                console.log('Selected Record:', selectedRecord);
+                                setTimeout(() => {
+                                    refreshFormControls();
+                                }, 200);
                             }
                         }
-                      
+
 
                         if (args.item.id === 'DeleteCustom') {
                             state.deleteMode = true;
@@ -790,12 +843,16 @@ const App = {
                                 state.mainTitle = 'حذف اذن الاستلام?';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
-                                state.ExamineDate = selectedRecord.ExamineDate ? new Date(selectedRecord.ExamineDate) : null;
+                                state.examineDate = selectedRecord.examineDate ? new Date(selectedRecord.examineDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
-                                state.CommiteeDate = selectedRecord.CommiteeDate ? new Date(selectedRecord.CommiteeDate) : null;
-                                state.CommitteeDesionNumber = String(selectedRecord.CommitteeDesionNumber ?? '');
+                                state.commiteeDate = selectedRecord.commiteeDate ? new Date(selectedRecord.commiteeDate) : null;
+                                state.committeeDesionNumber = String(selectedRecord.committeeDesionNumber ?? '');
+                                await Vue.nextTick();
+                                refreshFormControls();
+
+
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = false;
@@ -968,25 +1025,25 @@ const App = {
                             editType: 'stringedit'
                         },
                         {
-                            field: 'ItemStatus',
+                            field: 'itemStatus',
                             headerText: 'الحالة',
                             width: 150,
                             editType: 'dropdownedit',
                             edit: {
                                 create: () => document.createElement('input'),
                                 write: (args) => {
-                                    ItemStatusObj = new ej.dropdowns.DropDownList({
+                                    itemStatusObj = new ej.dropdowns.DropDownList({
                                         dataSource: [
                                             { text: 'مقبول', value: true },
                                             { text: 'مرفوض', value: false }
                                         ],
                                         fields: { text: 'text', value: 'value' },
-                                        value: args.rowData.ItemStatus
+                                        value: args.rowData.itemStatus
                                     });
-                                    ItemStatusObj.appendTo(args.element);
+                                    itemStatusObj.appendTo(args.element);
                                 },
-                                read: () => ItemStatusObj.value,
-                                destroy: () => ItemStatusObj.destroy()
+                                read: () => itemStatusObj.value,
+                                destroy: () => itemStatusObj.destroy()
                             }
                         }
 
@@ -1038,15 +1095,17 @@ const App = {
                         if (args.requestType === 'save' && args.action === 'add') {
                             try {
                                 const response = await services.createSecondaryData(
-                                    state.id,
+                                    state.id,                      // moduleId
                                     args.data.warehouseId,
                                     args.data.productId,
                                     args.data.movement,
+                                    StorageManager.getUserId(),    // createdById ✅
                                     args.data.percentage,
                                     args.data.reasons,
-                                    args.data.ItemStatus,
-                                    StorageManager.getUserId()
+                                    args.data.itemStatus
                                 );
+
+                               
 
                                 if (response.data.code === 200) {
                                     await methods.populateSecondaryData(state.id);
@@ -1087,7 +1146,7 @@ const App = {
                                     StorageManager.getUserId(), // updatedById
                                     args.data.percentage,
                                     args.data.reasons,
-                                    args.data.ItemStatus
+                                    args.data.itemStatus
                                 );
 
 
@@ -1179,7 +1238,7 @@ const App = {
             mainModalRef,
             secondaryGridRef,
             numberRef,
-            ExamineDateRef,
+            examineDateRef,
             purchaseOrderIdRef,
             statusRef,
             state,

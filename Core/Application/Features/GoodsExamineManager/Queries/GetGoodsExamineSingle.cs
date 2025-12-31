@@ -5,20 +5,42 @@ using Domain.Entities;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using static Application.Features.GoodsExamineManager.Queries.GetGoodsExamineSingleProfile;
 
 namespace Application.Features.GoodsExamineManager.Queries;
 
 
 public class GetGoodsExamineSingleProfile : Profile
 {
+    public class GetGoodsExamineSingleDto
+    {
+        public string? Id { get; set; }
+        public string? Number { get; set; }
+        public DateTime? ExamineDate { get; set; }
+        public DateTime? CommiteeDate { get; set; }
+        public string? CommitteeDesionNumber { get; set; }
+        public string? Description { get; set; }
+        public string? PurchaseOrderId { get; set; }
+
+        public List<ExamineCommiteeDto> CommitteeList { get; set; } = new();
+    }
+
     public GetGoodsExamineSingleProfile()
     {
+        CreateMap<GoodsExamine, GetGoodsExamineSingleDto>()
+            .ForMember(
+                d => d.CommitteeList,
+                o => o.MapFrom(s => s.Committees)
+            );
+
+        CreateMap<ExamineCommitee, ExamineCommiteeDto>();
     }
 }
 
+
 public class GetGoodsExamineSingleResult
 {
-    public GoodsExamine? Data { get; init; }
+    public GetGoodsExamineSingleDto? Data { get; init; }
     public List<InventoryTransaction>? TransactionList { get; init; }
 }
 
@@ -34,33 +56,38 @@ public class GetGoodsExamineSingleValidator : AbstractValidator<GetGoodsExamineS
         RuleFor(x => x.Id).NotEmpty();
     }
 }
-
-public class GetGoodsExamineSingleHandler : IRequestHandler<GetGoodsExamineSingleRequest, GetGoodsExamineSingleResult>
+public class GetGoodsExamineSingleHandler
+    : IRequestHandler<GetGoodsExamineSingleRequest, GetGoodsExamineSingleResult>
 {
     private readonly IQueryContext _context;
+    private readonly IMapper _mapper;
 
     public GetGoodsExamineSingleHandler(
-        IQueryContext context
-        )
+        IQueryContext context,
+        IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
-    public async Task<GetGoodsExamineSingleResult> Handle(GetGoodsExamineSingleRequest request, CancellationToken cancellationToken)
+    public async Task<GetGoodsExamineSingleResult> Handle(
+        GetGoodsExamineSingleRequest request,
+        CancellationToken cancellationToken)
     {
-        var queryData = _context
+        var entity = await _context
             .GoodsExamine
             .AsNoTracking()
             .Include(x => x.Committees)
             .Include(x => x.PurchaseOrder)
                 .ThenInclude(x => x.Vendor)
-            .Where(x => x.Id == request.Id)
-            .AsQueryable();
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
-        var data = await queryData.SingleOrDefaultAsync(cancellationToken);
+        if (entity == null)
+            return new GetGoodsExamineSingleResult();
 
+        var dto = _mapper.Map<GetGoodsExamineSingleDto>(entity);
 
-        var queryTransactionList = _context
+        var transactionList = await _context
             .InventoryTransaction
             .AsNoTracking()
             .ApplyIsDeletedFilter(false)
@@ -68,15 +95,15 @@ public class GetGoodsExamineSingleHandler : IRequestHandler<GetGoodsExamineSingl
             .Include(x => x.Warehouse)
             .Include(x => x.WarehouseFrom)
             .Include(x => x.WarehouseTo)
-            .Where(x => x.ModuleId == request.Id && x.ModuleName == nameof(GoodsExamine))
-            .AsQueryable();
-
-        var transactionList = await queryTransactionList.ToListAsync(cancellationToken);
+            .Where(x => x.ModuleId == request.Id &&
+                        x.ModuleName == nameof(GoodsExamine))
+            .ToListAsync(cancellationToken);
 
         return new GetGoodsExamineSingleResult
         {
-            Data = data,
+            Data = dto,
             TransactionList = transactionList
         };
     }
 }
+

@@ -236,7 +236,7 @@ public class InventoryTransactionController : BaseApiController
 
     [Authorize]
     [HttpPost("GoodsExamineCreateInvenTrans")]
-    public async Task<ActionResult<ApiSuccessResult<GoodsExamineCreateInvenTransResult>>> GoodsExamineCreateInvenTransAsync(GoodsExamineCreateInvenTransRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiSuccessResult<GoodsExamineCreateInvenTransResult>>> GoodsExamineCreateInvenTransAsync([FromBody] GoodsExamineCreateInvenTransRequest request, CancellationToken cancellationToken)
     {
         var response = await _sender.Send(request, cancellationToken);
 
