@@ -16,7 +16,9 @@ public class GoodsExamineUpdateInvenTransRequest : IRequest<GoodsExamineUpdateIn
     public string? ProductId { get; init; }
     public double? Movement { get; init; }
     public string? UpdatedById { get; init; }
-
+    public string? Percentage { get; set; }
+    public string? Reasons { get; set; }
+    public bool? ItemStatus { get; set; }
 }
 
 public class GoodsExamineUpdateInvenTransValidator : AbstractValidator<GoodsExamineUpdateInvenTransRequest>
@@ -45,12 +47,16 @@ public class GoodsExamineUpdateInvenTransHandler : IRequestHandler<GoodsExamineU
     public async Task<GoodsExamineUpdateInvenTransResult> Handle(GoodsExamineUpdateInvenTransRequest request, CancellationToken cancellationToken = default)
     {
         var entity = await _inventoryTransactionService.GoodsExamineUpdateInvenTrans(
-            request.Id,
-            request.WarehouseId,
-            request.ProductId,
-            request.Movement,
-            request.UpdatedById,
-            cancellationToken);
+    request.Id,
+    request.WarehouseId,
+    request.ProductId,
+    request.Movement,
+    request.Percentage,
+    request.ItemStatus,
+    request.Reasons,
+    request.UpdatedById,
+    cancellationToken);
+
 
         return new GoodsExamineUpdateInvenTransResult
         {

@@ -4,6 +4,7 @@ using Infrastructure.DataAccessManager.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251230165829_mig1")]
+    partial class mig1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -855,9 +858,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<bool?>("ItemStatus")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ModuleCode")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -883,9 +883,6 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Percentage")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ProductId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -898,9 +895,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<double?>("QtySCSys")
                         .HasColumnType("float");
-
-                    b.Property<string>("Reasons")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
@@ -1402,9 +1396,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<bool?>("ItemStatus")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Percentage")
                         .HasColumnType("nvarchar(max)");
 
@@ -1421,6 +1412,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Reasons")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Summary")
                         .HasMaxLength(4000)
@@ -2698,7 +2692,7 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("ExamineCommiteeId");
 
                     b.HasOne("Domain.Entities.GoodsExamine", "GoodsExamine")
-                        .WithMany("Committees")
+                        .WithMany()
                         .HasForeignKey("GoodsExamineId");
 
                     b.Navigation("GoodsExamine");
@@ -3014,11 +3008,6 @@ namespace Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Domain.Entities.ExamineCommitee", b =>
-                {
-                    b.Navigation("Committees");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GoodsExamine", b =>
                 {
                     b.Navigation("Committees");
                 });

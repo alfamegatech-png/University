@@ -45,6 +45,7 @@ public partial class InventoryTransactionService
                     x.WarehouseId == warehouseId &&
                     x.ProductId == productId &&
                     x.Product!.Physical == true)
+
                 .Sum(x => x.Stock ?? 0.0);
 
         }

@@ -22,11 +22,14 @@ public class CreateGoodsExamineRequest : IRequest<CreateGoodsExamineResult>
     public string? Description { get; init; }
     public string? PurchaseOrderId { get; init; }
     public string? CreatedById { get; init; }
+    public DateTime? CommiteeDate { get; set; }
+    public string? CommitteeDesionNumber { get; set; }
     // ✅ إضافة بيانات اللجنة
-    public ExamineCommiteeDto? Committee { get; init; }
+    public List<ExamineCommiteeDto>? committeeList { get; init; }
+
 }
 public class ExamineCommiteeDto
-{
+{     public string? Id { get; init; }
     public int? EmployeeID { get; init; }
     public int? EmployeePositionID { get; init; }
     public string? EmployeeName { get; init; }
@@ -84,31 +87,36 @@ public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineReque
         entity.Status = (GoodsExamineStatus)int.Parse(request.Status!);
         entity.Description = request.Description;
         entity.PurchaseOrderId = request.PurchaseOrderId;
-
+        entity.CommitteeDesionNumber = request.CommitteeDesionNumber;
+        entity.CommiteeDate = request.CommiteeDate;
         await _deliveryOrderRepository.CreateAsync(entity, cancellationToken);
         await _unitOfWork.SaveAsync(cancellationToken);
 
 
-       
 
-        // ✅ هنا بالظبط نضيف اللجنة
-        if (request.Committee != null)
+
+        if (request.committeeList != null && request.committeeList.Any())
         {
-            var committee = new ExamineCommitee
+            foreach (var committeeDto in request.committeeList)
             {
-                GoodsExamineId = entity.Id,
-                EmployeeID = request.Committee.EmployeeID,
-                EmployeePositionID = request.Committee.EmployeePositionID,
-                EmployeeName = request.Committee.EmployeeName,
-                EmployeePositionName = request.Committee.EmployeePositionName,
-                EmployeeType = request.Committee.EmployeeType,
-                Description = request.Committee.Description,
-                CreatedById = request.CreatedById
-            };
+                var committee = new ExamineCommitee
+                {
+                    GoodsExamineId = entity.Id,
+                    EmployeeID = committeeDto.EmployeeID,
+                    EmployeePositionID = committeeDto.EmployeePositionID,
+                    EmployeeName = committeeDto.EmployeeName,
+                    EmployeePositionName = committeeDto.EmployeePositionName,
+                    EmployeeType = committeeDto.EmployeeType,
+                    Description = committeeDto.Description,
+                    CreatedById = request.CreatedById
+                };
 
-            await _examineCommiteeRepository.CreateAsync(committee, cancellationToken);
+                await _examineCommiteeRepository.CreateAsync(committee, cancellationToken);
+            }
+
             await _unitOfWork.SaveAsync(cancellationToken);
         }
+
 
         var defaultWarehouse = await _warehouseRepository
             .GetQuery()
@@ -133,6 +141,9 @@ public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineReque
                         entity.Id,
                         defaultWarehouse.Id,
                         item.ProductId,
+                        item.Percentage,
+                        item.ItemStatus,
+                        item.Reasons,
                         item.Quantity,
                         entity.CreatedById,
                         cancellationToken

@@ -18,6 +18,8 @@ namespace Domain.Entities
         public string? CommitteeDesionNumber { get; set; }
         public string? PurchaseOrderId { get; set; }
         public PurchaseOrder? PurchaseOrder { get; set; }
-       
+        public ICollection<ExamineCommitee> Committees { get; set; } = new List<ExamineCommitee>();
+
+
     }
 }

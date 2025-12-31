@@ -53,21 +53,21 @@
 
                                             <div class="col-md-6">
                                                 <label for="Status">الحالة</label>
-                                                <div ref="statusRef"></div>
+                                                <div ref="ItemStatusRef"></div>
                                                 <label class="text-danger">{{ state.errors.status }}</label>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
                                                 <label for="CommitteeDesionNumber"> رقم قرار اللجنه</label>
-                                                <input ref ="CommitteeDesionNumberRef" />
+                                                <input class="form-control" v-model="state.CommitteeDesionNumber" />
                                                 
                                                 <label class="text-danger">{{ state.errors.purchaseOrderId }}</label>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <label for="CommiteeDate">تاريخ اللجنه</label>
-                                                <input ref="CommiteeDateRef">
+                                                <input type="date" class="form-control" v-model="state.CommiteeDate" />
                                                 
                                                 <label class="text-danger">{{ state.errors.status }}</label>
                                             </div>
@@ -81,7 +81,7 @@
                                         </div>
                                         <div class="card-body">
                                             <div v-for="(member, index) in state.committeeList" :key="index" class="border p-3 mb-3">
-
+                                                <input type="hidden" v-model="member.id"  name="Id" />
                                                 <div class="row mb-2">
                                                     <div class="col-md-6">
                                                         <label>اسم الموظف</label>
@@ -108,20 +108,23 @@
                                                         <textarea class="form-control" v-model="member.description"></textarea>
                                                     </div>
                                                 </div>
-
-                                                <button class="btn btn-danger btn-sm"
+                                                <button type="button"
+                                                        class="btn btn-danger btn-sm"
                                                         v-if="state.committeeList.length > 1"
-                                                        v-on:click="state.committeeList.splice(index,1)">
+                                                        v-on:click ="removeCommitteeMember(index)">
                                                     حذف العضو
                                                 </button>
 
                                             </div>
 
-                                            <button class="btn btn-success btn-sm"
-                                                    v-on:click="state.committeeList.push(emptyCommitteeMember())">
-                                                + إضافة عضو
+                                            <button type="button"
+                                                    class="btn btn-success btn-sm"
+                                                    v-on:click ="addCommitteeMember">
+                                                إضافة عضو
                                             </button>
+
                                         </div>
+
 
 
                                     </div>

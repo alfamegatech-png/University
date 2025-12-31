@@ -18,9 +18,12 @@ public record GetGoodsExamineListDto
     public string? Description { get; init; }
     public string? PurchaseOrderId { get; init; }
     public string? PurchaseOrderNumber { get; init; }
-
     public DateTime? CreatedAtUtc { get; init; }
-    public ExamineCommiteeDto? Committee { get; init; }
+    public DateTime? CommiteeDate { get; set; }
+    public string? CommitteeDesionNumber { get; set; }
+
+    // ✅ لازم List
+    public List<ExamineCommiteeDto> committeeList { get; init; } = new();
 }
 public class ExamineCommiteeDto
 {
@@ -37,14 +40,21 @@ public class GetGoodsExamineListProfile : Profile
     public GetGoodsExamineListProfile()
     {
         CreateMap<GoodsExamine, GetGoodsExamineListDto>()
-            .ForMember(
-                dest => dest.PurchaseOrderNumber,
-                opt => opt.MapFrom(src => src.PurchaseOrder != null ? src.PurchaseOrder.Number : string.Empty)
-            )
-            .ForMember(
-                dest => dest.StatusName,
-                opt => opt.MapFrom(src => src.Status.HasValue ? src.Status.Value.ToFriendlyName() : string.Empty)
-            );
+     .ForMember(
+         dest => dest.PurchaseOrderNumber,
+         opt => opt.MapFrom(src => src.PurchaseOrder != null ? src.PurchaseOrder.Number : string.Empty)
+     )
+     .ForMember(
+         dest => dest.StatusName,
+         opt => opt.MapFrom(src => src.Status.HasValue ? src.Status.Value.ToFriendlyName() : string.Empty)
+     )
+     .ForMember(
+         dest => dest.committeeList,
+         opt => opt.MapFrom(src => src.Committees) // ✅ تحويل القائمة إلى DTO
+     );
+
+        CreateMap<ExamineCommitee, ExamineCommiteeDto>();
+
 
     }
 }
@@ -79,7 +89,8 @@ public class GetGoodsExamineListHandler : IRequestHandler<GetGoodsExamineListReq
             .ApplyIsDeletedFilter(request.IsDeleted)
             
             .Include(x => x.PurchaseOrder)
-            
+            .Include(x => x.Committees).Where(x=>x.IsDeleted==false) // ✅ جلب جميع اللجان
+
             .AsQueryable();
 
         var entities = await query.ToListAsync(cancellationToken);

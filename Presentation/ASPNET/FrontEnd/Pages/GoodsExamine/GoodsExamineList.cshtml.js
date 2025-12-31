@@ -40,7 +40,22 @@
     }
 });
 const App = {
+
     setup() {
+        const mainGridRef = Vue.ref(null);
+        const mainModalRef = Vue.ref(null);
+        const secondaryGridRef = Vue.ref(null);
+        const ExamineDateRef = Vue.ref(null);
+        const purchaseOrderIdRef = Vue.ref(null);
+        const ItemStatusRef = Vue.ref(null);
+        const numberRef = Vue.ref(null);
+        const statusRef = Vue.ref(null);
+        // ✅ دول لازم هنا
+        const CommitteeDesionNumberRef = Vue.ref(null);
+        const CommiteeDateRef = Vue.ref(null);
+
+
+
         const state = Vue.reactive({
             mainData: [],
             deleteMode: false,
@@ -56,7 +71,8 @@ const App = {
 
 
               
-           
+            CommitteeDesionNumberRef,
+            CommiteeDateRef,
             CommiteeDate: null,
             CommitteeDesionNumber: '',
             number: '',
@@ -76,13 +92,8 @@ const App = {
             totalMovementFormatted: '0.00'
         });
 
-        const mainGridRef = Vue.ref(null);
-        const mainModalRef = Vue.ref(null);
-        const secondaryGridRef = Vue.ref(null);
-        const ExamineDateRef = Vue.ref(null);
-        const purchaseOrderIdRef = Vue.ref(null);
-        const statusRef = Vue.ref(null);
-        const numberRef = Vue.ref(null);
+        
+
         const emptyCommitteeMember = () => ({
             id: null,
             goodsExamineId: '',
@@ -91,6 +102,15 @@ const App = {
             employeeType: true, // رئيس / عضو
             description: ''
         });
+        const addCommitteeMember = () => {
+            state.committeeList.push(emptyCommitteeMember());
+        };
+
+        const removeCommitteeMember = (index) => {
+            if (state.committeeList.length > 1) {
+                state.committeeList.splice(index, 1);
+            }
+        };
 
         const validateForm = function () {
             state.errors.ExamineDate = '';
@@ -130,10 +150,49 @@ const App = {
                 status: '',
                 description: ''
             };
-            
+            state.committeeList = [emptyCommitteeMember()];
+
             state.committeeList = [];
 
             state.secondaryData = [];
+        };
+        const CommitteeDesionNumberText = {
+            obj: null,
+            create: () => {
+                CommitteeDesionNumberText.obj = new ej.inputs.TextBox({
+                    placeholder: 'رقم قرار اللجنة',
+                    value: state.CommitteeDesionNumber,
+                    input: (e) => {
+                        state.CommitteeDesionNumber = e.value;
+                    }
+                });
+                CommitteeDesionNumberText.obj.appendTo(CommitteeDesionNumberRef.value);
+            },
+            refresh: () => {
+                if (CommitteeDesionNumberText.obj) {
+                    CommitteeDesionNumberText.obj.value = state.CommitteeDesionNumber;
+                }
+            }
+        };
+        const CommiteeDatePicker = {
+            obj: null,
+            create: () => {
+                CommiteeDatePicker.obj = new ej.calendars.DatePicker({
+                    placeholder: 'اختر تاريخ اللجنة',
+                    format: 'yyyy-MM-dd',
+                    value: state.CommiteeDate ? new Date(state.CommiteeDate) : null,
+                    change: (e) => {
+                        state.CommiteeDate = e.value;
+                    }
+                });
+                CommiteeDatePicker.obj.appendTo(CommiteeDateRef.value);
+            },
+            refresh: () => {
+                if (CommiteeDatePicker.obj) {
+                    CommiteeDatePicker.obj.value =
+                        state.CommiteeDate ? new Date(state.CommiteeDate) : null;
+                }
+            }
         };
 
         const ExamineDatePicker = {
@@ -155,6 +214,18 @@ const App = {
                 }
             }
         };
+
+
+
+
+
+        Vue.watch(() => state.CommiteeDate, () => {
+            CommiteeDatePicker.refresh();
+        });
+
+        Vue.watch(() => state.CommitteeDesionNumber, () => {
+            CommitteeDesionNumberText.refresh();
+        });
 
         Vue.watch(
             () => state.ExamineDate,
@@ -245,6 +316,7 @@ const App = {
                 state.errors.status = '';
             }
         );
+       
 
         const services = {
             getMainData: async () => {
@@ -255,7 +327,7 @@ const App = {
                     throw error;
                 }
             },
-            createMainData: async (ExamineDate, description, CommiteeDate, CommitteeDesionNumber,status, purchaseOrderId,committee, createdById) => {
+            createMainData: async (ExamineDate, description, CommiteeDate, CommitteeDesionNumber, status, purchaseOrderId, committeeList, createdById) => {
                 try {
                     const response = await AxiosManager.post('/GoodsExamine/CreateGoodsExamine', {
                         ExamineDate,
@@ -264,7 +336,7 @@ const App = {
                         CommiteeDate,
                         CommitteeDesionNumber,
                         purchaseOrderId,
-                        committee,
+                        committeeList,
                         createdById
                     });
                     return response;
@@ -274,7 +346,7 @@ const App = {
             },
 
 
-            updateMainData: async (id, ExamineDate, description, CommiteeDate, CommitteeDesionNumber, status, purchaseOrderId, committee, updatedById) => {
+            updateMainData: async (id, ExamineDate, description, CommiteeDate, CommitteeDesionNumber, status, purchaseOrderId, committeeList, updatedById) => {
  
                 try {
                     const response = await AxiosManager.post('/GoodsExamine/UpdateGoodsExamine', {
@@ -285,7 +357,7 @@ const App = {
                         CommitteeDesionNumber,
                         status,
                         purchaseOrderId,
-                        committee,     // ✅ أضف هذا
+                        committeeList,     // ✅ أضف هذا
                         updatedById
                     });
 
@@ -328,20 +400,28 @@ const App = {
                     throw error;
                 }
             },
-            createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById) => {
+            createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById, percentage,
+                reasons,
+                ItemStatus,) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineCreateInvenTrans', {
-                        moduleId, warehouseId, productId, movement, createdById
+                        moduleId, warehouseId, productId, movement, createdById, percentage,
+                        reasons,
+                        ItemStatus,
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById) => {
+            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById, percentage,
+                reasons,
+                ItemStatus,) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineUpdateInvenTrans', {
-                        id, warehouseId, productId, movement, updatedById
+                        id, warehouseId, productId, movement, updatedById, percentage,
+                        reasons,
+                        ItemStatus,
                     });
                     return response;
                 } catch (error) {
@@ -377,14 +457,40 @@ const App = {
         };
 
         const methods = {
+            emptyCommitteeMember() {
+                return {
+                    employeeName: '',
+                    employeePositionName: '',
+                    employeeType: null,
+                    description: ''
+                };
+            },
+            addCommitteeMember() {
+                this.state.committeeList.push(this.emptyCommitteeMember());
+            },
             populateMainData: async () => {
                 const response = await services.getMainData();
                 state.mainData = response?.data?.content?.data.map(item => ({
-                    ...item,
-                    ExamineDate: new Date(item.ExamineDate),
-                    createdAtUtc: new Date(item.createdAtUtc)
+                    id: item.id,
+                    number: item.number,
+                    description: item.description,
+                    purchaseOrderId: item.purchaseOrderId,
+                    purchaseOrderNumber: item.purchaseOrderNumber,
+                    status: item.status,
+                    statusName: item.statusName,
+
+                    // ✅ دول المهمين
+                    CommitteeDesionNumber: item.CommitteeDesionNumber ?? '',
+                    CommiteeDate: item.CommiteeDate ? new Date(item.CommiteeDate) : null,
+
+                    ExamineDate: item.ExamineDate ? new Date(item.ExamineDate) : null,
+                    createdAtUtc: item.createdAtUtc ? new Date(item.createdAtUtc) : null,
+
+                    committeeList: item.committeeList ?? []
                 }));
             },
+
+
             populatePurchaseOrderListLookupData: async () => {
                 const response = await services.getPurchaseOrderListLookupData();
                 state.purchaseOrderListLookupData = response?.data?.content?.data;
@@ -447,7 +553,7 @@ const App = {
                             state.CommitteeDesionNumber ?? null,
                             state.status,
                             state.purchaseOrderId,
-                            state.committee,
+                            state.committeeList,
                             StorageManager.getUserId()
                         )
 
@@ -461,7 +567,7 @@ const App = {
                                 state.CommitteeDesionNumber ?? null,
                                 state.status,
                                 state.purchaseOrderId,
-                                state.committee,
+                                state.committeeList,
                                 StorageManager.getUserId()
                             );
 
@@ -473,7 +579,7 @@ const App = {
                         if (!state.deleteMode) {
                             state.mainTitle = 'تعديل طلب الفحص';
                             state.id = response?.data?.content?.data.id ?? '';
-                            state.committee.goodsExamineId = state.id;
+                            
                             state.number = response?.data?.content?.data.number ?? '';
                             await methods.populateSecondaryData(state.id);
                             secondaryGrid.refresh();
@@ -524,11 +630,15 @@ const App = {
 
         Vue.onMounted(async () => {
             try {
+
                 await SecurityManager.authorizePage(['GoodsExamine']);
                 await SecurityManager.validateToken();
 
                 await methods.populateMainData();
                 await mainGrid.create(state.mainData);
+
+                CommitteeDesionNumberText.create();
+                CommiteeDatePicker.create();
 
                 mainModal.create();
                 mainModalRef.value?.addEventListener('hidden.bs.modal', methods.onMainModalHidden);
@@ -584,6 +694,8 @@ const App = {
                         { field: 'ExamineDate', headerText: 'تاريخ الاستلام', width: 150, format: 'yyyy-MM-dd' },
                         { field: 'purchaseOrderNumber', headerText: 'رقم أمر التوريد', width: 150, minWidth: 150 },
                         { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
+                        { field: 'CommitteeDesionNumber', headerText: 'رقم القرار', width: 150, minWidth: 150 },
+                        { field: 'CommiteeDate', headerText: 'تاريخ اللجنة UTC', width: 150, format: 'yyyy-MM-dd HH:mm' },
                         { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
                     toolbar: [
@@ -601,7 +713,7 @@ const App = {
                     beforeDataBound: () => { },
                     dataBound: function () {
                         mainGrid.obj.toolbarModule.enableItems(['EditCustom', 'DeleteCustom', 'PrintPDFCustom'], false);
-                        mainGrid.obj.autoFitColumns(['number', 'ExamineDate', 'purchaseOrderNumber', 'statusName', 'createdAtUtc']);
+                        mainGrid.obj.autoFitColumns(['number', 'ExamineDate', 'purchaseOrderNumber', 'statusName', 'CommitteeDesionNumber','CommiteeDate','createdAtUtc']);
                     },
                     excelExportComplete: () => { },
                     rowSelected: () => {
@@ -630,7 +742,7 @@ const App = {
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'اضافة اذن استلام';
+                            state.mainTitle = 'اضافة طلب فحص';
                             resetFormState();
                             state.showComplexDiv = false;
                             mainModal.obj.show();
@@ -640,33 +752,36 @@ const App = {
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'تعديل اذن الاستلام';
+                                state.mainTitle = 'تعديل طلب فحص';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.ExamineDate = selectedRecord.ExamineDate ? new Date(selectedRecord.ExamineDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
-                                state.status = String(selectedRecord.status ?? '');
+                                state.CommiteeDate = selectedRecord.CommiteeDate ? new Date(selectedRecord.CommiteeDate) : null;
+                                state.CommitteeDesionNumber = selectedRecord.CommitteeDesionNumber ?? '';
+                            
+                                state.committeeList = selectedRecord.committeeList?.length
+                                    ? selectedRecord.committeeList.map(c => ({
+                                        id: null,                    // ✅ مهم جدًا
+                                        goodsExamineId: selectedRecord.id,
+                                        employeeName: c.employeeName ?? '',
+                                        employeePositionName: c.employeePositionName ?? '',
+                                        employeeType: c.employeeType ?? true,
+                                        description: c.description ?? ''
+                                    }))
+                                    : [emptyCommitteeMember()];
 
-                                // ⭐⭐ إضافة مهمة
-                                state.committee = {
-                                    number: selectedRecord.committee?.number ?? '',
-                                    goodsExamineId: selectedRecord.id ?? '',
-                                    employeeID: selectedRecord.committee?.employeeID ?? null,
-                                    employeePositionID: selectedRecord.committee?.employeePositionID ?? null,
-                                    employeeName: selectedRecord.committee?.employeeName ?? '',
-                                    employeePositionName: selectedRecord.committee?.employeePositionName ?? '',
-                                    employeeType: selectedRecord.committee?.employeeType ?? null,
-                                    description: selectedRecord.committee?.description ?? ''
-                                };
 
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = true;
                                 mainModal.obj.show();
+                                console.log('Selected Record:', selectedRecord);
                             }
                         }
+                      
 
                         if (args.item.id === 'DeleteCustom') {
                             state.deleteMode = true;
@@ -679,6 +794,8 @@ const App = {
                                 state.description = selectedRecord.description ?? '';
                                 state.purchaseOrderId = selectedRecord.purchaseOrderId ?? '';
                                 state.status = String(selectedRecord.status ?? '');
+                                state.CommiteeDate = selectedRecord.CommiteeDate ? new Date(selectedRecord.CommiteeDate) : null;
+                                state.CommitteeDesionNumber = String(selectedRecord.CommitteeDesionNumber ?? '');
                                 await methods.populateSecondaryData(selectedRecord.id);
                                 secondaryGrid.refresh();
                                 state.showComplexDiv = false;
@@ -707,6 +824,8 @@ const App = {
             create: async (dataSource) => {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
                     allowFiltering: false,
@@ -804,6 +923,7 @@ const App = {
                                 }
                             }
                         },
+
                         {
                             field: 'movement',
                             headerText: 'الحركة',
@@ -812,7 +932,7 @@ const App = {
                                 required: true,
                                 custom: [(args) => {
                                     return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
+                                }, 'يجب ان يكون الرقم اكبر من 0']
                             },
                             type: 'number',
                             format: 'N2', textAlign: 'Right',
@@ -835,6 +955,42 @@ const App = {
                                 }
                             }
                         },
+                        {
+                            field: 'percentage',
+                            headerText: ' النسبة المئوية',
+                            width: 120,
+                            editType: 'stringedit'
+                        },
+                        {
+                            field: 'reasons',
+                            headerText: 'الأسباب',
+                            width: 250,
+                            editType: 'stringedit'
+                        },
+                        {
+                            field: 'ItemStatus',
+                            headerText: 'الحالة',
+                            width: 150,
+                            editType: 'dropdownedit',
+                            edit: {
+                                create: () => document.createElement('input'),
+                                write: (args) => {
+                                    ItemStatusObj = new ej.dropdowns.DropDownList({
+                                        dataSource: [
+                                            { text: 'مقبول', value: true },
+                                            { text: 'مرفوض', value: false }
+                                        ],
+                                        fields: { text: 'text', value: 'value' },
+                                        value: args.rowData.ItemStatus
+                                    });
+                                    ItemStatusObj.appendTo(args.element);
+                                },
+                                read: () => ItemStatusObj.value,
+                                destroy: () => ItemStatusObj.destroy()
+                            }
+                        }
+
+
                     ],
                     toolbar: [
                         'ExcelExport',
@@ -886,6 +1042,9 @@ const App = {
                                     args.data.warehouseId,
                                     args.data.productId,
                                     args.data.movement,
+                                    args.data.percentage,
+                                    args.data.reasons,
+                                    args.data.ItemStatus,
                                     StorageManager.getUserId()
                                 );
 
@@ -920,7 +1079,18 @@ const App = {
 
                         if (args.requestType === 'save' && args.action === 'edit') {
                             try {
-                                const response = await services.updateSecondaryData(args.data.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
+                                const response = services.updateSecondaryData(
+                                    args.data.id,
+                                    args.data.warehouseId,
+                                    args.data.productId,
+                                    args.data.movement,
+                                    StorageManager.getUserId(), // updatedById
+                                    args.data.percentage,
+                                    args.data.reasons,
+                                    args.data.ItemStatus
+                                );
+
+
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
                                 if (response.data.code === 200) {
@@ -1013,7 +1183,10 @@ const App = {
             purchaseOrderIdRef,
             statusRef,
             state,
+
             handler,
+            addCommitteeMember,
+            removeCommitteeMember,
         };
     }
 };
