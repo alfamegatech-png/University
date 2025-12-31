@@ -142,7 +142,7 @@ public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineReque
                         defaultWarehouse.Id,
                         item.ProductId,
                         item.Percentage,
-                        item.Status,
+                        item.ItemStatus,
                         item.Reasons,
                         item.Quantity,
                         entity.CreatedById,

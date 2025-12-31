@@ -23,7 +23,7 @@ public record GetPurchaseOrderItemListDto
     public DateTime? CreatedAtUtc { get; init; }
     public string? Percentage { get; set; }
     public string? Reasons { get; set; }
-    public bool? Status { get; set; }
+    public bool? ItemStatus { get; set; }
 }
 
 public class GetPurchaseOrderItemListProfile : Profile

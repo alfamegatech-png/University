@@ -47,9 +47,9 @@ const App = {
         const secondaryGridRef = Vue.ref(null);
         const ExamineDateRef = Vue.ref(null);
         const purchaseOrderIdRef = Vue.ref(null);
-        const statusRef = Vue.ref(null);
+        const ItemStatusRef = Vue.ref(null);
         const numberRef = Vue.ref(null);
-
+        const statusRef = Vue.ref(null);
         // ✅ دول لازم هنا
         const CommitteeDesionNumberRef = Vue.ref(null);
         const CommiteeDateRef = Vue.ref(null);
@@ -402,12 +402,12 @@ const App = {
             },
             createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById, percentage,
                 reasons,
-                status,) => {
+                ItemStatus,) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineCreateInvenTrans', {
                         moduleId, warehouseId, productId, movement, createdById, percentage,
                         reasons,
-                        status,
+                        ItemStatus,
                     });
                     return response;
                 } catch (error) {
@@ -416,12 +416,12 @@ const App = {
             },
             updateSecondaryData: async (id, warehouseId, productId, movement, updatedById, percentage,
                 reasons,
-                status,) => {
+                ItemStatus,) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineUpdateInvenTrans', {
                         id, warehouseId, productId, movement, updatedById, percentage,
                         reasons,
-                        status,
+                        ItemStatus,
                     });
                     return response;
                 } catch (error) {
@@ -968,25 +968,25 @@ const App = {
                             editType: 'stringedit'
                         },
                         {
-                            field: 'status',
+                            field: 'ItemStatus',
                             headerText: 'الحالة',
                             width: 150,
                             editType: 'dropdownedit',
                             edit: {
                                 create: () => document.createElement('input'),
                                 write: (args) => {
-                                    statusObj = new ej.dropdowns.DropDownList({
+                                    ItemStatusObj = new ej.dropdowns.DropDownList({
                                         dataSource: [
                                             { text: 'مقبول', value: true },
                                             { text: 'مرفوض', value: false }
                                         ],
                                         fields: { text: 'text', value: 'value' },
-                                        value: args.rowData.status
+                                        value: args.rowData.ItemStatus
                                     });
-                                    statusObj.appendTo(args.element);
+                                    ItemStatusObj.appendTo(args.element);
                                 },
-                                read: () => statusObj.value,
-                                destroy: () => statusObj.destroy()
+                                read: () => ItemStatusObj.value,
+                                destroy: () => ItemStatusObj.destroy()
                             }
                         }
 
@@ -1044,7 +1044,7 @@ const App = {
                                     args.data.movement,
                                     args.data.percentage,
                                     args.data.reasons,
-                                    args.data.status,
+                                    args.data.ItemStatus,
                                     StorageManager.getUserId()
                                 );
 
@@ -1079,9 +1079,18 @@ const App = {
 
                         if (args.requestType === 'save' && args.action === 'edit') {
                             try {
-                                const response = await services.updateSecondaryData(args.data.id, args.data.warehouseId, args.data.productId, args.data.movement, args.data.percentage,
+                                const response = services.updateSecondaryData(
+                                    args.data.id,
+                                    args.data.warehouseId,
+                                    args.data.productId,
+                                    args.data.movement,
+                                    StorageManager.getUserId(), // updatedById
+                                    args.data.percentage,
                                     args.data.reasons,
-                                    args.data.status, StorageManager.getUserId());
+                                    args.data.ItemStatus
+                                );
+
+
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
                                 if (response.data.code === 200) {
@@ -1174,6 +1183,7 @@ const App = {
             purchaseOrderIdRef,
             statusRef,
             state,
+
             handler,
             addCommitteeMember,
             removeCommitteeMember,

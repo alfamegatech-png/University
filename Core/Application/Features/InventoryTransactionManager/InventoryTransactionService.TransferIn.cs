@@ -12,7 +12,10 @@ public partial class InventoryTransactionService
         string? productId,
         double? movement,
         string? createdById,
-        CancellationToken cancellationToken = default
+       string? Percentage,
+       bool? ItemStatus,
+      string? Reasons,
+    CancellationToken cancellationToken = default
         )
     {
         var parent = await _queryContext
@@ -40,7 +43,9 @@ public partial class InventoryTransactionService
 
         child.ProductId = productId;
         child.Movement = movement;
-
+        child.ItemStatus = ItemStatus;
+        child.Reasons = Reasons;
+        child.Percentage = Percentage;
         CalculateInvenTrans(child);
 
         await _inventoryTransactionRepository.CreateAsync(child, cancellationToken);
@@ -56,7 +61,7 @@ public partial class InventoryTransactionService
         string? updatedById,
         string? Percentage,
         string? Reasons,
-        bool? Status,
+        bool? ItemStatus,
         CancellationToken cancellationToken = default
         )
     {
@@ -71,7 +76,9 @@ public partial class InventoryTransactionService
 
         child.ProductId = productId;
         child.Movement = movement;
-
+        child.ItemStatus = ItemStatus;
+        child.Reasons = Reasons;
+        child.Percentage = Percentage;
         CalculateInvenTrans(child);
 
         _inventoryTransactionRepository.Update(child);

@@ -9,7 +9,7 @@ public class PurchaseOrderItem : BaseEntity
     public string? ProductId { get; set; }
     public string? Percentage { get; set; }
     public string? Reasons { get; set; }
-    public bool? Status { get; set; }
+    public bool? ItemStatus { get; set; }
     public Product? Product { get; set; }
     public string? Summary { get; set; }
     public double? UnitPrice { get; set; } = 0;

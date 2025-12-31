@@ -60,7 +60,7 @@ public partial class InventoryTransactionService
         string? productId,
         double? movement, 
         string? Percentage,
-          bool? Status,
+          bool? ItemStatus,
         string? Reasons,
         string? updatedById,
          
@@ -79,7 +79,9 @@ public partial class InventoryTransactionService
         child.WarehouseId = warehouseId;
         child.ProductId = productId;
         child.Movement = movement;
-
+        child.Percentage = Percentage;
+        child.ItemStatus = ItemStatus;
+        child.Reasons = Reasons;
         CalculateInvenTrans(child);
 
         _inventoryTransactionRepository.Update(child);

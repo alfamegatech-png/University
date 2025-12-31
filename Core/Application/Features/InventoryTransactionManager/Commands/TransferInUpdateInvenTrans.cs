@@ -17,7 +17,7 @@ public class TransferInUpdateInvenTransRequest : IRequest<TransferInUpdateInvenT
     public string? UpdatedById { get; init; }
     public string? Percentage { get; set; }
     public string? Reasons { get; set; }
-    public bool? Status { get; set; }
+    public bool? ItemStatus { get; set; }
 
 }
 
@@ -52,7 +52,7 @@ public class TransferInUpdateInvenTransHandler : IRequestHandler<TransferInUpdat
             request.UpdatedById,
             request.Percentage,
              request.Reasons,
-            request.Status,
+            request.ItemStatus,
            
             cancellationToken);
 
