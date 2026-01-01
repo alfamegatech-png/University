@@ -18,20 +18,24 @@
 
             <h2 class="title">محضر لجنة الفحص</h2>
 
-            <p class="text">
-                اليوم ............. الموافق <strong>{{ state.commiteeDate }}</strong>
+            <p style="text-align:right"  class="text">
+                اليوم ..............
+                الموافق....../......./..........
+               
                 اجتمعت لجنة الفحص المشكلة بالقرار رقم
                 (<strong>{{ state.committeeDesionNumber }}</strong>)
+                الصادر بتاريخ <strong>{{ state.commiteeDate }} </strong>
             </p>
 
-            <p v-if="chairman">
-                <strong>برئاسة السيد /</strong>
+            <p style="text-align:right" v-if="chairman" >
+                <strong>برئاسة السيد / {{ chairman.employeePositionName }}  </strong>
                 {{ chairman.employeeName }}
-                — الوظيفة: {{ chairman.employeePositionName }}
+                 
             </p>
 
             <br />
-            <p><strong>وعضوية كل من:</strong></p>
+            <p style="text-align:right"><strong>وعضوية كل من:</strong></p>
+
 
             <div class="committee">
                 <p v-for="(member,index) in members" :key="index">
@@ -45,9 +49,7 @@
 
 
             <p class="paragraph">
-                وقد قامت اللجنة بفحص الأصناف المدرجة فيما بعد من حيث
-                المواصفات والنوعية، وقررت قبولها أو رفضها طبقًا
-                لأمر التوريد الصادر إلى الإدارة المختصة.
+                وقد قامت اللجنة بفحص الأصناف المدرجة في ظهره بالنسبة المئوية ووفقا لما أرتائه من القبول او الرفض والاسباب المبينة قرين كل صنف وذلك علي مقتضي امر التوريد الصادر الي ......... برقم () بتاريخ ..... وبالمواصفات المنصوص عليها بكراسة الشروط والمواصفات والعقد المبرم مع المورد وبحضور / وعدم حضور المورد او مندوبه .
             </p>
 
             <div class="signatures">
@@ -103,9 +105,10 @@
     </div>
 
     <!-- زر خارج الطباعة -->
-    <button v-on-click ="handler.downloadPDF" class="pdf-btn">
+    <button v-on:click="handler.downloadPDF" class="pdf-btn">
         تحميل PDF
     </button>
+
 
 </div>
 <style>
@@ -199,6 +202,16 @@
         font-size: 16px;
         cursor: pointer;
     }
+
+    .committee,
+    .committee p {
+        text-align: right;
+    }
+
+    .chairman {
+        text-align: right;
+    }
+
 </style>
 
 @section scripts {

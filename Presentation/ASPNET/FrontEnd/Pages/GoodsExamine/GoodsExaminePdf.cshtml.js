@@ -1,8 +1,22 @@
-﻿const App = {
+﻿const getArabicDayName = (date) => {
+    const days = [
+        'الأحد',
+        'الاثنين',
+        'الثلاثاء',
+        'الأربعاء',
+        'الخميس',
+        'الجمعة',
+        'السبت'
+    ];
+    return days[date.getDay()];
+};
+
+const App = {
     setup() {
 
         const state = Vue.reactive({
             number: '',
+            commiteeDayName: '',   // ✅ جديد
             commiteeDate: '',
             committeeDesionNumber: '',
             committeeList: [],
@@ -30,10 +44,23 @@
                 const transactions = result.transactionList;
 
                 state.number = header.number ?? '';
+                if (header.commiteeDate) {
+                    const d = new Date(header.commiteeDate);
 
-                state.commiteeDate = header.commiteeDate
-                    ? new Date(header.commiteeDate).toLocaleDateString('ar-EG')
-                    : '';
+                    state.commiteeDayName = getArabicDayName(d); // ✅ اليوم
+                    state.commiteeDate = d.toLocaleDateString('ar-EG', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                } else {
+                    state.commiteeDayName = '';
+                    state.commiteeDate = '';
+                }
+
+                //state.commiteeDate = header.commiteeDate
+                //    ? new Date(header.commiteeDate).toLocaleDateString('ar-EG')
+                //    : '';
 
                 state.committeeDesionNumber =
                     header.committeeDesionNumber ?? '';
@@ -54,12 +81,12 @@
         };
         // ✅ رئيس اللجنة
         const chairman = Vue.computed(() =>
-            state.committeeList.find(x => x.employeeType === 1)
+            state.committeeList.find(x => x.employeeType === true)
         );
 
         // ✅ أعضاء اللجنة
         const members = Vue.computed(() =>
-            state.committeeList.filter(x => x.employeeType === 0)
+            state.committeeList.filter(x => x.employeeType === false)
         );
         const handler = {
             downloadPDF: async () => {
