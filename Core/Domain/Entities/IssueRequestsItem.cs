@@ -10,8 +10,9 @@ public class IssueRequestsItem : BaseEntity
     public Product? Product { get; set; }
     public string? Summary { get; set; }
     public double? UnitPrice { get; set; } = 0;
-    public double? Quantity { get; set; } = 1;
+    public double? AvailableQuantity { get; set; } = 1;
     public double? RequestedQuantity { get; set; } = 1;
+    public double? SuppliedQuantity { get; set; } 
     public double? Total { get; set; } = 0;
 
 }

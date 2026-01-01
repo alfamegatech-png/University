@@ -18,7 +18,8 @@ public class UpdateIssueRequestsItemRequest : IRequest<UpdateIssueRequestsItemRe
     public string? ProductId { get; init; }
     public string? Summary { get; init; }
     public double? UnitPrice { get; init; }
-    public double? Quantity { get; init; }
+    public double? AvailableQuantity { get; init; }
+    public double? SuppliedQuantity { get; init; }
     public double? RequestedQuantity { get; set; } 
     public string? UpdatedById { get; init; }
 }
@@ -31,7 +32,8 @@ public class UpdateIssueRequestsItemValidator : AbstractValidator<UpdateIssueReq
         RuleFor(x => x.IssueRequestsId).NotEmpty();
         RuleFor(x => x.ProductId).NotEmpty();
         RuleFor(x => x.UnitPrice).NotEmpty();
-        RuleFor(x => x.Quantity).NotEmpty();
+        RuleFor(x => x.AvailableQuantity).NotEmpty();
+        RuleFor(x => x.SuppliedQuantity).NotEmpty();
         RuleFor(x => x.RequestedQuantity).NotEmpty();
     }
 }
@@ -69,10 +71,11 @@ public class UpdateIssueRequestsItemHandler : IRequestHandler<UpdateIssueRequest
         entity.ProductId = request.ProductId;
         entity.Summary = request.Summary;
         entity.UnitPrice = request.UnitPrice;
-        entity.Quantity = request.Quantity;
+        entity.AvailableQuantity = request.AvailableQuantity;
+        entity.SuppliedQuantity = request.SuppliedQuantity;
         entity.RequestedQuantity = request.RequestedQuantity;
 
-        entity.Total = entity.UnitPrice * entity.Quantity;
+        entity.Total = entity.UnitPrice * entity.SuppliedQuantity;
 
         _repository.Update(entity);
         await _unitOfWork.SaveAsync(cancellationToken);

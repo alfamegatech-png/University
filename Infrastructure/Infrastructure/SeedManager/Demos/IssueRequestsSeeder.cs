@@ -77,7 +77,7 @@ public class IssueRequestsSeeder
                         ProductId = product.Id,
                         Summary = product.Number,
                         UnitPrice = product.UnitPrice,
-                        Quantity = qty,
+                        SuppliedQuantity = qty,
                         Total = product.UnitPrice * qty
                     };
                     await _IssueRequestsItemRepository.CreateAsync(IssueRequestsItem);

@@ -15,7 +15,9 @@ public class IssueRequestsItemConfiguration : BaseEntityConfiguration<IssueReque
         builder.Property(x => x.ProductId).HasMaxLength(IdConsts.MaxLength).IsRequired(false);
         builder.Property(x => x.Summary).HasMaxLength(DescriptionConsts.MaxLength).IsRequired(false);
         builder.Property(x => x.UnitPrice).IsRequired(false);
-        builder.Property(x => x.Quantity).IsRequired(false);
+        builder.Property(x => x.AvailableQuantity).IsRequired(false);
+        builder.Property(x => x.RequestedQuantity).IsRequired(false);
+        builder.Property(x => x.SuppliedQuantity).IsRequired(false);
         builder.Property(x => x.RequestedQuantity).IsRequired(false);
         builder.Property(x => x.Total).IsRequired(false);
 
