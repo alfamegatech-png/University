@@ -418,7 +418,7 @@ const App = {
             },
             createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById, percentage,
                 reasons,
-                ItemStatus,) => {
+                itemStatus,) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineCreateInvenTrans', {
                         moduleId, warehouseId, productId, movement, createdById, percentage,
@@ -531,15 +531,26 @@ const App = {
             populateSecondaryData: async (goodsExamineId) => {
                 try {
                     const response = await services.getSecondaryData(goodsExamineId);
+
                     state.secondaryData = response?.data?.content?.data.map(item => ({
                         ...item,
                         createdAtUtc: new Date(item.createdAtUtc)
-                    }));
+                    })) || [];
+
+                    // ✅ أهم سطر
+                    if (secondaryGrid.obj) {
+                        secondaryGrid.obj.dataSource = [...state.secondaryData];
+                    }
+
                     methods.refreshSummary();
                 } catch (error) {
                     state.secondaryData = [];
+                    if (secondaryGrid.obj) {
+                        secondaryGrid.obj.dataSource = [];
+                    }
                 }
             },
+
             refreshSummary: () => {
                 const totalMovement = state.secondaryData.reduce((sum, record) => sum + (record.movement ?? 0), 0);
                 state.totalMovementFormatted = NumberFormatManager.formatToLocale(totalMovement);
@@ -604,7 +615,7 @@ const App = {
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
                             await methods.populateSecondaryData(state.id);
-                            secondaryGrid.refresh();
+                            s
                             state.showComplexDiv = true;
 
                             Swal.fire({
@@ -854,7 +865,7 @@ const App = {
 
 
                                 await methods.populateSecondaryData(selectedRecord.id);
-                                secondaryGrid.refresh();
+                              
                                 state.showComplexDiv = false;
                                 mainModal.obj.show();
                             }
@@ -863,7 +874,7 @@ const App = {
                         if (args.item.id === 'PrintPDFCustom') {
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                window.open('/GoodsExamines/GoodsExaminePdf?id=' + (selectedRecord.id ?? ''), '_blank');
+                                window.open('/GoodsExamine/GoodsExaminePdf?id=' + (selectedRecord.id ?? ''), '_blank');
                             }
                         }
                     }
@@ -1028,6 +1039,11 @@ const App = {
                             field: 'itemStatus',
                             headerText: 'الحالة',
                             width: 150,
+                            valueAccessor: (field, data) => {
+                                if (data[field] === true) return 'مقبول';
+                                if (data[field] === false) return 'مرفوض';
+                                return '';
+                            },
                             editType: 'dropdownedit',
                             edit: {
                                 create: () => document.createElement('input'),
@@ -1046,6 +1062,7 @@ const App = {
                                 destroy: () => itemStatusObj.destroy()
                             }
                         }
+
 
 
                     ],
@@ -1109,7 +1126,7 @@ const App = {
 
                                 if (response.data.code === 200) {
                                     await methods.populateSecondaryData(state.id);
-                                    secondaryGrid.refresh();
+                                    
 
                                     Swal.fire({
                                         icon: 'success',
@@ -1138,49 +1155,49 @@ const App = {
 
                         if (args.requestType === 'save' && args.action === 'edit') {
                             try {
-                                const response = services.updateSecondaryData(
+                                const response = await services.updateSecondaryData(
                                     args.data.id,
                                     args.data.warehouseId,
                                     args.data.productId,
                                     args.data.movement,
-                                    StorageManager.getUserId(), // updatedById
+                                    StorageManager.getUserId(),
                                     args.data.percentage,
                                     args.data.reasons,
                                     args.data.itemStatus
                                 );
 
-
-                                await methods.populateSecondaryData(state.id);
-                                secondaryGrid.refresh();
                                 if (response.data.code === 200) {
+                                    await methods.populateSecondaryData(state.id);
+                                    
+
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Update Successful',
+                                        title: 'تم التحديث',
                                         timer: 2000,
                                         showConfirmButton: false
                                     });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Update Failed',
-                                            text: response.data.message ?? 'يرجى التحقق من البيانات.',
-                                        confirmButtonText: 'حاول مرة أخرى'
+                                        title: 'فشل التحديث',
+                                        text: response.data.message ?? 'يرجى التحقق من البيانات'
                                     });
                                 }
+
                             } catch (error) {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى.',
-                                    confirmButtonText: 'OK'
+                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى'
                                 });
                             }
                         }
+
                         if (args.requestType === 'delete') {
                             try {
                                 const response = await services.deleteSecondaryData(args.data[0].id, StorageManager.getUserId());
                                 await methods.populateSecondaryData(state.id);
-                                secondaryGrid.refresh();
+                               
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',

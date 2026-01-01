@@ -18,11 +18,11 @@ public class CreateGoodsExamineResult
 
 public class CreateGoodsExamineRequest : IRequest<CreateGoodsExamineResult>
 {
-    public DateTime? ExamineDate { get; init; }
-    public string? Status { get; init; }
+    public DateTime? ExamineDate { get; set; }
+    public string? Status { get; set; }
     public string? Description { get; init; }
     public string? PurchaseOrderId { get; init; }
-    public string? CreatedById { get; init; }
+    public string? CreatedById { get; set; }
     public DateTime? CommiteeDate { get; set; }
     public string? CommitteeDesionNumber { get; set; }
     // ✅ إضافة بيانات اللجنة

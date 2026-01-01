@@ -1,232 +1,206 @@
 ﻿@page
 @{
-    ViewData["Title"] = "استلام البضائع PDF";
+    ViewData["Title"] = "فحص البضائع PDF";
 }
 
-<div id="app" class="row">
-    <div class="col-12">
-        <div class="print-indicator" v-cloak>
-            <div class="content-wrapper">
+<div id="app">
+
+    <!-- محتوى الـ PDF فقط -->
+    <div id="content">
+
+        <!-- الصفحة الأولى -->
+        <section class="print-area">
+
+            <header class="top-header">
+                <div>اسم الجهة: كلية الزراعة - جامعة الزقازيق</div>
+                <div>نموذج رقم (12)</div>
+            </header>
+
+            <h2 class="title">محضر لجنة الفحص</h2>
+
+            <p class="text">
+                اليوم ............. الموافق <strong>{{ state.commiteeDate }}</strong>
+                اجتمعت لجنة الفحص المشكلة بالقرار رقم
+                (<strong>{{ state.committeeDesionNumber }}</strong>)
+            </p>
+
+            <p v-if="chairman">
+                <strong>برئاسة السيد /</strong>
+                {{ chairman.employeeName }}
+                — الوظيفة: {{ chairman.employeePositionName }}
+            </p>
+
+            <br />
+            <p><strong>وعضوية كل من:</strong></p>
+
+            <div class="committee">
+                <p v-for="(member,index) in members" :key="index">
+                    السيد / {{ member.employeeName }}
+                    — الوظيفة: {{ member.employeePositionName }}
+                </p>
+            </div>
+
+
+            
+
+
+            <p class="paragraph">
+                وقد قامت اللجنة بفحص الأصناف المدرجة فيما بعد من حيث
+                المواصفات والنوعية، وقررت قبولها أو رفضها طبقًا
+                لأمر التوريد الصادر إلى الإدارة المختصة.
+            </p>
+
+            <div class="signatures">
                 <div>
-                    <button id="download-pdf" class="btn btn-danger d-flex align-items-center" v-on:click="handler.downloadPDF" v-bind:disabled="state.isDownloading">
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" v-if="state.isDownloading"></span>
-                        <span class="button-text" v-if="!state.isDownloading">
-                            <i class="bi bi-file-earmark-pdf-fill me-2"></i> تحميل PDF
-                        </span>
-                    </button>
+                    <strong>رئيس اللجنة</strong><br>
+                    الاسم: .................................<br>
+                    التوقيع: ...............................
                 </div>
-                <div id="content" class="print-area">
-                    <div class="company-info">
-                        <h2>{{ state.company.name }}</h2>
-                        <p>{{ state.companyAddress }}</p>
-                        <p>البريد الإلكتروني: {{ state.company.emailAddress }} | الهاتف: {{ state.company.phoneNumber }}</p>
-                    </div>
-
-                    <h1>استلام البضائع</h1>
-
-                    <div class="info-container">
-                        <table class="details-table">
-                            <tr>
-                                <th colspan="2">معلومات المورد</th>
-                            </tr>
-                            <tr>
-                                <td><strong>الاسم:</strong></td>
-                                <td>{{ state.vendor.name }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>العنوان:</strong></td>
-                                <td>{{ state.vendorAddress }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>البريد الإلكتروني:</strong></td>
-                                <td>{{ state.vendor.emailAddress }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>الهاتف:</strong></td>
-                                <td>{{ state.vendor.phoneNumber }}</td>
-                            </tr>
-                        </table>
-
-                        <table class="details-table">
-                            <tr>
-                                <th colspan="2">معلومات الاستلام</th>
-                            </tr>
-                            <tr>
-                                <td><strong>الرقم:</strong></td>
-                                <td>{{ state.number }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>التاريخ:</strong></td>
-                                <td>{{ state.date }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>المرجع:</strong></td>
-                                <td>{{ state.reference }}</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <table class="product-table" border="1" style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-                                <th>المستودع</th>
-                                <th>المنتج</th>
-                                <th>الكمية المستلمة</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in state.mappedItems" :key="item.product + item.warehouse">
-                                <td>{{ item.warehouse }}</td>
-                                <td>{{ item.product }}</td>
-                                <td>{{ item.movement }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="summary">
-                        <div class="column"></div>
-                        <div class="column">
-                            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                                <tr>
-                                    <td style="font-weight: bold; font-size: 1.2em;">إجمالي الكمية المستلمة:</td>
-                                    <td style="text-align: right; font-weight: bold; font-size: 1.2em; color: #2c3e50;">
-                                        {{ state.movementTotal }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
+                <div>
+                    <strong>عضو اللجنة</strong><br>
+                    الاسم: .................................<br>
+                    التوقيع: ...............................
                 </div>
             </div>
-        </div>
+
+        </section>
+
+        <!-- الصفحة الثانية -->
+        <section class="print-area">
+
+            <table class="inspection-table">
+                <thead>
+                    <tr>
+                        <th>اسم الصنف ومواصفاته</th>
+                        <th>الكمية</th>
+                        <th>الوحدة</th>
+                        <th>نسبة المطابقة</th>
+                        <th>مقبول</th>
+                        <th>مرفوض</th>
+                        <th>الأسباب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,index) in state.mappedItems" :key="index">
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.qty }}</td>
+                        <td>{{ item.unit }}</td>
+                        <td>{{ item.matchPercent }}</td>
+                        <td class="check">{{ item.accepted ? '✔' : '' }}</td>
+                        <td class="check">{{ item.rejected ? '✔' : '' }}</td>
+                        <td>{{ item.reason }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <footer class="footer-sign">
+                <div>رئيس لجنة الفحص</div>
+                <div>أعضاء اللجنة</div>
+            </footer>
+
+        </section>
+
     </div>
+
+    <!-- زر خارج الطباعة -->
+    <button v-on-click ="handler.downloadPDF" class="pdf-btn">
+        تحميل PDF
+    </button>
+
 </div>
-
-<!-- CSS -->
 <style>
-    /* جعل كل المحتوى من اليمين لليسار */
-    body, .print-area, .details-table, .product-table, .summary {
-        direction: rtl;
-        text-align: right;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .print-indicator {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        height: 100vh;
-        background-color: #f8f9fa;
-        position: relative;
-        overflow-y: auto;
-        padding: 30px;
-    }
-
-    .content-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-
     .print-area {
         width: 210mm;
-        padding: 10mm;
-        background-color: white;
-        border: 1px dashed #cccccc;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-height: 297mm;
+        padding: 20mm;
+        font-family: "Times New Roman", serif;
+        font-size: 15px;
+        direction: rtl;
+        page-break-after: always;
     }
 
-    #download-pdf {
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .company-info {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .company-info h2 {
-        font-size: 24px;
-        margin: 0;
-    }
-
-    .company-info p {
-        margin: 5px 0;
-        font-size: 14px;
-        color: #555;
-    }
-
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 28px;
-        color: #333;
-    }
-
-    .info-container {
+    .top-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 20px;
-        gap: 10px;
+        font-weight: bold;
+        border-bottom: 2px solid #000;
+        padding-bottom: 8px;
+        margin-bottom: 25px;
     }
 
-    .details-table {
-        flex: 1;
-        padding: 5px 8px;
-        border: 1px solid #ccc;
-        font-size: 14px;
+    .title {
+        text-align: center;
+        text-decoration: underline;
+        font-size: 20px;
+        margin-bottom: 25px;
     }
 
-    .details-table th, .details-table td {
-        padding: 5px 10px;
-        border: 1px solid #ccc;
-        font-size: 14px;
+    .text {
+        line-height: 1.9;
+        margin: 12px 0;
     }
 
-    .details-table th {
-        background-color: #f2f2f2;
-        text-align: right;
-        height: 35px;
-        vertical-align: middle;
+    .paragraph {
+        margin-top: 25px;
+        line-height: 2;
+        text-align: justify;
     }
 
-    .product-table {
+    .committee p {
+        margin-right: 25px;
+        margin-bottom: 8px;
+    }
+
+    .signatures {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 70px;
+    }
+
+        .signatures div {
+            width: 45%;
+            text-align: center;
+        }
+
+    .inspection-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
-        font-size: 14px;
+        margin-top: 10px;
     }
 
-    .product-table th, .product-table td {
-        padding: 8px;
-        text-align: right;
+        .inspection-table th,
+        .inspection-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .inspection-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+    .check {
+        font-size: 18px;
+        font-weight: bold;
     }
 
-    .product-table th {
-        background-color: #f2f2f2;
-    }
-
-    .summary {
+    .footer-sign {
         display: flex;
         justify-content: space-between;
-        margin-top: 20px;
-        font-size: 14px;
+        margin-top: 45px;
+        font-weight: bold;
     }
 
-    .summary .column {
-        width: 48%;
-    }
-
-    .summary p {
-        margin: 5px 0;
-        text-align: right;
+    .pdf-btn {
+        margin: 20px;
+        padding: 10px 25px;
+        font-size: 16px;
+        cursor: pointer;
     }
 </style>
 
 @section scripts {
-    <script src="~/FrontEnd/Pages/GoodsReceives/GoodsReceivePdf.cshtml.js"></script>
+    <script src="~/FrontEnd/Pages/GoodsExamine/GoodsExaminePdf.cshtml.js"></script>
 }

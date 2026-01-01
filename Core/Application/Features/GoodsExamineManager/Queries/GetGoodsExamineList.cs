@@ -27,6 +27,7 @@ public record GetGoodsExamineListDto
 }
 public class ExamineCommiteeDto
 {
+    public string? Id { get; set; }
     public int? EmployeeID { get; init; }
     public int? EmployeePositionID { get; init; }
     public string? EmployeeName { get; init; }
