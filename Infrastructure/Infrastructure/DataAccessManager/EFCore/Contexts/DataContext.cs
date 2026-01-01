@@ -108,6 +108,11 @@ public class DataContext : IdentityDbContext<ApplicationUser>, IEntityDbSet
         modelBuilder.ApplyConfiguration(new PositiveAdjustmentConfiguration());
         modelBuilder.ApplyConfiguration(new ScrappingConfiguration());
 
+
+        modelBuilder.ApplyConfiguration(new ExamineCommitteConfiguration());
+        modelBuilder.ApplyConfiguration(new GoodsExamineConfiguration());
+
+
         /// mai
         modelBuilder.ApplyConfiguration(new IssueRequestsConfiguration());
         modelBuilder.ApplyConfiguration(new IssueRequestsItemConfiguration());
