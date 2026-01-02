@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.DataAccessManager.EFCore.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using static Domain.Common.Constants;
 
@@ -33,6 +34,12 @@ public class EmployeeConfiguration : BaseEntityConfiguration<Employee>
 
         builder.HasIndex(e => e.Name);
         builder.HasIndex(e => e.Number);
+
+        builder.HasOne(e => e.Department)
+       .WithMany(d => d.Employees)
+       .HasForeignKey(e => e.DepartmentId)
+       .OnDelete(DeleteBehavior.Restrict);
+
     }
 }
 

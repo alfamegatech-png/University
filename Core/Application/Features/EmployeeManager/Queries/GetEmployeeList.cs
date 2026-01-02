@@ -11,6 +11,8 @@ public record GetEmployeeListDto
 {
     public string? Id { get; init; }
     public string? Name { get; set; }
+    public string? DepartmentName { get; set; }
+    public string? DepartmentId { get; set; }
     public string? Number { get; set; }
     public string? Description { get; set; }
     public string? Street { get; set; }
@@ -37,11 +39,11 @@ public class GetEmployeeListProfile : Profile
 {
     public GetEmployeeListProfile()
     {
-        CreateMap<Employee, GetEmployeeListDto>();
-            //.ForMember(
-            //    dest => dest.EmployeeGroupName,
-            //    opt => opt.MapFrom(src => src.EmployeeGroup != null ? src.EmployeeGroup.Name : string.Empty)
-            //)
+        CreateMap<Employee, GetEmployeeListDto>()
+            .ForMember(
+                dest => dest.DepartmentName,
+                opt => opt.MapFrom(src => src.Department != null ? src.Department.Name : string.Empty)
+            );
             //.ForMember(
             //    dest => dest.EmployeeCategoryName,
             //    opt => opt.MapFrom(src => src.EmployeeCategory != null ? src.EmployeeCategory.Name : string.Empty)
@@ -78,7 +80,7 @@ public class GetEmployeeListHandler : IRequestHandler<GetEmployeeListRequest, Ge
             .Employee
             .AsNoTracking()
             .ApplyIsDeletedFilter(request.IsDeleted)
-            //.Include(x => x.EmployeeGroup)
+            .Include(x => x.Department)
             //.Include(x => x.EmployeeCategory)
             .AsQueryable();
 

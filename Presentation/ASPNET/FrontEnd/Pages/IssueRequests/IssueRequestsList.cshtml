@@ -42,10 +42,16 @@
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-6">
+                                                <label for="departmentId">الادارة</label>
+                                                <div ref="departmentIdRef"></div>
+                                                <label class="text-danger">{{ state.errors.departmentId }}</label>
+                                            </div>
+                                            <div class="col-md-6">
                                                 <label for="employeeId">الموظف</label>
                                                 <div ref="employeeIdRef"></div>
                                                 <label class="text-danger">{{ state.errors.employeeId }}</label>
                                             </div>
+                                         
                                       @*       <div class="col-md-6">
                                                 <label for="TaxId">الضريبة</label>
                                                 <div ref="taxIdRef"></div>

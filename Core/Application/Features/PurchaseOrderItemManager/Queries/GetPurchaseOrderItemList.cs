@@ -21,6 +21,9 @@ public record GetPurchaseOrderItemListDto
     public double? Quantity { get; init; }
     public double? Total { get; init; }
     public DateTime? CreatedAtUtc { get; init; }
+    public string? Percentage { get; set; }
+    public string? Reasons { get; set; }
+    public bool? ItemStatus { get; set; }
 }
 
 public class GetPurchaseOrderItemListProfile : Profile

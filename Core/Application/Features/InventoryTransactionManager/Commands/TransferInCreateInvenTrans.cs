@@ -15,6 +15,9 @@ public class TransferInCreateInvenTransRequest : IRequest<TransferInCreateInvenT
     public string? ProductId { get; init; }
     public double? Movement { get; init; }
     public string? CreatedById { get; init; }
+    public string? Percentage { get; set; }
+    public string? Reasons { get; set; }
+    public bool? ItemStatus { get; set; }
 }
 
 public class TransferInCreateInvenTransValidator : AbstractValidator<TransferInCreateInvenTransRequest>
@@ -46,6 +49,9 @@ public class TransferInCreateInvenTransHandler : IRequestHandler<TransferInCreat
             request.ProductId,
             request.Movement,
             request.CreatedById,
+            request.Percentage,
+            request.ItemStatus,
+            request.Reasons,
             cancellationToken);
 
         return new TransferInCreateInvenTransResult

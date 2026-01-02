@@ -27,5 +27,8 @@ public class InventoryTransaction : BaseEntity
     public double? QtySCSys { get; set; }
     public double? QtySCCount { get; set; }
     public double? QtySCDelta { get; set; }
+    public string? Percentage { get; set; }
+    public string? Reasons { get; set; }
+    public bool? ItemStatus { get; set; }
 
 }

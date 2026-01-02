@@ -58,6 +58,7 @@ public static class DI
         services.AddScoped<CustomerCategorySeeder>();
         services.AddScoped<CustomerGroupSeeder>();
         services.AddScoped<CustomerSeeder>();
+        services.AddScoped<DepartmentSeeder>();
         services.AddScoped<CustomerContactSeeder>();
         services.AddScoped<VendorCategorySeeder>();
         services.AddScoped<VendorGroupSeeder>();
@@ -87,6 +88,20 @@ public static class DI
         var serviceProvider = scope.ServiceProvider;
 
         var context = serviceProvider.GetRequiredService<DataContext>();
+
+        //mai
+        if (!context.Departments.Any())
+        {
+            serviceProvider.GetRequiredService<DepartmentSeeder>()
+                .GenerateDataAsync().Wait();
+        }
+
+        if (!context.Employee.Any())
+        {
+            serviceProvider.GetRequiredService<EmployeeSeeder>()
+                .GenerateDataAsync().Wait();
+        }
+        ///
         if (!context.Tax.Any()) //if empty, thats mean never been seeded before
         {
             var taxSeeder = serviceProvider.GetRequiredService<TaxSeeder>();

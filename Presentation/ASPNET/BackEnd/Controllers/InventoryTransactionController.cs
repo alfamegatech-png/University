@@ -235,6 +235,74 @@ public class InventoryTransactionController : BaseApiController
 
 
     [Authorize]
+    [HttpPost("GoodsExamineCreateInvenTrans")]
+    public async Task<ActionResult<ApiSuccessResult<GoodsExamineCreateInvenTransResult>>> GoodsExamineCreateInvenTransAsync([FromBody] GoodsExamineCreateInvenTransRequest request, CancellationToken cancellationToken)
+    {
+        var response = await _sender.Send(request, cancellationToken);
+
+        return Ok(new ApiSuccessResult<GoodsExamineCreateInvenTransResult>
+        {
+            Code = StatusCodes.Status200OK,
+            Message = $"Success executing {nameof(GoodsExamineCreateInvenTransAsync)}",
+            Content = response
+        });
+    }
+
+    [Authorize]
+    [HttpPost("GoodsExamineUpdateInvenTrans")]
+    public async Task<ActionResult<ApiSuccessResult<GoodsExamineUpdateInvenTransResult>>> GoodsExamineUpdateInvenTransAsync([FromBody] GoodsExamineUpdateInvenTransRequest request, CancellationToken cancellationToken)
+    {
+        var response = await _sender.Send(request, cancellationToken);
+
+        return Ok(new ApiSuccessResult<GoodsExamineUpdateInvenTransResult>
+        {
+            Code = StatusCodes.Status200OK,
+            Message = $"Success executing {nameof(GoodsExamineUpdateInvenTransAsync)}",
+            Content = response
+        });
+    }
+
+    [Authorize]
+    [HttpPost("GoodsExamineDeleteInvenTrans")]
+    public async Task<ActionResult<ApiSuccessResult<GoodsExamineDeleteInvenTransResult>>> GoodsExamineDeleteInvenTransAsync(GoodsExamineDeleteInvenTransRequest request, CancellationToken cancellationToken)
+    {
+        var response = await _sender.Send(request, cancellationToken);
+
+        return Ok(new ApiSuccessResult<GoodsExamineDeleteInvenTransResult>
+        {
+            Code = StatusCodes.Status200OK,
+            Message = $"Success executing {nameof(GoodsExamineDeleteInvenTransAsync)}",
+            Content = response
+        });
+    }
+
+    [Authorize]
+    [HttpGet("GoodsExamineGetInvenTransList")]
+    public async Task<ActionResult<ApiSuccessResult<GoodsExamineGetInvenTransListResult>>> GoodsExamineGetInvenTransListAsync(
+        CancellationToken cancellationToken,
+        [FromQuery] string moduleId
+        )
+    {
+        var request = new GoodsExamineGetInvenTransListRequest { ModuleId = moduleId };
+        var response = await _sender.Send(request, cancellationToken);
+
+        return Ok(new ApiSuccessResult<GoodsExamineGetInvenTransListResult>
+        {
+            Code = StatusCodes.Status200OK,
+            Message = $"Success executing {nameof(GoodsExamineGetInvenTransListAsync)}",
+            Content = response
+        });
+    }
+
+
+
+
+
+
+
+
+
+    [Authorize]
     [HttpPost("PurchaseReturnCreateInvenTrans")]
     public async Task<ActionResult<ApiSuccessResult<PurchaseReturnCreateInvenTransResult>>> PurchaseReturnCreateInvenTransAsync(PurchaseReturnCreateInvenTransRequest request, CancellationToken cancellationToken)
     {

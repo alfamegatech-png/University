@@ -414,6 +414,48 @@ namespace Infrastructure.Migrations
                     b.ToTable("DeliveryOrder");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Department", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedById")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedById")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Departments");
+                });
+
             modelBuilder.Entity("Domain.Entities.Employee", b =>
                 {
                     b.Property<string>("Id")
@@ -434,6 +476,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CreatedById")
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DepartmentId")
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(4000)
@@ -513,11 +558,81 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DepartmentId");
+
                     b.HasIndex("Name");
 
                     b.HasIndex("Number");
 
                     b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ExamineCommitee", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedById")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<int?>("EmployeeID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeName")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<int?>("EmployeePositionID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeePositionName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool?>("EmployeeType")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ExamineCommiteeId")
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("GoodsExamineId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedById")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamineCommiteeId");
+
+                    b.HasIndex("GoodsExamineId");
+
+                    b.HasIndex("Number");
+
+                    b.ToTable("ExamineCommitee");
                 });
 
             modelBuilder.Entity("Domain.Entities.FileDocument", b =>
@@ -634,6 +749,65 @@ namespace Infrastructure.Migrations
                     b.ToTable("FileImage");
                 });
 
+            modelBuilder.Entity("Domain.Entities.GoodsExamine", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("CommiteeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CommitteeDesionNumber")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime?>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedById")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime?>("ExamineDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PurchaseOrderId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedById")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Number");
+
+                    b.HasIndex("PurchaseOrderId");
+
+                    b.ToTable("GoodsExamine");
+                });
+
             modelBuilder.Entity("Domain.Entities.GoodsReceive", b =>
                 {
                     b.Property<string>("Id")
@@ -704,6 +878,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool?>("ItemStatus")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModuleCode")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -729,6 +906,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Percentage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ProductId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -741,6 +921,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<double?>("QtySCSys")
                         .HasColumnType("float");
+
+                    b.Property<string>("Reasons")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
@@ -862,6 +1045,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<double?>("AvailableQuantity")
+                        .HasColumnType("float");
+
                     b.Property<DateTime?>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -882,15 +1068,15 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<double?>("Quantity")
-                        .HasColumnType("float");
-
                     b.Property<double?>("RequestedQuantity")
                         .HasColumnType("float");
 
                     b.Property<string>("Summary")
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
+
+                    b.Property<double?>("SuppliedQuantity")
+                        .HasColumnType("float");
 
                     b.Property<double?>("Total")
                         .HasColumnType("float");
@@ -1242,6 +1428,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool?>("ItemStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Percentage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ProductId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -1252,6 +1444,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<double?>("Quantity")
                         .HasColumnType("float");
+
+                    b.Property<string>("Reasons")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Summary")
                         .HasMaxLength(4000)
@@ -2512,6 +2707,38 @@ namespace Infrastructure.Migrations
                     b.Navigation("SalesOrder");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Employee", b =>
+                {
+                    b.HasOne("Domain.Entities.Department", "Department")
+                        .WithMany("Employees")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ExamineCommitee", b =>
+                {
+                    b.HasOne("Domain.Entities.ExamineCommitee", null)
+                        .WithMany("Committees")
+                        .HasForeignKey("ExamineCommiteeId");
+
+                    b.HasOne("Domain.Entities.GoodsExamine", "GoodsExamine")
+                        .WithMany("Committees")
+                        .HasForeignKey("GoodsExamineId");
+
+                    b.Navigation("GoodsExamine");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GoodsExamine", b =>
+                {
+                    b.HasOne("Domain.Entities.PurchaseOrder", "PurchaseOrder")
+                        .WithMany()
+                        .HasForeignKey("PurchaseOrderId");
+
+                    b.Navigation("PurchaseOrder");
+                });
+
             modelBuilder.Entity("Domain.Entities.GoodsReceive", b =>
                 {
                     b.HasOne("Domain.Entities.PurchaseOrder", "PurchaseOrder")
@@ -2802,9 +3029,24 @@ namespace Infrastructure.Migrations
                     b.Navigation("CustomerContactList");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Department", b =>
+                {
+                    b.Navigation("Employees");
+                });
+
             modelBuilder.Entity("Domain.Entities.Employee", b =>
                 {
                     b.Navigation("IssueRequestsList");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ExamineCommitee", b =>
+                {
+                    b.Navigation("Committees");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GoodsExamine", b =>
+                {
+                    b.Navigation("Committees");
                 });
 
             modelBuilder.Entity("Domain.Entities.IssueRequests", b =>

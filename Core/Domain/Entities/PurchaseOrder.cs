@@ -12,6 +12,7 @@ public class PurchaseOrder : BaseEntity
     public string? VendorId { get; set; }
     public Vendor? Vendor { get; set; }
     public string? TaxId { get; set; }
+
     public Tax? Tax { get; set; }
     public double? BeforeTaxAmount { get; set; }
     public double? TaxAmount { get; set; }

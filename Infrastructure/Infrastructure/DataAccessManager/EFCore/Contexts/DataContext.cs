@@ -43,6 +43,10 @@ public class DataContext : IdentityDbContext<ApplicationUser>, IEntityDbSet
     public DbSet<InventoryTransaction> InventoryTransaction { get; set; }
     public DbSet<DeliveryOrder> DeliveryOrder { get; set; }
     public DbSet<GoodsReceive> GoodsReceive { get; set; }
+    //noha
+    public DbSet<GoodsExamine> GoodsExamine { get; set; }
+    public DbSet<ExamineCommitee> ExamineCommitee { get; set; }
+    //
     public DbSet<SalesReturn> SalesReturn { get; set; }
     public DbSet<PurchaseReturn> PurchaseReturn { get; set; }
     public DbSet<TransferIn> TransferIn { get; set; }
@@ -56,6 +60,8 @@ public class DataContext : IdentityDbContext<ApplicationUser>, IEntityDbSet
     public DbSet<IssueRequests> IssueRequests { get; set; }
     public DbSet<IssueRequestsItem> IssueRequestsItem { get; set; }
     public DbSet<Employee> Employee { get; set; }
+    public DbSet<Department> Departments { get; set; }
+
     ///
 
 
@@ -102,10 +108,17 @@ public class DataContext : IdentityDbContext<ApplicationUser>, IEntityDbSet
         modelBuilder.ApplyConfiguration(new PositiveAdjustmentConfiguration());
         modelBuilder.ApplyConfiguration(new ScrappingConfiguration());
 
+
+        modelBuilder.ApplyConfiguration(new ExamineCommitteConfiguration());
+        modelBuilder.ApplyConfiguration(new GoodsExamineConfiguration());
+
+
         /// mai
         modelBuilder.ApplyConfiguration(new IssueRequestsConfiguration());
         modelBuilder.ApplyConfiguration(new IssueRequestsItemConfiguration());
         modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+        modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+
         ///
 
     }

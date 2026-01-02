@@ -45,6 +45,7 @@ public partial class InventoryTransactionService
                     x.WarehouseId == warehouseId &&
                     x.ProductId == productId &&
                     x.Product!.Physical == true)
+
                 .Sum(x => x.Stock ?? 0.0);
 
         }
@@ -125,6 +126,9 @@ public partial class InventoryTransactionService
             case nameof(GoodsReceive):
                 GoodsReceiveProcessing(transaction);
                 break;
+            case nameof(GoodsExamine):
+                GoodsExamineProcessing(transaction);
+                break;
             case nameof(SalesReturn):
                 SalesReturnProcessing(transaction);
                 break;
@@ -195,6 +199,21 @@ public partial class InventoryTransactionService
 
         return transaction;
     }
+    private InventoryTransaction GoodsExamineProcessing(InventoryTransaction transaction)
+    {
+        if (transaction == null)
+        {
+            throw new Exception("Inventory transaction is null");
+        }
+
+        transaction.TransType = InventoryTransType.In;
+        CalculateStock(transaction);
+        transaction.WarehouseFromId = _warehouseService.GetVendorWarehouse()!.Id;
+        transaction.WarehouseToId = transaction.WarehouseId;
+
+        return transaction;
+    }
+
 
     private InventoryTransaction SalesReturnProcessing(InventoryTransaction transaction)
     {

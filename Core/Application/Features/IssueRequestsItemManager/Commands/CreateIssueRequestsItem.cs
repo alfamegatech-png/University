@@ -60,10 +60,10 @@ public class CreateIssueRequestsItemHandler : IRequestHandler<CreateIssueRequest
         entity.ProductId = request.ProductId;
         entity.Summary = request.Summary;
         entity.UnitPrice = request.UnitPrice;
-        entity.Quantity = request.Quantity;
+        entity.SuppliedQuantity = request.Quantity;
         entity.RequestedQuantity = request.RequestedQuantity;
 
-        entity.Total = entity.Quantity * entity.UnitPrice;
+        entity.Total = entity.SuppliedQuantity * entity.UnitPrice;
 
         await _repository.CreateAsync(entity, cancellationToken);
         await _unitOfWork.SaveAsync(cancellationToken);

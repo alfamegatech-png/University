@@ -54,10 +54,15 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "IsModule": false
                     },
                     {
-            "URL": "/Employee/EmployeeList",
-            "Name": " الموظفين ",
-            "IsModule": false
-        }
+                       "URL": "/Employee/EmployeeList",
+                       "Name": " الموظفين ",
+                       "IsModule": false
+                    },
+                    {
+                       "URL": "/Department/DepartmentList",
+                       "Name": " الادارة ",
+                       "IsModule": false
+                    }
                     
                 ]
             },
@@ -89,7 +94,17 @@ namespace Infrastructure.SecurityManager.NavigationMenu
             "Name": "طلب وإذن الصرف ",
             "IsModule": false
         },
-            
+         {
+            "URL": "/GoodsReceives/GoodsReceiveList",
+            "Name": "استلام ",
+            "IsModule": false
+        },
+         {
+            "URL": "/GoodsExamine/GoodsExamineList",
+            "Name": "فحص  ",
+            "IsModule": false
+        },
+                     
          
                     {
                         "URL": "/PurchaseReturns/PurchaseReturnList",

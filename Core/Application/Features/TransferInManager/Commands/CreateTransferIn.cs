@@ -22,6 +22,9 @@ public class CreateTransferInRequest : IRequest<CreateTransferInResult>
     public string? Description { get; init; }
     public string? TransferOutId { get; init; }
     public string? CreatedById { get; init; }
+    public string? Percentage { get; set; }
+    public string? Reasons { get; set; }
+    public bool? ItemStatus { get; set; }
 }
 
 public class CreateTransferInValidator : AbstractValidator<CreateTransferInRequest>
@@ -87,6 +90,10 @@ public class CreateTransferInHandler : IRequestHandler<CreateTransferInRequest, 
                     item.ProductId,
                     item.Movement,
                     entity.CreatedById,
+                    request.Percentage,
+                    request.ItemStatus,
+                    request.Reasons,
+
                     cancellationToken
                     );
 
