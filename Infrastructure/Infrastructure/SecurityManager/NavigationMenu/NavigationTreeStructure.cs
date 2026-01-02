@@ -72,7 +72,12 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "Name": "أوامر التوريد",
                         "IsModule": false
                     },
-
+        {
+            "URL": "/GoodsReceives/GoodsReceiveList",
+            "Name": "فحص واستلام ",
+            "IsModule": false
+        },
+               
                     {
                         "URL": "/PurchaseReports/PurchaseReportList",
                         "Name": "تقارير أوامر التوريد",
@@ -84,12 +89,7 @@ namespace Infrastructure.SecurityManager.NavigationMenu
             "Name": "طلب وإذن الصرف ",
             "IsModule": false
         },
-         {
-            "URL": "/GoodsReceives/GoodsReceiveList",
-            "Name": "فحص واستلام ",
-            "IsModule": false
-        },
-                  
+            
          
                     {
                         "URL": "/PurchaseReturns/PurchaseReturnList",
