@@ -41,7 +41,7 @@ public class GetGoodsExamineSingleProfile : Profile
 public class GetGoodsExamineSingleResult
 {
     public GetGoodsExamineSingleDto? Data { get; init; }
-    public List<InventoryTransaction>? TransactionList { get; init; }
+    public List<PurchaseOrderItem>? PurchaseOrder { get; init; }
 }
 
 public class GetGoodsExamineSingleRequest : IRequest<GetGoodsExamineSingleResult>
@@ -87,22 +87,18 @@ public class GetGoodsExamineSingleHandler
 
         var dto = _mapper.Map<GetGoodsExamineSingleDto>(entity);
 
-        var transactionList = await _context
-            .InventoryTransaction
+        var PuchaseOrderItemList = await _context
+            .PurchaseOrderItem
             .AsNoTracking()
             .ApplyIsDeletedFilter(false)
-            .Include(x => x.Product)
-            .Include(x => x.Warehouse)
-            .Include(x => x.WarehouseFrom)
-            .Include(x => x.WarehouseTo)
-            .Where(x => x.ModuleId == request.Id &&
-                        x.ModuleName == nameof(GoodsExamine))
+            .Include(x => x.Product).Where(a=>a.PurchaseOrderId== entity.PurchaseOrderId)
+          
             .ToListAsync(cancellationToken);
 
         return new GetGoodsExamineSingleResult
         {
             Data = dto,
-            TransactionList = transactionList
+            PurchaseOrder = PuchaseOrderItemList
         };
     }
 }

@@ -31,7 +31,11 @@ public partial class InventoryTransactionService
         {
             throw new Exception($"Parent entity not found: {moduleId}");
         }
-
+        var quantity = await _queryContext.PurchaseOrderItem
+   .Where(x => x.PurchaseOrderId == parent.PurchaseOrderId
+            && x.ProductId == productId)
+   .Select(x => x.Quantity)
+   .FirstOrDefaultAsync(cancellationToken) ?? 1;
         var child = new InventoryTransaction();
         child.CreatedById = createdById;
 
@@ -47,7 +51,7 @@ public partial class InventoryTransactionService
         child.Percentage = Percentage;
         child.WarehouseId = warehouseId;
         child.ProductId = productId;
-        child.Movement = movement;
+        child.Movement = quantity;
 
         CalculateInvenTrans(child);
 
@@ -61,7 +65,7 @@ public partial class InventoryTransactionService
         string? id,
         string? warehouseId,
         string? productId,
-        double? movement, 
+        
         string? Percentage,
           bool? ItemStatus,
         string? Reasons,
@@ -70,6 +74,9 @@ public partial class InventoryTransactionService
         CancellationToken cancellationToken = default
         )
     {
+       
+
+
         var child = await _inventoryTransactionRepository.GetAsync(id ?? string.Empty, cancellationToken);
 
         if (child == null)
@@ -81,7 +88,8 @@ public partial class InventoryTransactionService
 
         child.WarehouseId = warehouseId;
         child.ProductId = productId;
-        child.Movement = movement;
+     
+
         child.Percentage = Percentage;
         child.ItemStatus = ItemStatus;
         child.Reasons = Reasons;

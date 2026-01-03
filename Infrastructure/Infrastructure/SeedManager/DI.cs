@@ -89,18 +89,18 @@ public static class DI
 
         var context = serviceProvider.GetRequiredService<DataContext>();
 
-        //mai
-        if (!context.Departments.Any())
-        {
-            serviceProvider.GetRequiredService<DepartmentSeeder>()
-                .GenerateDataAsync().Wait();
-        }
+        ////mai
+        //if (!context.Departments.Any())
+        //{
+        //    serviceProvider.GetRequiredService<DepartmentSeeder>()
+        //        .GenerateDataAsync().Wait();
+        //}
 
-        if (!context.Employee.Any())
-        {
-            serviceProvider.GetRequiredService<EmployeeSeeder>()
-                .GenerateDataAsync().Wait();
-        }
+        //if (!context.Employee.Any())
+        //{
+        //    serviceProvider.GetRequiredService<EmployeeSeeder>()
+        //        .GenerateDataAsync().Wait();
+        //}
         ///
         if (!context.Tax.Any()) //if empty, thats mean never been seeded before
         {

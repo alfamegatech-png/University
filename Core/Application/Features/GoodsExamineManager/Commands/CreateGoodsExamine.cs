@@ -1,5 +1,6 @@
 ﻿using Application.Common.Extensions;
 using Application.Common.Repositories;
+using Application.Features.GoodsExamineManager.Commands;
 using Application.Features.GoodsReceiveManager.Commands;
 using Application.Features.InventoryTransactionManager;
 using Application.Features.NumberSequenceManager;
@@ -8,6 +9,7 @@ using Domain.Enums;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace Application.Features.GoodsExamineManager.Commands;
 
@@ -93,49 +95,48 @@ public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineReque
         await _deliveryOrderRepository.CreateAsync(entity, cancellationToken);
         await _unitOfWork.SaveAsync(cancellationToken);
 
-        var defaultWarehouse = await _warehouseRepository
-           .GetQuery()
-           .ApplyIsDeletedFilter(false)
-           .Where(x => x.SystemWarehouse == false)
-           .FirstOrDefaultAsync(cancellationToken);
+        //var defaultWarehouse = await _warehouseRepository
+        //   .GetQuery()
+        //   .ApplyIsDeletedFilter(false)
+        //   .Where(x => x.SystemWarehouse == false)
+        //   .FirstOrDefaultAsync(cancellationToken);
 
-        if (defaultWarehouse != null)
-        {
-            var items = await _purchaseOrderItemRepository
-                .GetQuery()
-                .ApplyIsDeletedFilter(false)
-                .Where(x => x.PurchaseOrderId == entity.PurchaseOrderId)
-                .Include(x => x.Product)
-                .ToListAsync(cancellationToken);
+        //if (defaultWarehouse != null)
+        //{
+        //    var items = await _purchaseOrderItemRepository
+        //        .GetQuery()
+        //        .ApplyIsDeletedFilter(false)
+        //        .Where(x => x.PurchaseOrderId == entity.PurchaseOrderId)
+        //        .Include(x => x.Product)
+        //        .ToListAsync(cancellationToken);
 
-            foreach (var item in items)
-            {
-                if (item?.Product?.Physical ?? false)
-                {
-                    await _inventoryTransactionService.GoodsExamineCreateInvenTrans(
-                        
-                        entity.Id,
-                        defaultWarehouse.Id,
-                        item.ProductId,
-                        item.Percentage,
-                       
-                        item.Reasons,
-                        item.ItemStatus,
-                        item.Quantity,
-                        
-                        
-                        
-                        entity.CreatedById,
-                        
-                        
-                        cancellationToken
-                        );
+        //    foreach (var item in items)
+        //    {
+        //        if (item?.Product?.Physical ?? false)
+        //        {
+        //            await _inventoryTransactionService.GoodsExamineCreateInvenTrans(
 
-                }
-            }
-        }
+        //                entity.Id,
+        //                defaultWarehouse.Id,
+        //                item.ProductId,
+        //                item.Percentage,
 
-       
+        //                item.Reasons,
+        //                item.ItemStatus,
+        //                item.Quantity,
+
+
+
+        //                entity.CreatedById,
+
+
+        //                cancellationToken
+        //                );
+
+        //        }
+        //    }
+        //}
+
 
         if (request.committeeList != null && request.committeeList.Any())
         {
@@ -160,12 +161,14 @@ public class CreateGoodsExamineHandler : IRequestHandler<CreateGoodsExamineReque
         }
 
 
-       
-     
+
+
 
         return new CreateGoodsExamineResult
         {
             Data = entity
         };
+
     }
+   
 }

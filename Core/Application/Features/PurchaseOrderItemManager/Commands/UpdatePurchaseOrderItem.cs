@@ -20,6 +20,9 @@ public class UpdatePurchaseOrderItemRequest : IRequest<UpdatePurchaseOrderItemRe
     public double? UnitPrice { get; init; }
     public double? Quantity { get; init; }
     public string? UpdatedById { get; init; }
+    public string? Percentage { get; set; }
+    public string? Reasons { get; set; }
+    public bool? ItemStatus { get; set; }
 }
 
 public class UpdatePurchaseOrderItemValidator : AbstractValidator<UpdatePurchaseOrderItemRequest>
@@ -64,10 +67,13 @@ public class UpdatePurchaseOrderItemHandler : IRequestHandler<UpdatePurchaseOrde
         entity.UpdatedById = request.UpdatedById;
 
         entity.PurchaseOrderId = request.PurchaseOrderId;
-        entity.ProductId = request.ProductId;
+       
         entity.Summary = request.Summary;
         entity.UnitPrice = request.UnitPrice;
         entity.Quantity = request.Quantity;
+        entity.Percentage = request.Percentage;
+        entity.ItemStatus = request.ItemStatus;
+        entity.Reasons = request.Reasons;
 
         entity.Total = entity.UnitPrice * entity.Quantity;
 
