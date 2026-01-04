@@ -52,6 +52,7 @@ const App = {
             employeeListLookupData: [],
             departmentId: null,
             departmentListLookupData: [],
+            warehouseListLookupData: [],
            // taxListLookupData: [],
             issueRequestsStatusListLookupData: [],
             secondaryData: [],
@@ -77,6 +78,11 @@ const App = {
             //taxAmount: '0.00',
             totalAmount: '0.00'
         });
+
+        let productObj, priceObj, numberObj, summaryObj;
+        let availableQuantityObj, requestedQtyObj, suppliedQtyObj, totalObj;
+        let warehouseObj;
+
 
         const mainGridRef = Vue.ref(null);
         const mainModalRef = Vue.ref(null);
@@ -180,6 +186,10 @@ const App = {
                     throw error;
                 }
             },
+            getWarehouseListLookupData: async () => {
+                return await AxiosManager.get('/Warehouse/GetWarehouseList', {});
+            },
+
             getDepartmentListLookupData: async () => {
                 return await AxiosManager.get('/Department/GetDepartmentList', {});
             },
@@ -216,20 +226,20 @@ const App = {
                     throw error;
                 }
             },
-            createSecondaryData: async (unitPrice, quantity, requestedQuantity ,summary, productId, issueRequestsId, createdById) => {
+            createSecondaryData: async (unitPrice, availableQuantity, requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, createdById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequestsItem/CreateIssueRequestsItem', {
-                        unitPrice, quantity, requestedQuantity, summary, productId, issueRequestsId, createdById
+                        unitPrice, availableQuantity, requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, createdById
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateSecondaryData: async (id, unitPrice, quantity, requestedQuantity, summary, productId, issueRequestsId, updatedById) => {
+            updateSecondaryData: async (id, unitPrice, availableQuantity, requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, updatedById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequestsItem/UpdateIssueRequestsItem', {
-                        id, unitPrice, quantity, requestedQuantity, summary, productId, issueRequestsId, updatedById
+                        id, unitPrice, availableQuantity, requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, updatedById
                     });
                     return response;
                 } catch (error) {
@@ -257,6 +267,11 @@ const App = {
         };
 
         const methods = {
+            populateWarehouseListLookupData: async () => {
+                const response = await services.getWarehouseListLookupData();
+                state.warehouseListLookupData = response?.data?.content?.data;
+            },
+
             populateDepartmentListLookupData: async () => {
                 const response = await services.getDepartmentListLookupData();
                 state.departmentListLookupData = response?.data?.content?.data;
@@ -404,7 +419,7 @@ const App = {
                         change: async (e) => {
                             state.departmentId = e.value;
 
-                            // 🚨 only reset employee if USER changed department
+                          
                             if (e.isInteracted) {
                                 state.employeeId = null;
 
@@ -764,10 +779,68 @@ const App = {
             }
         };
 
+
+
+
+        async function loadStock(rowData) {
+            if (!rowData.productId || !rowData.warehouseId) {
+                if (availableQuantityObj) availableQuantityObj.value = 0;
+                if (suppliedQtyObj) suppliedQtyObj.value = 0;
+                if (totalObj && priceObj) totalObj.value = 0;
+                return;
+            }
+
+            try {
+                
+                const res = await AxiosManager.get(
+                    `/IssueRequests/GetProductCurrentStock?productId=${rowData.productId}&warehouseId=${rowData.warehouseId}`
+                );
+                let stock = res.data?.content?.data?.currentStock ?? 0;
+
+             
+                const suppliedInRequest = state.secondaryData
+                    .filter(item => item.productId === rowData.productId && item.warehouseId === rowData.warehouseId)
+                    .reduce((sum, item) => sum + (item.suppliedQuantity ?? 0), 0);
+
+                stock -= suppliedInRequest;
+
+                if (availableQuantityObj)
+                    availableQuantityObj.value = stock;
+
+                if (suppliedQtyObj) {
+                    
+                    suppliedQtyObj.value = rowData.requestedQuantity != null
+                        ? Math.min(rowData.requestedQuantity, stock)
+                        : 0;
+                }
+
+                if (totalObj && priceObj) {
+                    totalObj.value = priceObj.value * (suppliedQtyObj?.value ?? 0);
+                }
+
+            } catch (e) {
+                console.error('Stock load failed', e);
+                if (availableQuantityObj) availableQuantityObj.value = 0;
+            }
+        }
+
+
+        function getAvailableProducts(currentRow) {
+            return state.productListLookupData.filter(p => {
+                return !state.secondaryData.some(item =>
+                    item.productId === p.id &&
+                    item.warehouseId === currentRow.warehouseId &&
+                    item.id !== currentRow.id 
+                );
+            });
+        }
+
         // ثانوي (Secondary Grid)
         const secondaryGrid = {
+
             obj: null,
             create: async (dataSource) => {
+
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
                     locale: 'ar',        
@@ -791,47 +864,118 @@ const App = {
                     gridLines: 'Horizontal',
                     columns: [
                         { type: 'checkbox', width: 60 },
-                        { field: 'id', isPrimaryKey: true, headerText: 'معرف', visible: false },
+                        { field: 'id', isPrimaryKey: true, visible: false },
+
+                        /* ================= Warehouse ================= */
                         {
-                            field: 'productId', headerText: 'المنتج', width: 250, validationRules: { required: true }, disableHtmlEncode: false,
-                            valueAccessor: (field, data, column) => {
-                                const product = state.productListLookupData.find(item => item.id === data[field]);
-                                return product ? `${product.name}` : '';
+                            field: 'warehouseId',
+                            headerText: 'المخزن',
+                            width: 220,
+                            validationRules: { required: true },
+
+                            valueAccessor: (field, data) => {
+                                const id = String(data[field]);
+                                const w = state.warehouseListLookupData
+                                    .find(x => String(x.id) === id);
+                                return w ? w.name : '';
                             },
-                            editType: 'dropdownedit',
+
+                            edit: {
+                                create: () => document.createElement('input'),
+                                read: () => warehouseObj.value,
+                                destroy: () => warehouseObj.destroy(),
+                                write: (args) => {
+
+                                    warehouseObj = new ej.dropdowns.DropDownList({
+                                        dataSource: state.warehouseListLookupData,
+                                        fields: { value: 'id', text: 'name' },
+                                        value: args.rowData.warehouseId ?? null,
+                                        placeholder: 'اختر المخزن',
+                                        allowFiltering: true,
+
+                                        change: (e) => {
+                                            args.rowData.warehouseId = e.value; 
+
+                                            if (productObj) {
+                                                productObj.value = null;
+                                                productObj.dataSource = getAvailableProducts(args.rowData);
+                                            }
+
+                                            args.rowData.productId = null;
+                                            loadStock(args.rowData);
+                                        }
+                                    });
+
+                                    warehouseObj.appendTo(args.element);
+                                }
+                            }
+                        },
+
+
+                        /* ================= Product ================= */
+                        {
+                            field: 'productId',
+                            headerText: 'المنتج',
+                            width: 250,
+                            validationRules: { required: true },
+
+                           
+                            valueAccessor: (field, data) => {
+                                const p = state.productListLookupData.find(x => x.id === data[field]);
+                                return p ? p.name : '';
+                            },
+
                             edit: {
                                 create: () => document.createElement('input'),
                                 read: () => productObj.value,
                                 destroy: () => productObj.destroy(),
                                 write: (args) => {
-                                    productObj = new ej.dropdowns.DropDownList({
-                                        dataSource: state.productListLookupData,
-                                        fields: { value: 'id', text: 'name' },
-                                        value: args.rowData.productId,
-                                        change: (e) => {
-                                            const selectedProduct = state.productListLookupData.find(item => item.id === e.value);
-                                            if (selectedProduct) {
-                                                args.rowData.productId = selectedProduct.id;
-                                                if (numberObj) numberObj.value = selectedProduct.number;
-                                                if (priceObj) priceObj.value = selectedProduct.unitPrice;
-                                                if (summaryObj) summaryObj.value = selectedProduct.description;
-                                                if (requestedQtyObj) requestedQtyObj.value = selectedProduct.requestedQuantity;
 
-                                                if (quantityObj) {
-                                                    quantityObj.value = 1;
-                                                    if (totalObj) totalObj.value = selectedProduct.unitPrice * quantityObj.value;
-                                                }
-                                            }
-                                        },
+                                    const filteredProducts = getAvailableProducts(args.rowData);
+
+                                    productObj = new ej.dropdowns.DropDownList({
+                                        dataSource: filteredProducts,
+                                        fields: { text: 'name', value: 'id' },
+                                        value: args.rowData.productId ?? null,
+                                        allowFiltering: true,
                                         placeholder: 'اختر المنتج',
-                                        floatLabelType: 'Never'
+                                        change: async (e) => {
+                                            const product = state.productListLookupData.find(x => x.id === e.value);
+                                            if (!product) return;
+
+                                            args.rowData.productId = product.id;
+
+                                         
+                                            if (priceObj) priceObj.value = product.unitPrice ?? 0;
+
+                                            
+                                            if (summaryObj) summaryObj.value = product.description;
+                                            if (numberObj) numberObj.value = product.number;
+
+                                         
+                                            if (requestedQtyObj)
+                                                requestedQtyObj.value = args.rowData.requestedQuantity ?? null;
+
+                                            
+                                            await loadStock(args.rowData);
+                                        }
                                     });
+
                                     productObj.appendTo(args.element);
                                 }
                             }
                         },
+
+
+
+                        /* ================= Unit Price ================= */
                         {
-                            field: 'unitPrice', headerText: 'سعر الوحدة', width: 200, validationRules: { required: true }, type: 'number', format: 'N2', textAlign: 'Right',
+                            field: 'unitPrice',
+                            headerText: 'سعر الوحدة',
+                            width: 180,
+                            type: 'number',
+                            format: 'N2',
+                            validationRules: { required: true },
                             edit: {
                                 create: () => document.createElement('input'),
                                 read: () => priceObj.value,
@@ -839,92 +983,104 @@ const App = {
                                 write: (args) => {
                                     priceObj = new ej.inputs.NumericTextBox({
                                         value: args.rowData.unitPrice ?? 0,
-                                        change: (e) => {
-                                            if (quantityObj && totalObj) totalObj.value = e.value * quantityObj.value;
-                                        }
+                                        change: () => loadStock(args.rowData)
                                     });
                                     priceObj.appendTo(args.element);
                                 }
                             }
                         },
+
+                        /* ================= Available Quantity (READ ONLY) ================= */
                         {
-                            field: 'quantity', headerText: 'الكمية', width: 200, validationRules: { required: true, custom: [(args) => args['value'] > 0, 'يجب أن تكون قيمة موجبة وغير صفر'] }, type: 'number', format: 'N2', textAlign: 'Right',
+                            field: 'availableQuantity',
+                            headerText: 'المتاح بالمخزن',
+                            width: 180,
+                            allowEditing: false,
                             edit: {
                                 create: () => document.createElement('input'),
-                                read: () => quantityObj.value,
-                                destroy: () => quantityObj.destroy(),
                                 write: (args) => {
-                                    quantityObj = new ej.inputs.NumericTextBox({
-                                        value: args.rowData.quantity ?? 0,
-                                        change: (e) => {
-                                            if (priceObj && totalObj) totalObj.value = e.value * priceObj.value;
-                                        }
+                                    availableQuantityObj = new ej.inputs.NumericTextBox({
+                                        value: args.rowData.availableQuantity ?? 0,
+                                        readonly: true
                                     });
-                                    quantityObj.appendTo(args.element);
+                                    availableQuantityObj.appendTo(args.element);
                                 }
                             }
                         },
+
+                        /* ================= Requested ================= */
                         {
                             field: 'requestedQuantity',
                             headerText: 'الكمية المطلوبة',
-                            width: 200,
-                            validationRules: {
-                                required: true,
-                                custom: [(args) => args.value > 0, 'يجب أن تكون قيمة موجبة']
-                            },
-                            type: 'number',
-                            format: 'N2',
-                            textAlign: 'Right',
+                            width: 180,
+                            validationRules: { required: true },
                             edit: {
                                 create: () => document.createElement('input'),
                                 read: () => requestedQtyObj.value,
                                 destroy: () => requestedQtyObj.destroy(),
                                 write: (args) => {
                                     requestedQtyObj = new ej.inputs.NumericTextBox({
-                                        value: args.rowData.requestedQuantity ?? 0
+                                        value: args.rowData.requestedQuantity ,
+                                        change: () => loadStock(args.rowData)
                                     });
                                     requestedQtyObj.appendTo(args.element);
                                 }
                             }
                         },
 
+                        /* ================= Supplied ================= */
                         {
-                            field: 'total', headerText: 'الإجمالي', width: 200, type: 'number', format: 'N2', textAlign: 'Right', edit: {
+                            field: 'suppliedQuantity',
+                            headerText: 'الكمية المصروفة',
+                            width: 180,
+                            validationRules: { required: true },
+                            edit: {
                                 create: () => document.createElement('input'),
-                                read: () => totalObj.value,
-                                destroy: () => totalObj.destroy(),
+                                read: () => suppliedQtyObj.value,
+                                destroy: () => suppliedQtyObj.destroy(),
                                 write: (args) => {
-                                    totalObj = new ej.inputs.NumericTextBox({ value: args.rowData.total ?? 0, readonly: true });
+                                    suppliedQtyObj = new ej.inputs.NumericTextBox({
+                                        value: args.rowData.suppliedQuantity ?? 0
+                                    });
+                                    suppliedQtyObj.appendTo(args.element);
+                                }
+                            }
+                        },
+
+                        /* ================= Total ================= */
+                        {
+                            field: 'total',
+                            headerText: 'الإجمالي',
+                            width: 180,
+                            allowEditing: false,
+                            edit: {
+                                create: () => document.createElement('input'),
+                                write: (args) => {
+                                    totalObj = new ej.inputs.NumericTextBox({
+                                        value: args.rowData.total ?? 0,
+                                        readonly: true
+                                    });
                                     totalObj.appendTo(args.element);
                                 }
                             }
                         },
+
+                        /* ================= Product Number ================= */
                         {
-                            field: 'productNumber', headerText: 'رقم المنتج', allowEditing: false, width: 180, edit: {
-                                create: () => document.createElement('input'),
-                                read: () => numberObj.value,
-                                destroy: () => numberObj.destroy(),
-                                write: (args) => {
-                                    numberObj = new ej.inputs.TextBox();
-                                    numberObj.value = args.rowData.productNumber;
-                                    numberObj.readonly = true;
-                                    numberObj.appendTo(args.element);
-                                }
-                            }
+                            field: 'productNumber',
+                            headerText: 'رقم المنتج',
+                            width: 180,
+                            allowEditing: false
                         },
+
+                        /* ================= Summary ================= */
                         {
-                            field: 'summary', headerText: 'وصف المنتج', width: 200, edit: {
-                                create: () => document.createElement('input'),
-                                read: () => summaryObj.value,
-                                destroy: () => summaryObj.destroy(),
-                                write: (args) => {
-                                    summaryObj = new ej.inputs.TextBox();
-                                    summaryObj.value = args.rowData.summary;
-                                    summaryObj.appendTo(args.element);
-                                }
-                            }
-                        },
+                            field: 'summary',
+                            headerText: 'وصف المنتج',
+                            width: 220
+                        }
                     ],
+
                     toolbar: [
                         { text: 'تصدير إكسل', tooltipText: 'تصدير إلى Excel', prefixIcon: 'e-excelexport', id: 'secondaryGrid_excelexport' },
                       /*  'ExcelExport',*/
@@ -953,21 +1109,97 @@ const App = {
                     toolbarClick: (args) => {
                         if (args.item.id === 'SecondaryGrid_excelexport') secondaryGrid.obj.excelExport();
                     },
+                    //actionComplete: async (args) => {
+                    //    const IssueRequestsId = state.id;
+                    //    const userId = StorageManager.getUserId();
+
+                    //    // --- ADD NEW ITEM ---
+                    //    if (args.requestType === 'save' && args.action === 'add') {
+                    //        const data = args.data;
+
+                    //        await services.createSecondaryData(
+                    //            data.unitPrice, data.availableQuantity, data.requestedQuantity, data.suppliedQuantity,
+                    //            data.summary, data.productId, data.warehouseId, IssueRequestsId, userId
+                    //        );
+
+                    //        await methods.populateSecondaryData(IssueRequestsId);
+
+                    //        
+                    //        state.secondaryData.forEach(row => loadStock(row));
+
+                    //        secondaryGrid.refresh();
+                    //        Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
+                    //    }
+
+                    //    // --- EDIT ITEM ---
+                    //    if (args.requestType === 'save' && args.action === 'edit') {
+                    //        const data = args.data;
+                    //        await services.updateSecondaryData(
+                    //            data.id, data.unitPrice, data.availableQuantity, data.requestedQuantity, data.suppliedQuantity,
+                    //            data.summary, data.productId, data.warehouseId, IssueRequestsId, userId
+                    //        );
+                    //        await methods.populateSecondaryData(IssueRequestsId);
+
+                    //       
+                    //        state.secondaryData.forEach(row => loadStock(row));
+
+                    //        secondaryGrid.refresh();
+                    //        Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
+                    //    }
+
+                    //    // --- DELETE ITEM ---
+                    //    if (args.requestType === 'delete') {
+                    //        const data = args.data[0];
+                    //        await services.deleteSecondaryData(data.id, userId);
+                    //        await methods.populateSecondaryData(IssueRequestsId);
+
+                    //    
+                    //        state.secondaryData.forEach(row => loadStock(row));
+
+                    //        secondaryGrid.refresh();
+                    //        Swal.fire({ icon: 'success', title: 'تم الحذف', timer: 2000, showConfirmButton: false });
+                    //    }
+
+                    //    await methods.populateMainData();
+                    //    mainGrid.refresh();
+                    //    await methods.refreshPaymentSummary(state.id);
+                    //}
+
                     actionComplete: async (args) => {
                         if (args.requestType === 'save' && args.action === 'add') {
                             const IssueRequestsId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
-                            await services.createSecondaryData(data?.unitPrice, data?.quantity, data?.requestedQuantity ,data?.summary, data?.productId, IssueRequestsId, userId);
+
+                            //  calculate available after the request
+                            const adjustedAvailable = (data.availableQuantity ?? 0) - (data.suppliedQuantity ?? 0);
+
+                            await services.createSecondaryData(
+                                data.unitPrice,
+                                adjustedAvailable,        
+                                data.requestedQuantity,
+                                data.suppliedQuantity,
+                                data.summary,
+                                data.productId,
+                                data.warehouseId,
+                                IssueRequestsId,
+                                userId
+                            );
+
                             await methods.populateSecondaryData(IssueRequestsId);
+
+                            // recalc stock for display
+                            state.secondaryData.forEach(row => loadStock(row));
+
                             secondaryGrid.refresh();
                             Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
                         }
+
                         if (args.requestType === 'save' && args.action === 'edit') {
                             const IssueRequestsId = state.id;
                             const userId = StorageManager.getUserId();
                             const data = args.data;
-                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.quantity, data?.requestedQuantity, data?.summary, data?.productId, IssueRequestsId, userId);
+                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.availableQuantity, data?.requestedQuantity, data?.suppliedQuantity, data?.summary, data?.productId, data?.warehouseId, IssueRequestsId, userId);
                             await methods.populateSecondaryData(IssueRequestsId);
                             secondaryGrid.refresh();
                             Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
@@ -1020,6 +1252,8 @@ const App = {
 
                 await methods.populateEmployeeListLookupData();
                 employeeListLookup.create();
+
+                await methods.populateWarehouseListLookupData();
 
                // await methods.populateTaxListLookupData();
                 //taxListLookup.create();

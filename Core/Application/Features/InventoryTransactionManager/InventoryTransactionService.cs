@@ -153,6 +153,10 @@ public partial class InventoryTransactionService
             case nameof(Scrapping):
                 ScrappingProcessing(transaction);
                 break;
+            case nameof(IssueRequests):
+                IssueRequestItemProcessing(transaction);
+                break;
+
             default:
                 break;
         }
@@ -352,5 +356,16 @@ public partial class InventoryTransactionService
 
         return transaction;
     }
+    private InventoryTransaction IssueRequestItemProcessing(InventoryTransaction transaction)
+    {
+        transaction.TransType = InventoryTransType.Out;
+        CalculateStock(transaction);
+
+        transaction.WarehouseFromId = transaction.WarehouseId;
+        transaction.WarehouseToId = _warehouseService.GetCustomerWarehouse()!.Id;
+
+        return transaction;
+    }
+
 
 }

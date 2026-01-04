@@ -1,4 +1,5 @@
 ﻿using Application.Common.Repositories;
+using Application.Features.InventoryTransactionManager;
 using Application.Features.IssueRequestsManager;
 using Domain.Entities;
 using FluentValidation;
@@ -16,6 +17,7 @@ public class UpdateIssueRequestsItemRequest : IRequest<UpdateIssueRequestsItemRe
     public string? Id { get; init; }
     public string? IssueRequestsId { get; init; }
     public string? ProductId { get; init; }
+    public string? WarehouseId { get; init; }
     public string? Summary { get; init; }
     public double? UnitPrice { get; init; }
     public double? AvailableQuantity { get; init; }
@@ -43,16 +45,19 @@ public class UpdateIssueRequestsItemHandler : IRequestHandler<UpdateIssueRequest
     private readonly ICommandRepository<IssueRequestsItem> _repository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IssueRequestsService _IssueRequestsService;
+    private readonly InventoryTransactionService _inventoryTransactionService;
 
     public UpdateIssueRequestsItemHandler(
         ICommandRepository<IssueRequestsItem> repository,
         IUnitOfWork unitOfWork,
-        IssueRequestsService IssueRequestsService
+        IssueRequestsService IssueRequestsService, InventoryTransactionService inventoryTransactionService
         )
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _IssueRequestsService = IssueRequestsService;
+        _inventoryTransactionService = inventoryTransactionService;
+
     }
 
     public async Task<UpdateIssueRequestsItemResult> Handle(UpdateIssueRequestsItemRequest request, CancellationToken cancellationToken)
@@ -79,6 +84,53 @@ public class UpdateIssueRequestsItemHandler : IRequestHandler<UpdateIssueRequest
 
         _repository.Update(entity);
         await _unitOfWork.SaveAsync(cancellationToken);
+
+        // 2. Get related inventory transaction
+        var trans = await _inventoryTransactionService
+            .IssueRequestGetInvenTransList(
+                entity.IssueRequestsId,
+                nameof(IssueRequests),
+                cancellationToken
+            );
+
+        var existingTrans = trans.SingleOrDefault();
+
+        // 3. Update or create
+        if ((entity.SuppliedQuantity ?? 0) > 0)
+        {
+            if (existingTrans == null)
+            {
+                await _inventoryTransactionService.IssueRequestCreateInvenTrans(
+                    entity.Id,
+                    request.WarehouseId!,
+                    entity.ProductId!,
+                    entity.SuppliedQuantity,
+                    request.UpdatedById,
+                    cancellationToken
+                );
+            }
+            else
+            {
+                await _inventoryTransactionService.IssueRequestUpdateInvenTrans(
+                    existingTrans.Id,
+                    request.WarehouseId,
+                    entity.ProductId,
+                    entity.SuppliedQuantity,
+                    request.UpdatedById,
+                    cancellationToken
+                );
+            }
+        }
+        else if (existingTrans != null)
+        {
+            // SuppliedQuantity changed to 0
+            await _inventoryTransactionService.IssueRequestDeleteInvenTrans(
+                existingTrans.Id,
+                request.UpdatedById,
+                cancellationToken
+            );
+        }
+
 
         _IssueRequestsService.Recalculate(entity.IssueRequestsId ?? "");
 

@@ -1,6 +1,8 @@
 ﻿using Application.Common.Repositories;
+using Application.Features.InventoryTransactionManager;
 using Application.Features.IssueRequestsManager;
 using Domain.Entities;
+using Domain.Enums;
 using FluentValidation;
 using MediatR;
 
@@ -30,16 +32,18 @@ public class DeleteIssueRequestsItemHandler : IRequestHandler<DeleteIssueRequest
     private readonly ICommandRepository<IssueRequestsItem> _repository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IssueRequestsService _IssueRequestsService;
-
+    private readonly InventoryTransactionService _inventoryTransactionService;
     public DeleteIssueRequestsItemHandler(
         ICommandRepository<IssueRequestsItem> repository,
         IUnitOfWork unitOfWork,
-        IssueRequestsService IssueRequestsService
+        IssueRequestsService IssueRequestsService, InventoryTransactionService inventoryTransactionService
         )
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _IssueRequestsService = IssueRequestsService;
+        _inventoryTransactionService = inventoryTransactionService;
+
     }
 
     public async Task<DeleteIssueRequestsItemResult> Handle(DeleteIssueRequestsItemRequest request, CancellationToken cancellationToken)
@@ -51,13 +55,42 @@ public class DeleteIssueRequestsItemHandler : IRequestHandler<DeleteIssueRequest
         {
             throw new Exception($"Entity not found: {request.Id}");
         }
+        // 1. Delete related inventory transactions
+        var invTrans = await _inventoryTransactionService
+            .IssueRequestGetInvenTransList(
+                entity.IssueRequestsId,
+                nameof(IssueRequests),
+                cancellationToken
+            );
 
+        foreach (var trans in invTrans)
+        {
+            await _inventoryTransactionService.IssueRequestDeleteInvenTrans(
+                trans.Id,
+                request.DeletedById,
+                cancellationToken
+            );
+
+
+            await _inventoryTransactionService.PropagateParentUpdate(
+            entity.IssueRequestsId,
+            nameof(IssueRequests),
+            entity.CreatedAtUtc,
+            InventoryTransactionStatus.Cancelled,
+            entity.IsDeleted,
+            entity.UpdatedById,
+            null,
+            cancellationToken);
+        }
+        // 2. Delete IssueRequestsItem
         entity.UpdatedById = request.DeletedById;
-
         _repository.Delete(entity);
         await _unitOfWork.SaveAsync(cancellationToken);
 
-        _IssueRequestsService.Recalculate(entity.IssueRequestsId ?? "");
+        // 3. Recalculate parent
+        _IssueRequestsService.Recalculate(entity.IssueRequestsId!);
+
+ 
 
         return new DeleteIssueRequestsItemResult
         {

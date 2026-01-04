@@ -1,4 +1,5 @@
-﻿using Application.Features.IssueRequestsManager.Commands;
+﻿using Application.Features.IssueRequestsItemManager.Queries;
+using Application.Features.IssueRequestsManager.Commands;
 using Application.Features.IssueRequestsManager.Queries;
 using ASPNET.BackEnd.Common.Base;
 using ASPNET.BackEnd.Common.Models;
@@ -110,6 +111,32 @@ public class IssueRequestsController : BaseApiController
             Content = response
         });
     }
+    [Authorize]
+    [HttpGet("GetProductCurrentStock")]
+    public async Task<ActionResult<ApiSuccessResult<GetProductCurrentStockResult>>> GetProductCurrentStock(
+     [FromQuery] string productId, string warehouseId,
+     CancellationToken cancellationToken)
+    {
+        var request = new GetProductCurrentStockRequest
+        {
+            ProductId = productId,
+            WarehouseId = warehouseId
+        };
+
+        var result = await _sender.Send(request, cancellationToken);
+
+        return Ok(new ApiSuccessResult<GetProductCurrentStockResult>
+        {
+            Code = StatusCodes.Status200OK,
+            Message = "Success executing GetProductCurrentStock",
+            Content = result
+        });
+    }
+
+
+
+
+
 
 }
 

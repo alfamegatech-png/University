@@ -17,8 +17,9 @@ public record GetIssueRequestsItemByIssueRequestsIdListDto
     public string? ProductNumber { get; init; }
     public string? Summary { get; init; }
     public double? UnitPrice { get; init; }
-    public double? Quantity { get; init; }
+    public double? AvailableQuantity { get; init; }
     public double? RequestedQuantity { get; set; } 
+    public double? SuppliedQuantity { get; set; } 
     public double? Total { get; init; }
     public DateTime? CreatedAtUtc { get; init; }
 }
@@ -73,7 +74,7 @@ public class GetIssueRequestsItemByIssueRequestsIdListHandler : IRequestHandler<
             .AsNoTracking()
             .ApplyIsDeletedFilter(false)
             .Include(x => x.IssueRequests)
-            .Include(x => x.Product)
+            .Include(x => x.Product)/*.ThenInclude(p => p!.InventoryTransactions)*/
             .Where(x => x.IssueRequestsId == request.IssueRequestsId)
             .AsQueryable();
 
