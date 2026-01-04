@@ -77,7 +77,12 @@ namespace Infrastructure.SecurityManager.NavigationMenu
                         "Name": "أوامر التوريد",
                         "IsModule": false
                     },
-
+        {
+            "URL": "/GoodsReceives/GoodsReceiveList",
+            "Name": "فحص واستلام ",
+            "IsModule": false
+        },
+               
                     {
                         "URL": "/PurchaseReports/PurchaseReportList",
                         "Name": "تقارير أوامر التوريد",

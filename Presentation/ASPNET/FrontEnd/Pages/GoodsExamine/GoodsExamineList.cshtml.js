@@ -6,13 +6,19 @@
             'UnGroup': 'اضغط لإلغاء التجميع',
             'Item': 'عنصر',
             'Items': 'عناصر',
-            'Edit': 'تعديل',
-            'Delete': 'حذف',
-            'Update': 'تحديث',
-            'Cancel': 'إلغاء',
-            'Search': 'بحث',
-            'Save': 'حفظ',
-            'Close': 'إغلاق',
+            Add: 'إضافة',
+            Edit: 'تعديل',
+            Delete: 'حذف',
+            Update: 'تحديث',
+            Save: 'حفظ',
+            Cancel: 'إلغاء',
+            Close: 'إغلاق',
+
+            /* البحث والتصدير */
+            Search: 'بحث',
+           
+
+            
             'ExcelExport': 'تصدير إكسل',
             'AddVendorCategory': 'إضافة فئة موردين',
             "FilterButton": "تطبيق",
@@ -280,9 +286,21 @@ const App = {
                             }
                             e.updateData(state.purchaseOrderListLookupData, query);
                         },
-                        change: (e) => {
+                        change: async (e) => {
                             state.purchaseOrderId = e.value;
+
+                            if (e.value) {
+                                await methods.populateSecondaryData(e.value);
+                            } else {
+                                state.secondaryData = [];
+                                if (secondaryGrid.obj) {
+                                    secondaryGrid.obj.dataSource = [...state.secondaryData];
+                                    secondaryGrid.obj.refresh(); // 🔥 السطر الناقص
+                                }
+
+                            }
                         }
+
                     });
                     purchaseOrderListLookup.obj.appendTo(purchaseOrderIdRef.value);
                 }
@@ -343,7 +361,7 @@ const App = {
                     throw error;
                 }
             },
-            createMainData: async (ExamineDate, description, CommiteeDate, CommitteeDesionNumber, status, purchaseOrderId, committeeList, createdById) => {
+            createMainData: async (examineDate, description, commiteeDate, committeeDesionNumber, status, purchaseOrderId, committeeList, createdById) => {
                 try {
                     const response = await AxiosManager.post('/GoodsExamine/CreateGoodsExamine', {
                         examineDate,
@@ -402,42 +420,40 @@ const App = {
             },
             getGoodsExamineStatusListLookupData: async () => {
                 try {
-                    const response = await AxiosManager.get('/GoodsExamine/GetGoodsExamineStatusList', {});
+                    const response = await AxiosManager.get('/PurchaseOrder/GetPurchaseOrderStatusList', {});
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            getSecondaryData: async (moduleId) => {
+            getSecondaryData: async (purchaseOrderId) => {
                 try {
-                    const response = await AxiosManager.get('/InventoryTransaction/GoodsExamineGetInvenTransList?moduleId=' + moduleId, {});
+                    const response = await AxiosManager.get('/PurchaseOrderItem/GetPurchaseOrderItemByPurchaseOrderIdList?purchaseOrderId=' + purchaseOrderId, {});
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById, percentage,
-                reasons,
-                itemStatus,) => {
+            //createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById, percentage,
+            //    reasons,
+            //    itemStatus,) => {
+            //    try {
+            //        const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineCreateInvenTrans', {
+            //            moduleId, warehouseId, productId, movement, createdById, percentage,
+            //            reasons,
+            //            itemStatus,
+            //        });
+            //        return response;
+            //    } catch (error) {
+            //        throw error;
+            //    }
+            //},
+            updateSecondaryData: async (id, unitPrice, quantity, summary, productId, purchaseOrderId, updatedById, percentage,
+                reasons, itemStatus) => {
                 try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineCreateInvenTrans', {
-                        moduleId, warehouseId, productId, movement, createdById, percentage,
-                        reasons,
-                        itemStatus,
-                    });
-                    return response;
-                } catch (error) {
-                    throw error;
-                }
-            },
-            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById, percentage,
-                reasons,
-                itemStatus,) => {
-                try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineUpdateInvenTrans', {
-                        id, warehouseId, productId, movement, updatedById, percentage,
-                        reasons,
-                        itemStatus,
+                    const response = await AxiosManager.post('/PurchaseOrderItem/UpdatePurchaseOrderItem', {
+                        id, unitPrice, quantity, summary, productId, purchaseOrderId, updatedById, percentage,
+                          reasons,  itemStatus
                     });
                     return response;
                 } catch (error) {
@@ -446,7 +462,7 @@ const App = {
             },
             deleteSecondaryData: async (id, deletedById) => {
                 try {
-                    const response = await AxiosManager.post('/InventoryTransaction/GoodsExamineDeleteInvenTrans', {
+                    const response = await AxiosManager.post('/PurchaseOrderItem/DeletePurchaseOrderItem', {
                         id, deletedById
                     });
                     return response;
@@ -504,6 +520,8 @@ const App = {
 
                     committeeList: item.committeeList ?? []
                 }));
+          
+
             },
 
 
@@ -528,28 +546,44 @@ const App = {
                 const response = await services.getWarehouseListLookupData();
                 state.warehouseListLookupData = response?.data?.content?.data.filter(warehouse => warehouse.systemWarehouse === false) || [];
             },
-            populateSecondaryData: async (goodsExamineId) => {
+            populateSecondaryData: async (purchaseOrderId) => {
                 try {
-                    const response = await services.getSecondaryData(goodsExamineId);
+                    const response = await services.getSecondaryData(purchaseOrderId);
 
                     state.secondaryData = response?.data?.content?.data.map(item => ({
                         ...item,
-                        createdAtUtc: new Date(item.createdAtUtc)
+                        productId: item.productId,
+                        productName: item.productName ?? '',
+                        productNumber: item.productNumber ?? '',
+                        quantity: item.quantity ?? 0,
+                        unitPrice: item.unitPrice ?? 0,
+                        total: item.total ?? 0,
+                        createdAtUtc: item.createdAtUtc ? new Date(item.createdAtUtc) : null
                     })) || [];
 
-                    // ✅ أهم سطر
+                    // 🔍 هنا بالظبط
+                    console.log('secondaryData:', state.secondaryData.length);
+
                     if (secondaryGrid.obj) {
                         secondaryGrid.obj.dataSource = [...state.secondaryData];
+                        secondaryGrid.obj.refresh();
+
+                        // 🔍 وهنا كمان
+                        console.log(
+                            'grid ds:',
+                            secondaryGrid.obj.dataSource?.length
+                        );
                     }
 
-                    methods.refreshSummary();
                 } catch (error) {
                     state.secondaryData = [];
                     if (secondaryGrid.obj) {
                         secondaryGrid.obj.dataSource = [];
+                        secondaryGrid.obj.refresh();
                     }
                 }
             },
+
 
             refreshSummary: () => {
                 const totalMovement = state.secondaryData.reduce((sum, record) => sum + (record.movement ?? 0), 0);
@@ -608,14 +642,21 @@ const App = {
 
                     if (response.data.code === 200) {
                         await methods.populateMainData();
-                        mainGrid.refresh();
+                        mainGrid.obj.dataSource = [...state.mainData];
+                        mainGrid.obj.refresh();
+
+
+
 
                         if (!state.deleteMode) {
                             state.mainTitle = 'تعديل طلب الفحص';
                             state.id = response?.data?.content?.data.id ?? '';
                             state.number = response?.data?.content?.data.number ?? '';
-                            await methods.populateSecondaryData(state.id);
-                            s
+                            await methods.populateMainData();
+                            mainGrid.obj.dataSource = [...state.mainData];
+                            mainGrid.obj.refresh();
+
+                          
                             state.showComplexDiv = true;
 
                             Swal.fire({
@@ -683,9 +724,10 @@ const App = {
                 
                 purchaseOrderListLookup.create();
                 goodsExamineStatusListLookup.create();
-
-                await secondaryGrid.create(state.secondaryData);
                 await methods.populateProductListLookupData();
+                
+
+                
                 await methods.populateWarehouseListLookupData();
 
             } catch (e) {
@@ -780,6 +822,13 @@ const App = {
                             state.mainTitle = 'اضافة طلب فحص';
                             resetFormState();
                             state.showComplexDiv = false;
+                            await Vue.nextTick(); // 🔥 مهم جدًا
+
+                            if (!secondaryGrid.obj) {
+                                await secondaryGrid.create(state.secondaryData);
+                            } else {
+                                secondaryGrid.obj.refresh();
+                            }
                             mainModal.obj.show();
                         }
 
@@ -833,12 +882,19 @@ const App = {
                                     }))
                                     : [emptyCommitteeMember()];
 
-                                await methods.populateSecondaryData(selectedRecord.id);
+                                await methods.populateSecondaryData(selectedRecord.purchaseOrderId);
                                 await Vue.nextTick();
                                 refreshFormControls();
 
 
                                 state.showComplexDiv = true;
+                                await Vue.nextTick(); // 🔥 مهم جدًا
+
+                                if (!secondaryGrid.obj) {
+                                    await secondaryGrid.create(state.secondaryData);
+                                } else {
+                                    secondaryGrid.obj.refresh();
+                                }
                                 mainModal.obj.show();
                                 setTimeout(() => {
                                     refreshFormControls();
@@ -864,9 +920,16 @@ const App = {
                                 refreshFormControls();
 
 
-                                await methods.populateSecondaryData(selectedRecord.id);
+                                await methods.populateSecondaryData(selectedRecord.purchaseOrderId);
                               
-                                state.showComplexDiv = false;
+                                state.showComplexDiv = true;
+                                await Vue.nextTick(); // 🔥 مهم جدًا
+
+                                if (!secondaryGrid.obj) {
+                                    await secondaryGrid.create(state.secondaryData);
+                                } else {
+                                    secondaryGrid.obj.refresh();
+                                }
                                 mainModal.obj.show();
                             }
                         }
@@ -883,8 +946,12 @@ const App = {
                 mainGrid.obj.appendTo(mainGridRef.value);
             },
             refresh: () => {
-                mainGrid.obj.setProperties({ dataSource: state.mainData });
+                if (!mainGrid.obj) return;
+                mainGrid.obj.dataSource = [...state.mainData];
+                mainGrid.obj.refresh();
             }
+
+
         };
 
         const secondaryGrid = {
@@ -895,7 +962,7 @@ const App = {
                     locale: 'ar',
                     enableRtl: true,
                     dataSource: dataSource,
-                    editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
+                    editSettings: { allowEditing: true, allowAdding: false, allowDeleting: false, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
                     allowFiltering: false,
                     allowSorting: true,
                     allowSelection: true,
@@ -907,7 +974,8 @@ const App = {
                     allowPaging: false,
                     allowExcelExport: true,
                     filterSettings: { type: 'CheckBox' },
-                    sortSettings: { columns: [{ field: 'warehouseName', direction: 'Descending' }] },
+                    sortSettings: { columns: [] },
+
                     pageSettings: { currentPage: 1, pageSize: 50, pageSizes: ["10", "20", "50", "100", "200", "All"] },
                     selectionSettings: { persistSelection: true, type: 'Single' },
                     autoFit: false,
@@ -918,108 +986,156 @@ const App = {
                         {
                             field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
                         },
-                        {
-                            field: 'warehouseId',
-                            headerText: 'المخزن',
-                            width: 250,
-                            validationRules: { required: true },
-                            disableHtmlEncode: false,
-                            valueAccessor: (field, data, column) => {
-                                const warehouse = state.warehouseListLookupData.find(item => item.id === data[field]);
-                                return warehouse ? `${warehouse.name}` : '';
-                            },
-                            editType: 'dropdownedit',
-                            edit: {
-                                create: () => {
-                                    const warehouseElem = document.createElement('input');
-                                    return warehouseElem;
-                                },
-                                read: () => {
-                                    return warehouseObj.value;
-                                },
-                                destroy: function () {
-                                    warehouseObj.destroy();
-                                },
-                                write: function (args) {
-                                    warehouseObj = new ej.dropdowns.DropDownList({
-                                        dataSource: state.warehouseListLookupData,
-                                        fields: { value: 'id', text: 'name' },
-                                        value: args.rowData.warehouseId,
-                                        placeholder: 'اختر المخزن',
-                                        floatLabelType: 'Never'
-                                    });
-                                    warehouseObj.appendTo(args.element);
-                                }
-                            }
-                        },
+                       
+
+                        
                         {
                             field: 'productId',
                             headerText: 'المنتج',
                             width: 250,
-                            validationRules: { required: true },
-                            disableHtmlEncode: false,
-                            valueAccessor: (field, data, column) => {
-                                const product = state.productListLookupData.find(item => item.id === data[field]);
-                                return product ? `${product.numberName}` : '';
-                            },
-                            editType: 'dropdownedit',
-                            edit: {
-                                create: () => {
-                                    const productElem = document.createElement('input');
-                                    return productElem;
-                                },
-                                read: () => {
-                                    return productObj.value;
-                                },
-                                destroy: function () {
-                                    productObj.destroy();
-                                },
-                                write: function (args) {
-                                    productObj = new ej.dropdowns.DropDownList({
-                                        dataSource: state.productListLookupData,
-                                        fields: { value: 'id', text: 'numberName' },
-                                        value: args.rowData.productId,
-                                        change: function (e) {
-                                            if (movementObj) {
-                                                movementObj.value = 1;
-                                            }
-                                        },
-                                        placeholder: 'احتر المنتج',
-                                        floatLabelType: 'Never'
-                                    });
-                                    productObj.appendTo(args.element);
-                                }
+                            allowEditing: false,
+                            valueAccessor: (field, data) => {
+                                return data.productName || data.productNumber || '';
                             }
                         },
 
                         {
-                            field: 'movement',
-                            headerText: 'الحركة',
+                            field: 'unitPrice',
+                            headerText: 'وحدة المنتج',
+                            width: 200, validationRules: { required: true }, type: 'number', format: 'N2', textAlign: 'Right',
+                            allowEditing: false,
+                            edit: {
+                                create: () => {
+                                    let priceElem = document.createElement('input');
+                                    return priceElem;
+                                },
+                                read: () => {
+                                    return priceObj.value;
+                                },
+                                destroy: () => {
+                                    priceObj.destroy();
+                                },
+                                write: (args) => {
+                                    priceObj = new ej.inputs.NumericTextBox({
+                                        value: args.rowData.unitPrice ?? 0,
+                                        change: (e) => {
+                                            if (quantityObj && totalObj) {
+                                                const total = e.value * quantityObj.value;
+                                                totalObj.value = total;
+                                            }
+                                        }
+                                    });
+                                    priceObj.appendTo(args.element);
+                                }
+                            }
+                        },
+                        {
+                            field: 'quantity',
+                            headerText: 'الكمية',
                             width: 200,
+                            allowEditing: false,
                             validationRules: {
                                 required: true,
                                 custom: [(args) => {
                                     return args['value'] > 0;
-                                }, 'يجب ان يكون الرقم اكبر من 0']
+                                }, 'Must be a positive number and not zero']
                             },
-                            type: 'number',
-                            format: 'N2', textAlign: 'Right',
+                            type: 'number', format: 'N2', textAlign: 'Right',
                             edit: {
                                 create: () => {
-                                    const movementElem = document.createElement('input');
-                                    return movementElem;
+                                    let quantityElem = document.createElement('input');
+                                    return quantityElem;
                                 },
                                 read: () => {
-                                    return movementObj.value;
+                                    return quantityObj.value;
                                 },
-                                destroy: function () {
-                                    movementObj.destroy();
+                                destroy: () => {
+                                    quantityObj.destroy();
                                 },
-                                write: function (args) {
-                                    movementObj = new ej.inputs.NumericTextBox({
-                                        value: args.rowData.movement ?? 0,
+                                write: (args) => {
+                                    quantityObj = new ej.inputs.NumericTextBox({
+                                        value: args.rowData.quantity ?? 0,
+                                        change: (e) => {
+                                            if (priceObj && totalObj) {
+                                                const total = e.value * priceObj.value;
+                                                totalObj.value = total;
+                                            }
+                                        }
                                     });
-                                    movementObj.appendTo(args.element);
+                                    quantityObj.appendTo(args.element);
+                                }
+                            }
+                        },
+                        {
+                            field: 'total',
+                            headerText: 'الاجمالي',
+                            allowEditing: false,
+                            width: 200, validationRules: { required: false }, type: 'number', format: 'N2', textAlign: 'Right',
+                            edit: {
+                                create: () => {
+                                    let totalElem = document.createElement('input');
+                                    return totalElem;
+                                },
+                                read: () => {
+                                    return totalObj.value;
+                                },
+                                destroy: () => {
+                                    totalObj.destroy();
+                                },
+                                write: (args) => {
+                                    totalObj = new ej.inputs.NumericTextBox({
+                                        value: args.rowData.total ?? 0,
+                                        readonly: true
+                                    });
+                                    totalObj.appendTo(args.element);
+                                }
+                            }
+                        },
+                        {
+                            field: 'productNumber',
+                            headerText: 'اسم المنتج',
+                            allowEditing: false,
+
+                            width: 180,
+                            edit: {
+                                create: () => {
+                                    let numberElem = document.createElement('input');
+                                    return numberElem;
+                                },
+                                read: () => {
+                                    return numberObj.value;
+                                },
+                                destroy: () => {
+                                    numberObj.destroy();
+                                },
+                                write: (args) => {
+                                    numberObj = new ej.inputs.TextBox();
+                                    numberObj.value = args.rowData.productNumber;
+                                    numberObj.readonly = true;
+                                    numberObj.appendTo(args.element);
+                                }
+                            }
+                        },
+                         {
+                            field: 'summary',
+                             headerText: 'الشروط',
+                             allowEditing: false,
+                            width: 200,
+                            edit: {
+                                create: () => {
+                                    let summaryElem = document.createElement('input');
+                                    return summaryElem;
+                                },
+                                read: () => {
+                                    return summaryObj.value;
+                                },
+                                destroy: () => {
+                                    summaryObj.destroy();
+                                },
+                                write: (args) => {
+                                    summaryObj = new ej.inputs.TextBox();
+                                    summaryObj.value = args.rowData.summary;
+                                    summaryObj.appendTo(args.element);
                                 }
                             }
                         },
@@ -1069,7 +1185,7 @@ const App = {
                     toolbar: [
                         'ExcelExport',
                         { type: 'Separator' },
-                        'Add', 'Edit', 'Delete', 'Update', 'Cancel',
+                        'Edit', 'Delete', 'Update', 'Cancel',
                     ],
                     beforeDataBound: () => { },
                     dataBound: function () { },
@@ -1109,94 +1225,71 @@ const App = {
                             secondaryGrid.obj.refresh();
                             return;
                         }
-                        if (args.requestType === 'save' && args.action === 'add') {
-                            try {
-                                const response = await services.createSecondaryData(
-                                    state.id,                      // moduleId
-                                    args.data.warehouseId,
-                                    args.data.productId,
-                                    args.data.movement,
-                                    StorageManager.getUserId(),    // createdById ✅
-                                    args.data.percentage,
-                                    args.data.reasons,
-                                    args.data.itemStatus
-                                );
+                        //if (args.requestType === 'save' && args.action === 'add') {
+                        //    try {
+                        //        const response = await services.createSecondaryData(
+                        //            state.id,                      // moduleId
+                        //            args.data.warehouseId,
+                        //            args.data.productId,
+                        //            args.data.movement,
+                        //            StorageManager.getUserId(),    // createdById ✅
+                        //            args.data.percentage,
+                        //            args.data.reasons,
+                        //            args.data.itemStatus
+                        //        );
 
                                
 
-                                if (response.data.code === 200) {
-                                    await methods.populateSecondaryData(state.id);
+                        //        if (response.data.code === 200) {
+                        //            await methods.populateSecondaryData(state.id);
                                     
 
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'تم الحفظ',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    secondaryGrid.refresh(); // يرجع البيانات الأصلية
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'فشل الحفظ',
-                                        text: response.data.message ?? 'يرجى التحقق من البيانات',
-                                    });
-                                }
+                        //            Swal.fire({
+                        //                icon: 'success',
+                        //                title: 'تم الحفظ',
+                        //                timer: 2000,
+                        //                showConfirmButton: false
+                        //            });
+                        //        } else {
+                        //            secondaryGrid.refresh(); // يرجشقل البيانات الأصلية
+                        //            Swal.fire({
+                        //                icon: 'error',
+                        //                title: 'فشل الحفظ',
+                        //                text: response.data.message ?? 'يرجى التحقق من البيانات',
+                        //            });
+                        //        }
 
-                            } catch (error) {
-                                secondaryGrid.refresh();
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى'
-                                });
-                            }
-                        }
+                        //    } catch (error) {
+                        //        secondaryGrid.refresh();
+                        //        Swal.fire({
+                        //            icon: 'error',
+                        //            title: 'حدث خطأ',
+                        //            text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى'
+                        //        });
+                        //    }
+                        //}
 
                         if (args.requestType === 'save' && args.action === 'edit') {
-                            try {
-                                const response = await services.updateSecondaryData(
-                                    args.data.id,
-                                    args.data.warehouseId,
-                                    args.data.productId,
-                                    args.data.movement,
-                                    StorageManager.getUserId(),
-                                    args.data.percentage,
-                                    args.data.reasons,
-                                    args.data.itemStatus
-                                );
+                            const purchaseOrderId = state.purchaseOrderId;
+                            const userId = StorageManager.getUserId();
+                            const data = args.data;
 
-                                if (response.data.code === 200) {
-                                    await methods.populateSecondaryData(state.id);
-                                    
+                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.quantity, data?.summary, data?.productId, purchaseOrderId, userId, data?.percentage,data?.reasons,data?.itemStatus);
+                            await methods.populateSecondaryData(purchaseOrderId);
+                            secondaryGrid.refresh();
 
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'تم التحديث',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'فشل التحديث',
-                                        text: response.data.message ?? 'يرجى التحقق من البيانات'
-                                    });
-                                }
-
-                            } catch (error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'حدث خطأ',
-                                    text: error.response?.data?.message ?? 'يرجى المحاولة مرة أخرى'
-                                });
-                            }
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'تم الحفظ',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
                         }
 
                         if (args.requestType === 'delete') {
                             try {
                                 const response = await services.deleteSecondaryData(args.data[0].id, StorageManager.getUserId());
-                                await methods.populateSecondaryData(state.id);
+                                await methods.populateSecondaryData(state.purchaseOrderId);
                                
                                 if (response.data.code === 200) {
                                     Swal.fire({
@@ -1236,8 +1329,10 @@ const App = {
             },
 
             refresh: () => {
-                secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
+                secondaryGrid.obj.dataSource = [...state.secondaryData];
+                secondaryGrid.obj.refresh();
             }
+
         };
 
         const mainModal = {

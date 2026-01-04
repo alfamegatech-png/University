@@ -50,7 +50,7 @@ public class GoodsExamineUpdateInvenTransHandler : IRequestHandler<GoodsExamineU
     request.Id,
     request.WarehouseId,
     request.ProductId,
-    request.Movement,
+   
     request.Percentage,
     request.ItemStatus,
     request.Reasons,

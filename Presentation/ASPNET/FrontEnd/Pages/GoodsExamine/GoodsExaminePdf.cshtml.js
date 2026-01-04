@@ -41,7 +41,10 @@ const App = {
                 const result = await services.getPDFData(id);
 
                 const header = result.data;
-                const transactions = result.transactionList;
+
+                // ❗ ده الصح
+                const transactions = result.purchaseOrder;
+
 
                 state.number = header.number ?? '';
                 if (header.commiteeDate) {
@@ -70,13 +73,15 @@ const App = {
 
                 state.mappedItems = (transactions ?? []).map(x => ({
                     product: `${x.product?.number ?? ''} - ${x.product?.name ?? ''}`,
-                    qty: x.movement ?? '',
+                    qty: x.quantity ?? '',
                     unit: 'عدد',
                     matchPercent: x.percentage ?? '',
                     accepted: x.itemStatus === true,
                     rejected: x.itemStatus === false,
                     reason: x.reasons ?? ''
                 }));
+
+                console.log("daat", state.mappedItems)
             }
         };
         // ✅ رئيس اللجنة

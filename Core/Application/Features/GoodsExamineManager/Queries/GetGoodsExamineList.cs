@@ -83,6 +83,7 @@ public class GetGoodsExamineListHandler : IRequestHandler<GetGoodsExamineListReq
     }
 
     public async Task<GetGoodsExamineListResult> Handle(GetGoodsExamineListRequest request, CancellationToken cancellationToken)
+    
     {
         var query = _context
             .GoodsExamine
