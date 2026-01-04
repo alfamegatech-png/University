@@ -159,7 +159,7 @@ const App = {
                     purchaseOrderListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.purchaseOrderListLookupData,
                         fields: { value: 'id', text: 'number' },
-                        placeholder: 'اختر امر الشراء',
+                        placeholder: 'اختر امر التوريد',
                         filterBarPlaceholder: 'Search',
                         sortOrder: 'Ascending',
                         allowFiltering: true,
@@ -187,11 +187,20 @@ const App = {
 
         Vue.watch(
             () => state.purchaseOrderId,
-            (newVal, oldVal) => {
+            async (newVal) => {
                 purchaseOrderListLookup.refresh();
                 state.errors.purchaseOrderId = '';
+
+                if (newVal) {
+                    await methods.populateProductListByPurchaseOrder(newVal);
+                    secondaryGrid.refresh();
+                } else {
+                    state.productListLookupData = [];
+                }
             }
         );
+
+
 
         const goodsReceiveStatusListLookup = {
             obj: null,
@@ -287,6 +296,17 @@ const App = {
                     throw error;
                 }
             },
+            getPurchaseOrderItems: async (purchaseOrderId) => {
+                try {
+                    const response = await AxiosManager.get(
+                        '/PurchaseOrderItem/GetPurchaseOrderItemByPurchaseOrderIdList?purchaseOrderId=' + purchaseOrderId
+                    );
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            },
+
             createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveCreateInvenTrans', {
@@ -346,8 +366,26 @@ const App = {
             },
             populatePurchaseOrderListLookupData: async () => {
                 const response = await services.getPurchaseOrderListLookupData();
-                state.purchaseOrderListLookupData = response?.data?.content?.data;
+                const purchaseOrders = response?.data?.content?.data || [];
+
+                const filteredOrders = [];
+
+                for (const po of purchaseOrders) {
+                    const itemsRes = await services.getPurchaseOrderItems(po.id);
+
+                    const hasAcceptedItem =
+                        itemsRes?.data?.content?.data?.some(
+                            item => item.itemStatus === true
+                        );
+
+                    if (hasAcceptedItem) {
+                        filteredOrders.push(po);
+                    }
+                }
+
+                state.purchaseOrderListLookupData = filteredOrders;
             },
+
             populateGoodsReceiveStatusListLookupData: async () => {
                 const response = await services.getGoodsReceiveStatusListLookupData();
                 state.goodsReceiveStatusListLookupData = response?.data?.content?.data;
@@ -358,13 +396,34 @@ const App = {
                     .filter(product => product.physical === true)
                     .map(product => ({
                         ...product,
-                        numberName: `${product.number} - ${product.name}`
+                        numberName: `${product.productNumber} - ${product.productName}`
                     })) || [];
             },
             populateWarehouseListLookupData: async () => {
                 const response = await services.getWarehouseListLookupData();
                 state.warehouseListLookupData = response?.data?.content?.data.filter(warehouse => warehouse.systemWarehouse === false) || [];
             },
+            populateProductListByPurchaseOrder: async (purchaseOrderId) => {
+                const response = await services.getPurchaseOrderItems(purchaseOrderId);
+                const items = response?.data?.content?.data || [];
+
+                state.productListLookupData = items
+                    .filter(x => x.itemStatus === true) // ✅ المقبول فقط
+                    .map(x => {
+                        const product = state.productListLookupData.find(
+                            p => p.id === x.productId
+                        );
+
+                        return {
+                            id: x.productId,
+                            numberName: `${x.productNumber} - ${x.productName}`
+                              
+                        };
+                    });
+            },
+
+
+
             populateSecondaryData: async (goodsReceiveId) => {
                 try {
                     const response = await services.getSecondaryData(goodsReceiveId);
@@ -477,7 +536,7 @@ const App = {
                 goodsReceiveStatusListLookup.create();
 
                 await secondaryGrid.create(state.secondaryData);
-                await methods.populateProductListLookupData();
+                
                 await methods.populateWarehouseListLookupData();
 
             } catch (e) {
@@ -518,8 +577,8 @@ const App = {
                         { type: 'checkbox', width: 60 },
                         { field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false },
                         { field: 'number', headerText: 'Number', width: 150, minWidth: 150 },
-                        { field: 'receiveDate', headerText: 'تاريخ الاستلام', width: 150, format: 'yyyy-MM-dd' },
-                        { field: 'purchaseOrderNumber', headerText: 'رقم أمر الشراء', width: 150, minWidth: 150 },
+                        { field: 'receiveDate', headerText: 'تاريخ اذن الاضافة', width: 150, format: 'yyyy-MM-dd' },
+                        { field: 'purchaseOrderNumber', headerText: 'رقم أمر التوريد', width: 150, minWidth: 150 },
                         { field: 'statusName', headerText: 'الحالة', width: 150, minWidth: 150 },
                         { field: 'createdAtUtc', headerText: 'تاريخ الإنشاء UTC', width: 150, format: 'yyyy-MM-dd HH:mm' }
                     ],
@@ -567,7 +626,7 @@ const App = {
 
                         if (args.item.id === 'AddCustom') {
                             state.deleteMode = false;
-                            state.mainTitle = 'اضافة اذن استلام';
+                            state.mainTitle = 'اضافة اذن اضافة';
                             resetFormState();
                             state.showComplexDiv = false;
                             mainModal.obj.show();
@@ -577,7 +636,7 @@ const App = {
                             state.deleteMode = false;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'تعديل اذن الاستلام';
+                                state.mainTitle = 'تعديل اذن اضافة';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.receiveDate = selectedRecord.receiveDate ? new Date(selectedRecord.receiveDate) : null;
@@ -595,7 +654,7 @@ const App = {
                             state.deleteMode = true;
                             if (mainGrid.obj.getSelectedRecords().length) {
                                 const selectedRecord = mainGrid.obj.getSelectedRecords()[0];
-                                state.mainTitle = 'حذف اذن الاستلام?';
+                                state.mainTitle = 'حذف اذن اضافة?';
                                 state.id = selectedRecord.id ?? '';
                                 state.number = selectedRecord.number ?? '';
                                 state.receiveDate = selectedRecord.receiveDate ? new Date(selectedRecord.receiveDate) : null;
@@ -630,6 +689,8 @@ const App = {
             create: async (dataSource) => {
                 secondaryGrid.obj = new ej.grids.Grid({
                     height: 400,
+                    locale: 'ar',
+                    enableRtl: true,
                     dataSource: dataSource,
                     editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, showDeleteConfirmDialog: true, mode: 'Normal', allowEditOnDblClick: true },
                     allowFiltering: false,
@@ -692,10 +753,13 @@ const App = {
                             width: 250,
                             validationRules: { required: true },
                             disableHtmlEncode: false,
-                            valueAccessor: (field, data, column) => {
-                                const product = state.productListLookupData.find(item => item.id === data[field]);
-                                return product ? `${product.numberName}` : '';
+                            valueAccessor: (field, data) => {
+                                const product = state.productListLookupData.find(
+                                    item => item.id === data.productId
+                                );
+                                return product ? product.numberName : '';
                             },
+
                             editType: 'dropdownedit',
                             edit: {
                                 create: () => {
@@ -733,7 +797,7 @@ const App = {
                                 required: true,
                                 custom: [(args) => {
                                     return args['value'] > 0;
-                                }, 'Must be a positive number and not zero']
+                                }, 'الرقم يجب ان يكون موجب']
                             },
                             type: 'number',
                             format: 'N2', textAlign: 'Right',
@@ -805,7 +869,7 @@ const App = {
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Save Failed',
+                                        title: 'فشل الحفظ',
                                             text: response.data.message ?? 'يرجى التحقق من البيانات.',
                                         confirmButtonText: 'حاول مرة أخرى'
                                     });
@@ -827,7 +891,7 @@ const App = {
                                 if (response.data.code === 200) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Update Successful',
+                                        title: 'تم التعديل',
                                         timer: 2000,
                                         showConfirmButton: false
                                     });

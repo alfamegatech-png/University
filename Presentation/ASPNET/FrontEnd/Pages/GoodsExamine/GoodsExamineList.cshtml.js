@@ -420,7 +420,7 @@ const App = {
             },
             getGoodsExamineStatusListLookupData: async () => {
                 try {
-                    const response = await AxiosManager.get('/PurchaseOrder/GetPurchaseOrderStatusList', {});
+                    const response = await AxiosManager.get('/GoodsExamine/GetGoodsExamineStatusList', {});
                     return response;
                 } catch (error) {
                     throw error;
