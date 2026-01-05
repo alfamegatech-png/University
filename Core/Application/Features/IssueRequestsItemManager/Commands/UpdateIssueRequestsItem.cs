@@ -34,7 +34,7 @@ public class UpdateIssueRequestsItemValidator : AbstractValidator<UpdateIssueReq
         RuleFor(x => x.IssueRequestsId).NotEmpty();
         RuleFor(x => x.ProductId).NotEmpty();
         RuleFor(x => x.UnitPrice).NotEmpty();
-        RuleFor(x => x.AvailableQuantity).NotEmpty();
+       // RuleFor(x => x.AvailableQuantity).NotEmpty();
         RuleFor(x => x.SuppliedQuantity).NotEmpty();
         RuleFor(x => x.RequestedQuantity).NotEmpty();
     }
@@ -76,9 +76,10 @@ public class UpdateIssueRequestsItemHandler : IRequestHandler<UpdateIssueRequest
         entity.ProductId = request.ProductId;
         entity.Summary = request.Summary;
         entity.UnitPrice = request.UnitPrice;
-        entity.AvailableQuantity = request.AvailableQuantity;
+       // entity.AvailableQuantity = request.AvailableQuantity;
         entity.SuppliedQuantity = request.SuppliedQuantity;
         entity.RequestedQuantity = request.RequestedQuantity;
+        entity.WarehouseId = request.WarehouseId;
 
         entity.Total = entity.UnitPrice * entity.SuppliedQuantity;
 
@@ -102,7 +103,7 @@ public class UpdateIssueRequestsItemHandler : IRequestHandler<UpdateIssueRequest
             {
                 await _inventoryTransactionService.IssueRequestCreateInvenTrans(
                     entity.Id,
-                    request.WarehouseId!,
+                    request.WarehouseId,
                     entity.ProductId!,
                     entity.SuppliedQuantity,
                     request.UpdatedById,

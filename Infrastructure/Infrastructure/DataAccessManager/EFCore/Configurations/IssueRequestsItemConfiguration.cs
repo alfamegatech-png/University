@@ -19,6 +19,7 @@ public class IssueRequestsItemConfiguration : BaseEntityConfiguration<IssueReque
         builder.Property(x => x.RequestedQuantity).IsRequired(false);
         builder.Property(x => x.SuppliedQuantity).IsRequired(false);
         builder.Property(x => x.RequestedQuantity).IsRequired(false);
+        builder.Property(x => x.WarehouseId).IsRequired(false);
         builder.Property(x => x.Total).IsRequired(false);
 
     }

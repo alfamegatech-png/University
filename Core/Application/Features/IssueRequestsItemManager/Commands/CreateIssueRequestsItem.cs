@@ -37,7 +37,7 @@ public class CreateIssueRequestsItemValidator : AbstractValidator<CreateIssueReq
         RuleFor(x => x.IssueRequestsId).NotEmpty();
         RuleFor(x => x.ProductId).NotEmpty();
         RuleFor(x => x.UnitPrice).NotEmpty();
-        RuleFor(x => x.AvailableQuantity).NotEmpty();
+       // RuleFor(x => x.AvailableQuantity).NotEmpty();
         RuleFor(x => x.RequestedQuantity).NotEmpty();
         RuleFor(x => x.SuppliedQuantity).NotEmpty();
     }
@@ -74,29 +74,30 @@ public class CreateIssueRequestsItemHandler : IRequestHandler<CreateIssueRequest
             Summary = request.Summary,
             UnitPrice = request.UnitPrice,
             RequestedQuantity = request.RequestedQuantity,
-            SuppliedQuantity = request.SuppliedQuantity
+            SuppliedQuantity = request.SuppliedQuantity,
+            WarehouseId = request.WarehouseId,
         };
 
-        // Calculate total
-        entity.Total = (entity.SuppliedQuantity ?? 0) * (entity.UnitPrice ?? 0);
+        //// Calculate total
+        //entity.Total = (entity.SuppliedQuantity ?? 0) * (entity.UnitPrice ?? 0);
 
-        // Recalculate request totals
-        _IssueRequestsService.Recalculate(entity.IssueRequestsId ?? "");
+        //// Recalculate request totals
+        //_IssueRequestsService.Recalculate(entity.IssueRequestsId ?? "");
 
-        // Get available stock
-        if (request.WarehouseId == null || request.ProductId == null)
-        {
-            entity.AvailableQuantity = 0;
-        }
-        else
-        {
-            var stock = _inventoryTransactionService.GetStock(
-                request.WarehouseId,
-                request.ProductId
-            );
+        //// Get available stock
+        //if (request.WarehouseId == null || request.ProductId == null)
+        //{
+        //    entity.AvailableQuantity = 0;
+        //}
+        //else
+        //{
+        //    var stock = _inventoryTransactionService.GetStock(
+        //        request.WarehouseId,
+        //        request.ProductId
+        //    );
 
-            entity.AvailableQuantity = stock;
-        }
+        //    entity.AvailableQuantity = stock;
+        //}
 
         // Create the entity **once**
         await _repository.CreateAsync(entity, cancellationToken);
@@ -105,15 +106,17 @@ public class CreateIssueRequestsItemHandler : IRequestHandler<CreateIssueRequest
         // Create inventory transaction ONLY if supplied
         if ((entity.SuppliedQuantity ?? 0) > 0)
         {
-            var warehouse = await _warehouseRepository
-                .GetQuery()
-                .ApplyIsDeletedFilter(false)
-                .FirstAsync(x => x.SystemWarehouse == false, cancellationToken);
+            //var warehouse = await _warehouseRepository
+            //    .GetQuery()
+            //    .ApplyIsDeletedFilter(false)
+            //    .FirstAsync(x => x.SystemWarehouse == false, cancellationToken);
 
             // Stock validation 
             var currentStock = _inventoryTransactionService.GetStock(
-                warehouse.Id,
+                //warehouse.Id,
+                entity.WarehouseId,
                 entity.ProductId
+                
             );
 
             if (entity.SuppliedQuantity > currentStock)
@@ -121,7 +124,7 @@ public class CreateIssueRequestsItemHandler : IRequestHandler<CreateIssueRequest
 
             await _inventoryTransactionService.IssueRequestCreateInvenTrans(
                 entity.Id,
-                warehouse.Id,
+                entity.WarehouseId,
                 entity.ProductId,
                 entity.SuppliedQuantity,
                 request.CreatedById,

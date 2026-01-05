@@ -44,6 +44,9 @@
     }
 });
 
+
+
+
 const App = {
     setup() {
         const state = Vue.reactive({
@@ -78,6 +81,14 @@ const App = {
             //taxAmount: '0.00',
             totalAmount: '0.00'
         });
+
+     
+       
+        const isDraft = Vue.computed(() => state.orderStatus === 0);
+
+
+
+
 
         let productObj, priceObj, numberObj, summaryObj;
         let availableQuantityObj, requestedQtyObj, suppliedQtyObj, totalObj;
@@ -226,20 +237,20 @@ const App = {
                     throw error;
                 }
             },
-            createSecondaryData: async (unitPrice, availableQuantity, requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, createdById) => {
+            createSecondaryData: async (unitPrice, /*availableQuantity,*/ requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, createdById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequestsItem/CreateIssueRequestsItem', {
-                        unitPrice, availableQuantity, requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, createdById
+                        unitPrice, /*availableQuantity,*/ requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, createdById
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateSecondaryData: async (id, unitPrice, availableQuantity, requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, updatedById) => {
+            updateSecondaryData: async (id, unitPrice, /*availableQuantity,*/ requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, updatedById) => {
                 try {
                     const response = await AxiosManager.post('/IssueRequestsItem/UpdateIssueRequestsItem', {
-                        id, unitPrice, availableQuantity, requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, updatedById
+                        id, unitPrice, /*availableQuantity,*/ requestedQuantity, suppliedQuantity, summary, productId, warehouseId, issueRequestsId, updatedById
                     });
                     return response;
                 } catch (error) {
@@ -288,8 +299,21 @@ const App = {
           
             populateIssueRequestsStatusListLookupData: async () => {
                 const response = await services.getIssueRequestsStatusListLookupData();
-                state.issueRequestsStatusListLookupData = response?.data?.content?.data;
+                const data = response?.data?.content?.data ?? [];
+
+                state.issueRequestsStatusListLookupData = data.map(item => ({
+                    id: Number(item.id), // MUST be number
+                    name:
+                        item.name === 'Draft' ? 'مسودة' :
+                            item.name === 'Confirmed' ? 'مؤكد' :
+                                item.name === 'Cancelled' ? 'ملغي' :
+                                    item.name === 'Archived' ? 'مؤرشف' :
+                                        item.name
+                }));
             },
+
+
+
             populateMainData: async () => {
                 const response = await services.getMainData();
                 state.mainData = response?.data?.content?.data.map(item => ({
@@ -353,7 +377,8 @@ const App = {
                             
                             //state.taxId = response?.data?.content?.data.taxId ?? '';
                             //taxListLookup.trackingChange = true;
-                            state.orderStatus = String(response?.data?.content?.data.orderStatus ?? '');
+                            state.orderStatus = response?.data?.content?.data.orderStatus;
+                            //state.orderStatus = String(response?.data?.content?.data.orderStatus ?? '');
                             state.showComplexDiv = true;
 
                             await methods.refreshPaymentSummary(state.id);
@@ -510,10 +535,14 @@ const App = {
                 if (state.issueRequestsStatusListLookupData && Array.isArray(state.issueRequestsStatusListLookupData)) {
                     issueRequestsStatusListLookup.obj = new ej.dropdowns.DropDownList({
                         dataSource: state.issueRequestsStatusListLookupData,
+                        //fields: { value: 'value', text: 'text' },
                         fields: { value: 'id', text: 'name' },
+
+
                         placeholder: 'اختر حالة الطلب',
                         change: (e) => {
-                            state.orderStatus = e.value;
+                            state.orderStatus = e.value; 
+
                         }
                     });
                     issueRequestsStatusListLookup.obj.appendTo(orderStatusRef.value);
@@ -592,6 +621,7 @@ const App = {
             (newVal, oldVal) => {
                 issueRequestsStatusListLookup.refresh();
                 state.errors.orderStatus = '';
+                secondaryGrid.refresh();
             }
         );
 
@@ -714,7 +744,8 @@ const App = {
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                 state.employeeId = selectedRecord.employeeId ?? '';
-                                state.orderStatus = String(selectedRecord.orderStatus ?? '');
+                                state.orderStatus = selectedRecord.orderStatus;
+                               // state.orderStatus = String(selectedRecord.orderStatus ?? '');
                                 state.departmentId = selectedRecord.departmentId ?? null;
                                 state.showComplexDiv = true;
 
@@ -741,8 +772,10 @@ const App = {
                                 state.orderDate = selectedRecord.orderDate ? new Date(selectedRecord.orderDate) : null;
                                 state.description = selectedRecord.description ?? '';
                                state.employeeId = selectedRecord.employeeId ?? '';
-                               // state.taxId = selectedRecord.taxId ?? '';
-                                state.orderStatus = String(selectedRecord.orderStatus ?? '');
+                                // state.taxId = selectedRecord.taxId ?? '';
+                                state.orderStatus = selectedRecord.orderStatus; // already string enum
+
+                                //state.orderStatus = String(selectedRecord.orderStatus ?? '');
                                 state.showComplexDiv = false;
 
                                 state.departmentId = selectedRecord.departmentId ?? null;
@@ -780,50 +813,44 @@ const App = {
         };
 
 
-
-
         async function loadStock(rowData) {
+
+            if (!isDraft.value) return;
+
             if (!rowData.productId || !rowData.warehouseId) {
+                rowData.availableQuantity = 0;
                 if (availableQuantityObj) availableQuantityObj.value = 0;
-                if (suppliedQtyObj) suppliedQtyObj.value = 0;
-                if (totalObj && priceObj) totalObj.value = 0;
                 return;
             }
 
-            try {
-                
-                const res = await AxiosManager.get(
-                    `/IssueRequests/GetProductCurrentStock?productId=${rowData.productId}&warehouseId=${rowData.warehouseId}`
-                );
-                let stock = res.data?.content?.data?.currentStock ?? 0;
+            const res = await AxiosManager.get(
+                `/IssueRequests/GetProductCurrentStock?productId=${rowData.productId}&warehouseId=${rowData.warehouseId}`
+            );
 
-             
-                const suppliedInRequest = state.secondaryData
-                    .filter(item => item.productId === rowData.productId && item.warehouseId === rowData.warehouseId)
-                    .reduce((sum, item) => sum + (item.suppliedQuantity ?? 0), 0);
+            let stock = res.data?.content?.data?.currentStock ?? 0;
 
-                stock -= suppliedInRequest;
+            // subtract supplied quantities INSIDE this request
+            const suppliedInRequest = state.secondaryData
+                .filter(item =>
+                    item.productId === rowData.productId &&
+                    item.warehouseId === rowData.warehouseId &&
+                    item.id !== rowData.id
+                )
+                .reduce((sum, item) => sum + (item.suppliedQuantity ?? 0), 0);
 
-                if (availableQuantityObj)
-                    availableQuantityObj.value = stock;
+            stock -= suppliedInRequest;
 
-                if (suppliedQtyObj) {
-                    
-                    suppliedQtyObj.value = rowData.requestedQuantity != null
-                        ? Math.min(rowData.requestedQuantity, stock)
-                        : 0;
-                }
+    
+            rowData.availableQuantity = stock;
 
-                if (totalObj && priceObj) {
-                    totalObj.value = priceObj.value * (suppliedQtyObj?.value ?? 0);
-                }
-
-            } catch (e) {
-                console.error('Stock load failed', e);
-                if (availableQuantityObj) availableQuantityObj.value = 0;
-            }
+          
+            if (availableQuantityObj)
+                availableQuantityObj.value = stock;
         }
 
+
+
+      
 
         function getAvailableProducts(currentRow) {
             return state.productListLookupData.filter(p => {
@@ -839,6 +866,8 @@ const App = {
         const secondaryGrid = {
 
             obj: null,
+            isRowEditing: false,
+
             create: async (dataSource) => {
 
                 secondaryGrid.obj = new ej.grids.Grid({
@@ -995,6 +1024,7 @@ const App = {
                             field: 'availableQuantity',
                             headerText: 'المتاح بالمخزن',
                             width: 180,
+                            visible: false, // default
                             allowEditing: false,
                             edit: {
                                 create: () => document.createElement('input'),
@@ -1109,120 +1139,47 @@ const App = {
                     toolbarClick: (args) => {
                         if (args.item.id === 'SecondaryGrid_excelexport') secondaryGrid.obj.excelExport();
                     },
-                    //actionComplete: async (args) => {
-                    //    const IssueRequestsId = state.id;
-                    //    const userId = StorageManager.getUserId();
-
-                    //    // --- ADD NEW ITEM ---
-                    //    if (args.requestType === 'save' && args.action === 'add') {
-                    //        const data = args.data;
-
-                    //        await services.createSecondaryData(
-                    //            data.unitPrice, data.availableQuantity, data.requestedQuantity, data.suppliedQuantity,
-                    //            data.summary, data.productId, data.warehouseId, IssueRequestsId, userId
-                    //        );
-
-                    //        await methods.populateSecondaryData(IssueRequestsId);
-
-                    //        
-                    //        state.secondaryData.forEach(row => loadStock(row));
-
-                    //        secondaryGrid.refresh();
-                    //        Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
-                    //    }
-
-                    //    // --- EDIT ITEM ---
-                    //    if (args.requestType === 'save' && args.action === 'edit') {
-                    //        const data = args.data;
-                    //        await services.updateSecondaryData(
-                    //            data.id, data.unitPrice, data.availableQuantity, data.requestedQuantity, data.suppliedQuantity,
-                    //            data.summary, data.productId, data.warehouseId, IssueRequestsId, userId
-                    //        );
-                    //        await methods.populateSecondaryData(IssueRequestsId);
-
-                    //       
-                    //        state.secondaryData.forEach(row => loadStock(row));
-
-                    //        secondaryGrid.refresh();
-                    //        Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
-                    //    }
-
-                    //    // --- DELETE ITEM ---
-                    //    if (args.requestType === 'delete') {
-                    //        const data = args.data[0];
-                    //        await services.deleteSecondaryData(data.id, userId);
-                    //        await methods.populateSecondaryData(IssueRequestsId);
-
-                    //    
-                    //        state.secondaryData.forEach(row => loadStock(row));
-
-                    //        secondaryGrid.refresh();
-                    //        Swal.fire({ icon: 'success', title: 'تم الحذف', timer: 2000, showConfirmButton: false });
-                    //    }
-
-                    //    await methods.populateMainData();
-                    //    mainGrid.refresh();
-                    //    await methods.refreshPaymentSummary(state.id);
-                    //}
+            
+                    actionBegin: async (args) => {
+                        if (args.requestType === 'beginEdit') {
+                            secondaryGrid.isRowEditing = true;
+                            secondaryGrid.obj.showColumns(['availableQuantity']);
+                            await loadStock(args.rowData);
+                        }
+                    },
 
                     actionComplete: async (args) => {
-                        if (args.requestType === 'save' && args.action === 'add') {
-                            const IssueRequestsId = state.id;
-                            const userId = StorageManager.getUserId();
-                            const data = args.data;
-
-                            //  calculate available after the request
-                            const adjustedAvailable = (data.availableQuantity ?? 0) - (data.suppliedQuantity ?? 0);
-
-                            await services.createSecondaryData(
-                                data.unitPrice,
-                                adjustedAvailable,        
-                                data.requestedQuantity,
-                                data.suppliedQuantity,
-                                data.summary,
-                                data.productId,
-                                data.warehouseId,
-                                IssueRequestsId,
-                                userId
-                            );
-
-                            await methods.populateSecondaryData(IssueRequestsId);
-
-                            // recalc stock for display
-                            state.secondaryData.forEach(row => loadStock(row));
-
-                            secondaryGrid.refresh();
-                            Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
+                        if (args.requestType === 'save' || args.requestType === 'cancel') {
+                            secondaryGrid.isRowEditing = false;
+                            secondaryGrid.obj.hideColumns(['availableQuantity']);
                         }
-
-                        if (args.requestType === 'save' && args.action === 'edit') {
-                            const IssueRequestsId = state.id;
-                            const userId = StorageManager.getUserId();
-                            const data = args.data;
-                            await services.updateSecondaryData(data?.id, data?.unitPrice, data?.availableQuantity, data?.requestedQuantity, data?.suppliedQuantity, data?.summary, data?.productId, data?.warehouseId, IssueRequestsId, userId);
-                            await methods.populateSecondaryData(IssueRequestsId);
-                            secondaryGrid.refresh();
-                            Swal.fire({ icon: 'success', title: 'تم الحفظ', timer: 2000, showConfirmButton: false });
-                        }
-                        if (args.requestType === 'delete') {
-                            const IssueRequestsId = state.id;
-                            const userId = StorageManager.getUserId();
-                            const data = args.data[0];
-                            await services.deleteSecondaryData(data?.id, userId);
-                            await methods.populateSecondaryData(IssueRequestsId);
-                            secondaryGrid.refresh();
-                            Swal.fire({ icon: 'success', title: 'تم الحذف', timer: 2000, showConfirmButton: false });
-                        }
-                        await methods.populateMainData();
-                        mainGrid.refresh();
-                        await methods.refreshPaymentSummary(state.id);
                     }
+
+
+                   
                 });
                 secondaryGrid.obj.appendTo(secondaryGridRef.value);
             },
+
             refresh: () => {
-                secondaryGrid.obj.setProperties({ dataSource: state.secondaryData });
+                if (!secondaryGrid.obj) return;
+
+                secondaryGrid.obj.setProperties({
+                    dataSource: state.secondaryData,
+                    editSettings: {
+                        allowEditing: isDraft.value,
+                        allowAdding: isDraft.value,
+                        allowDeleting: isDraft.value
+                    }
+                });
+
+                const col = secondaryGrid.obj.getColumnByField('availableQuantity');
+                if (col) {
+                    col.visible = secondaryGrid.isRowEditing;
+                    secondaryGrid.obj.refreshColumns();
+                }
             }
+      
         };
 
 
