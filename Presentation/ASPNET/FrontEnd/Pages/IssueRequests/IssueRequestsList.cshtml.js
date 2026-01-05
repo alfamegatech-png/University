@@ -47,6 +47,7 @@
 
 
 
+
 const App = {
     setup() {
         const state = Vue.reactive({
@@ -749,9 +750,16 @@ const App = {
                                 state.departmentId = selectedRecord.departmentId ?? null;
                                 state.showComplexDiv = true;
 
-                                departmentListLookup.obj.value = state.departmentId;
                                 
+                                secondaryGrid.isRowEditing = false;
 
+                              
+                                if (secondaryGrid.obj) {
+                                    secondaryGrid.obj.hideColumns(['availableQuantity']);
+                                }
+
+
+                                departmentListLookup.obj.value = state.departmentId;
                                 await syncDepartmentAndEmployee(state.departmentId, state.employeeId);
 
                                 await methods.populateSecondaryData(selectedRecord.id);
@@ -813,13 +821,51 @@ const App = {
         };
 
 
+        //async function loadStock(rowData) {
+
+        //    if (!isDraft.value) return;
+
+        //    if (!rowData.productId || !rowData.warehouseId) {
+        //        rowData.availableQuantity = 0;
+        //        if (availableQuantityObj) availableQuantityObj.value = 0;
+        //        return;
+        //    }
+
+        //    const res = await AxiosManager.get(
+        //        `/IssueRequests/GetProductCurrentStock?productId=${rowData.productId}&warehouseId=${rowData.warehouseId}`
+        //    );
+
+        //    let stock = res.data?.content?.data?.currentStock ?? 0;
+
+        //    // subtract supplied quantities INSIDE this request
+        //    const suppliedInRequest = state.secondaryData
+        //        .filter(item =>
+        //            item.productId === rowData.productId &&
+        //            item.warehouseId === rowData.warehouseId &&
+        //            item.id !== rowData.id
+        //        )
+        //        .reduce((sum, item) => sum + (item.suppliedQuantity ?? 0), 0);
+
+        //    stock -= suppliedInRequest;
+
+    
+        //    rowData.availableQuantity = stock;
+
+          
+        //    if (availableQuantityObj)
+        //        availableQuantityObj.value = stock;
+        //}
+
         async function loadStock(rowData) {
 
             if (!isDraft.value) return;
 
             if (!rowData.productId || !rowData.warehouseId) {
                 rowData.availableQuantity = 0;
-                if (availableQuantityObj) availableQuantityObj.value = 0;
+
+                if (availableQuantityObj)
+                    availableQuantityObj.value = 0;
+
                 return;
             }
 
@@ -840,14 +886,15 @@ const App = {
 
             stock -= suppliedInRequest;
 
-    
+            // ✅ UPDATE ROW DATA
             rowData.availableQuantity = stock;
 
-          
-            if (availableQuantityObj)
+            // ✅ FORCE UPDATE INPUT
+            if (availableQuantityObj) {
                 availableQuantityObj.value = stock;
+                availableQuantityObj.dataBind(); // 🔥 THIS IS THE KEY
+            }
         }
-
 
 
       
@@ -1020,23 +1067,46 @@ const App = {
                         },
 
                         /* ================= Available Quantity (READ ONLY) ================= */
+                        //{
+                        //    field: 'availableQuantity',
+                        //    headerText: 'المتاح بالمخزن',
+                        //    width: 180,
+                        //    visible: false,         
+                        //    allowEditing: true      
+                      
+                        //},
+
                         {
                             field: 'availableQuantity',
                             headerText: 'المتاح بالمخزن',
                             width: 180,
-                            visible: false, // default
                             allowEditing: false,
                             edit: {
                                 create: () => document.createElement('input'),
                                 write: (args) => {
+
+                                    const td = args.element.closest('td');
+
+                                    if (!secondaryGrid.isRowEditing) {
+                                        td.style.display = 'none';
+                                        return;
+                                    }
+
+                                    td.style.display = '';
+
                                     availableQuantityObj = new ej.inputs.NumericTextBox({
                                         value: args.rowData.availableQuantity ?? 0,
-                                        readonly: true
+                                        readonly: true,
+                                        enabled: false
                                     });
+
                                     availableQuantityObj.appendTo(args.element);
                                 }
                             }
+
                         },
+
+
 
                         /* ================= Requested ================= */
                         {
@@ -1141,19 +1211,26 @@ const App = {
                     },
             
                     actionBegin: async (args) => {
-                        if (args.requestType === 'beginEdit') {
+                        if (args.requestType === 'beginEdit' || args.requestType === 'add') {
                             secondaryGrid.isRowEditing = true;
-                            secondaryGrid.obj.showColumns(['availableQuantity']);
-                            await loadStock(args.rowData);
+
+                            // ⏱️ انتظر editor يتخلق
+                            requestAnimationFrame(async () => {
+                                await loadStock(args.rowData);
+                            });
                         }
                     },
 
-                    actionComplete: async (args) => {
+
+
+                    actionComplete: (args) => {
                         if (args.requestType === 'save' || args.requestType === 'cancel') {
                             secondaryGrid.isRowEditing = false;
-                            secondaryGrid.obj.hideColumns(['availableQuantity']);
                         }
                     }
+
+
+
 
 
                    
@@ -1173,11 +1250,11 @@ const App = {
                     }
                 });
 
-                const col = secondaryGrid.obj.getColumnByField('availableQuantity');
-                if (col) {
-                    col.visible = secondaryGrid.isRowEditing;
-                    secondaryGrid.obj.refreshColumns();
-                }
+                //const col = secondaryGrid.obj.getColumnByField('availableQuantity');
+                //if (col) {
+                //    col.visible = secondaryGrid.isRowEditing;
+                //    secondaryGrid.obj.refreshColumns();
+                //}
             }
       
         };

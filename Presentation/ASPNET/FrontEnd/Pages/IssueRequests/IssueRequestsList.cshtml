@@ -2,7 +2,11 @@
 @{
     ViewData["Title"] = "قائمة طلبات وإذن الصرف";
 }
-
+<style>
+      .e-grid:not(.e-editing) .e-rowcell[data-colindex="5"] {
+          display: none;
+    }
+</style>
 <div id="app" v-cloak>
     <div class="row">
         <div class="col-12">
