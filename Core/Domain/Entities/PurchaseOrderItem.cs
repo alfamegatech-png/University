@@ -4,6 +4,7 @@ namespace Domain.Entities;
 
 public class PurchaseOrderItem : BaseEntity
 {
+
     public string? PurchaseOrderId { get; set; }
     public PurchaseOrder? PurchaseOrder { get; set; }
     public string? ProductId { get; set; }

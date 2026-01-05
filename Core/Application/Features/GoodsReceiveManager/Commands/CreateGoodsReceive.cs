@@ -99,6 +99,7 @@ public class CreateGoodsReceiveHandler : IRequestHandler<CreateGoodsReceiveReque
                         item.ProductId,
                         item.Quantity,
                         entity.CreatedById,
+                        item.Id,
                         cancellationToken
                         );
 

@@ -13,6 +13,7 @@ public partial class InventoryTransactionService
         string? productId,
         double? movement,
         string? createdById,
+        string? PurchaseOrderItemId,
         CancellationToken cancellationToken = default
         )
     {
@@ -36,7 +37,7 @@ public partial class InventoryTransactionService
         child.ModuleNumber = parent.Number;
         child.MovementDate = parent.ReceiveDate;
         child.Status = (InventoryTransactionStatus?)parent.Status;
-
+        child.PurchaseOrderItemId = PurchaseOrderItemId;
         child.WarehouseId = warehouseId;
         child.ProductId = productId;
         child.Movement = movement;
@@ -55,6 +56,7 @@ public partial class InventoryTransactionService
         string? productId,
         double? movement,
         string? updatedById,
+        string? PurchaseOrderItemId,
         CancellationToken cancellationToken = default
         )
     {
@@ -66,11 +68,11 @@ public partial class InventoryTransactionService
         }
 
         child.UpdatedById = updatedById;
-
+        child.PurchaseOrderItemId = PurchaseOrderItemId;
         child.WarehouseId = warehouseId;
         child.ProductId = productId;
         child.Movement = movement;
-
+    
         CalculateInvenTrans(child);
 
         _inventoryTransactionRepository.Update(child);
