@@ -307,20 +307,20 @@ const App = {
                 }
             },
 
-            createSecondaryData: async (moduleId, warehouseId, productId, movement, createdById) => {
+            createSecondaryData: async(moduleId, warehouseId, productId, movement, createdById,purchaseOrderItemId) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveCreateInvenTrans', {
-                        moduleId, warehouseId, productId, movement, createdById
+                        moduleId, warehouseId, productId, movement, createdById, purchaseOrderItemId
                     });
                     return response;
                 } catch (error) {
                     throw error;
                 }
             },
-            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById) => {
+            updateSecondaryData: async (id, warehouseId, productId, movement, updatedById, purchaseOrderItemId) => {
                 try {
                     const response = await AxiosManager.post('/InventoryTransaction/GoodsReceiveUpdateInvenTrans', {
-                        id, warehouseId, productId, movement, updatedById
+                        id, warehouseId, productId, movement, updatedById, purchaseOrderItemId
                     });
                     return response;
                 } catch (error) {
@@ -415,10 +415,12 @@ const App = {
                         );
 
                         return {
-                            id: x.productId,
+                            id: x.productId,                 // للـ Grid
+                            purchaseOrderItemId: x.id,       // ⭐ المهم
+                            unitPrice: x.unitPrice || 0,     // ⭐ السعر
                             numberName: `${x.productNumber} - ${x.productName}`
-                              
                         };
+
                     });
             },
 
@@ -714,6 +716,11 @@ const App = {
                             field: 'id', isPrimaryKey: true, headerText: 'Id', visible: false
                         },
                         {
+                            field: 'purchaseOrderItemId',
+                            visible: false
+                        },
+
+                        {
                             field: 'warehouseId',
                             headerText: 'Warehouse',
                             width: 250,
@@ -778,15 +785,26 @@ const App = {
                                         fields: { value: 'id', text: 'numberName' },
                                         value: args.rowData.productId,
                                         change: function (e) {
+                                            const selected = state.productListLookupData.find(
+                                                p => p.id === e.value
+                                            );
+
+                                            if (selected) {
+                                                args.rowData.purchaseOrderItemId = selected.purchaseOrderItemId; // ⭐
+                                                args.rowData.unitPrice = selected.unitPrice;                     // ⭐
+                                            }
+
                                             if (movementObj) {
                                                 movementObj.value = 1;
                                             }
                                         },
-                                        placeholder: 'احتر المنتج',
+                                        placeholder: 'اختر المنتج',
                                         floatLabelType: 'Never'
                                     });
+
                                     productObj.appendTo(args.element);
                                 }
+
                             }
                         },
                         {
@@ -824,8 +842,26 @@ const App = {
                     toolbar: [
                         'ExcelExport',
                         { type: 'Separator' },
-                        'Add', 'Edit', 'Delete', 'Update', 'Cancel',
+                         'Edit', 'Delete', 'Update', 'Cancel',
                     ],
+                    actionBegin: (args) => {
+                        if (args.requestType === 'add') {
+                            args.data.purchaseOrderItemId = null;
+                            args.data.unitPrice = 0;
+                        }
+
+                        if (args.requestType === 'save') {
+                            const product = state.productListLookupData.find(
+                                p => p.id === args.data.productId
+                            );
+
+                            if (product) {
+                                args.data.purchaseOrderItemId = product.purchaseOrderItemId;
+                                args.data.unitPrice = product.unitPrice;
+                            }
+                        }
+                    },
+
                     beforeDataBound: () => { },
                     dataBound: function () { },
                     excelExportComplete: () => { },
@@ -856,7 +892,7 @@ const App = {
                     actionComplete: async (args) => {
                         if (args.requestType === 'save' && args.action === 'add') {
                             try {
-                                const response = await services.createSecondaryData(state.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
+                                const response = await services.createSecondaryData(state.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId(), args.data.purchaseOrderItemId);
                                 await methods.populateSecondaryData(state.id);
                                 secondaryGrid.refresh();
                                 if (response.data.code === 200) {
@@ -885,8 +921,17 @@ const App = {
                         }
                         if (args.requestType === 'save' && args.action === 'edit') {
                             try {
-                                const response = await services.updateSecondaryData(args.data.id, args.data.warehouseId, args.data.productId, args.data.movement, StorageManager.getUserId());
+                                const response = await services.updateSecondaryData(
+                                    args.data.id,
+                                    args.data.warehouseId,
+                                    args.data.productId,
+                                    args.data.movement,
+                                    StorageManager.getUserId(),
+                                    args.data.purchaseOrderItemId // ⭐ مهم
+                                );
+
                                 await methods.populateSecondaryData(state.id);
+                                console.log('PO Item ID:', args.data.purchaseOrderItemId);
                                 secondaryGrid.refresh();
                                 if (response.data.code === 200) {
                                     Swal.fire({

@@ -60,15 +60,17 @@ public class GetGoodsReceiveSingleHandler : IRequestHandler<GetGoodsReceiveSingl
 
 
         var queryTransactionList = _context
-            .InventoryTransaction
-            .AsNoTracking()
-            .ApplyIsDeletedFilter(false)
-            .Include(x => x.Product)
-            .Include(x => x.Warehouse)
-            .Include(x => x.WarehouseFrom)
-            .Include(x => x.WarehouseTo)
-            .Where(x => x.ModuleId == request.Id && x.ModuleName == nameof(GoodsReceive))
-            .AsQueryable();
+    .InventoryTransaction
+    .AsNoTracking()
+    .ApplyIsDeletedFilter(false)
+    .Include(x => x.Product)
+        .ThenInclude(x=>x.UnitMeasure)
+    .Include(x => x.Warehouse)
+    .Include(x => x.PurchaseOrderItem)   // 👈 مهم جدًا
+    .Where(x => x.ModuleId == request.Id &&
+                x.ModuleName == nameof(GoodsReceive))
+    .AsQueryable();
+
 
         var transactionList = await queryTransactionList.ToListAsync(cancellationToken);
 

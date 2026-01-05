@@ -23,7 +23,7 @@ public record GetPurchaseOrderItemByPurchaseOrderIdListDto
     public string? Percentage { get; set; }
     public string? Reasons { get; set; }
     public bool? ItemStatus { get; set; }
-
+    
 
 }
 

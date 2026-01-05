@@ -26,6 +26,7 @@ public record GetInventoryTransactionListDto
     public string? WarehouseFromName { get; init; }
     public string? WarehouseToName { get; init; }
     public DateTime? CreatedAtUtc { get; init; }
+    public string? PurchaseOrderItemId { get; init; }
 }
 
 

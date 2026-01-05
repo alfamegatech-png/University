@@ -16,6 +16,7 @@ public class GoodsReceiveCreateInvenTransRequest : IRequest<GoodsReceiveCreateIn
     public string? ProductId { get; init; }
     public double? Movement { get; init; }
     public string? CreatedById { get; init; }
+    public string? PurchaseOrderItem { get; set; }
 }
 
 public class GoodsReceiveCreateInvenTransValidator : AbstractValidator<GoodsReceiveCreateInvenTransRequest>
@@ -49,6 +50,7 @@ public class GoodsReceiveCreateInvenTransHandler : IRequestHandler<GoodsReceiveC
             request.ProductId,
             request.Movement,
             request.CreatedById,
+           request.PurchaseOrderItem,
             cancellationToken);
 
         return new GoodsReceiveCreateInvenTransResult
