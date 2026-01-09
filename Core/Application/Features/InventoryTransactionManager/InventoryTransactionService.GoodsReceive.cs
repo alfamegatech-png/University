@@ -37,7 +37,7 @@ public partial class InventoryTransactionService
         child.ModuleNumber = parent.Number;
         child.MovementDate = parent.ReceiveDate;
         child.Status = (InventoryTransactionStatus?)parent.Status;
-        child.PurchaseOrderItemId = PurchaseOrderItemId;
+        //child.PurchaseOrderItemId = PurchaseOrderItemId;
         child.WarehouseId = warehouseId;
         child.ProductId = productId;
         child.Movement = movement;
@@ -68,7 +68,7 @@ public partial class InventoryTransactionService
         }
 
         child.UpdatedById = updatedById;
-        child.PurchaseOrderItemId = PurchaseOrderItemId;
+        //child.PurchaseOrderItemId = PurchaseOrderItemId;
         child.WarehouseId = warehouseId;
         child.ProductId = productId;
         child.Movement = movement;

@@ -21,7 +21,7 @@ public class InventoryTransaction : BaseEntity
     public InventoryTransType? TransType { get; set; }
     public double? Stock { get; set; }
     public string? WarehouseFromId { get; set; }
-    public string? PurchaseOrderItemId { get; set; }
+    
     public Warehouse? WarehouseFrom { get; set; }
     public string? WarehouseToId { get; set; }
     public Warehouse? WarehouseTo { get; set; }
@@ -31,7 +31,7 @@ public class InventoryTransaction : BaseEntity
     public string? Percentage { get; set; }
     public string? Reasons { get; set; }
     public bool? ItemStatus { get; set; }
-    public PurchaseOrderItem PurchaseOrderItem { get; set; }
+   
 
 
 }

@@ -48,25 +48,24 @@ public class GetGoodsReceiveSingleHandler : IRequestHandler<GetGoodsReceiveSingl
 
     public async Task<GetGoodsReceiveSingleResult> Handle(GetGoodsReceiveSingleRequest request, CancellationToken cancellationToken)
     {
-        var queryData = _context
-            .GoodsReceive
-            .AsNoTracking()
-            .Include(x => x.PurchaseOrder)
-                .ThenInclude(x => x.Vendor)
-            .Where(x => x.Id == request.Id)
+        var queryData =  _context.GoodsReceive
+    .AsNoTracking()
+    .Include(gr => gr.PurchaseOrder)
+        .ThenInclude(po => po.Vendor)
+    .Include(gr => gr.PurchaseOrder)
+        .ThenInclude(po => po.PurchaseOrderItemList)
+    .Where(gr => gr.Id == request.Id)
             .AsQueryable();
 
         var data = await queryData.SingleOrDefaultAsync(cancellationToken);
 
 
-        var queryTransactionList = _context
-    .InventoryTransaction
+        var queryTransactionList = _context.InventoryTransaction
     .AsNoTracking()
     .ApplyIsDeletedFilter(false)
     .Include(x => x.Product)
-        .ThenInclude(x=>x.UnitMeasure)
+        .ThenInclude(x => x.UnitMeasure)
     .Include(x => x.Warehouse)
-    .Include(x => x.PurchaseOrderItem)   // 👈 مهم جدًا
     .Where(x => x.ModuleId == request.Id &&
                 x.ModuleName == nameof(GoodsReceive))
     .AsQueryable();

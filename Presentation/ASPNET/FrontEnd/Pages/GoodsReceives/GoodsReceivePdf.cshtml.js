@@ -149,29 +149,35 @@ const App = {
                 state.reference = pdfData?.purchaseOrder?.number || '';
 
                 /* ===== 1️⃣ Mapping الأصناف (من PO Item + Transaction) ===== */
+                const poItems = state.pdfData?.purchaseOrder?.purchaseOrderItemList || [];
+
                 state.mappedItems = (state.pdfTransactionList || []).map(trx => {
 
-                    const poItem = trx.purchaseOrderItem || {};
+                    const poItem = poItems.find(
+                        x => x.productId === trx.productId
+                    ) || {};
 
                     const qty = trx.movement || 0;
-
                     const price = poItem.unitPrice || 0;
                     const amount = qty * price;
-                    
+
                     return {
                         product: `${trx.product?.number || ''} ${trx.product?.name || ''}`,
                         unit: trx.product?.unit?.name || '',
                         movement: qty,
 
-                        // من PurchaseOrderItem
+                        // ✔ جاية من PurchaseOrderItem
                         unitPrice: price,
-                        status: poItem.itemStatus === true ? 'مقبول' : poItem.itemStatus === false ? 'مرفوض' : '',
-                        notes: poItem.notes || '',
+                        status:
+                            poItem.status === true ? 'مقبول' :
+                                poItem.status === false ? 'مرفوض' : '',
+                        notes: poItem.reasons || '',
 
                         value: amount,
                         amount: amount
                     };
                 });
+
                
 
                 /* ===== 2️⃣ حساب الإجمالي ===== */
