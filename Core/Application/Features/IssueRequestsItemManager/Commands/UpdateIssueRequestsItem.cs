@@ -91,10 +91,23 @@ public class UpdateIssueRequestsItemHandler : IRequestHandler<UpdateIssueRequest
             .IssueRequestGetInvenTransList(
                 entity.IssueRequestsId,
                 nameof(IssueRequests),
+                entity.ProductId,
                 cancellationToken
             );
 
         var existingTrans = trans.SingleOrDefault();
+
+        // Stock validation 
+        var currentStock = _inventoryTransactionService.GetStock(
+            //warehouse.Id,
+            entity.WarehouseId,
+            entity.ProductId
+
+        );
+
+        if (entity.SuppliedQuantity > currentStock)
+            throw new Exception("Supplied quantity exceeds available stock.");
+
 
         // 3. Update or create
         if ((entity.SuppliedQuantity ?? 0) > 0)

@@ -6,6 +6,7 @@ using ASPNET.BackEnd.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace ASPNET.BackEnd.Controllers;
 
@@ -29,10 +30,17 @@ public class IssueRequestsController : BaseApiController
             Content = response
         });
     }
+    //[HttpPost("UpdateIssueRequests")]
+    //public async Task<IActionResult> UpdateIssueRequestsAsync(
+    //[FromBody] JsonElement body,
+    //CancellationToken cancellationToken)
+    //{
+    //    return Ok(body.ToString());
+    //}
 
     [Authorize]
     [HttpPost("UpdateIssueRequests")]
-    public async Task<ActionResult<ApiSuccessResult<UpdateIssueRequestsResult>>> UpdateIssueRequestsAsync(UpdateIssueRequestsRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ApiSuccessResult<UpdateIssueRequestsResult>>> UpdateIssueRequestsAsync( UpdateIssueRequestsRequest request, CancellationToken cancellationToken)
     {
         var response = await _sender.Send(request, cancellationToken);
 

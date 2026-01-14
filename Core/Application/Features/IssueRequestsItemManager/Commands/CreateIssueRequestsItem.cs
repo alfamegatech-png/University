@@ -76,34 +76,14 @@ public class CreateIssueRequestsItemHandler : IRequestHandler<CreateIssueRequest
             RequestedQuantity = request.RequestedQuantity,
             SuppliedQuantity = request.SuppliedQuantity,
             WarehouseId = request.WarehouseId,
+            Total = (request.SuppliedQuantity ?? 0) * (request.UnitPrice ?? 0)
         };
 
-        //// Calculate total
-        //entity.Total = (entity.SuppliedQuantity ?? 0) * (entity.UnitPrice ?? 0);
-
-        //// Recalculate request totals
-        //_IssueRequestsService.Recalculate(entity.IssueRequestsId ?? "");
-
-        //// Get available stock
-        //if (request.WarehouseId == null || request.ProductId == null)
-        //{
-        //    entity.AvailableQuantity = 0;
-        //}
-        //else
-        //{
-        //    var stock = _inventoryTransactionService.GetStock(
-        //        request.WarehouseId,
-        //        request.ProductId
-        //    );
-
-        //    entity.AvailableQuantity = stock;
-        //}
-
-        // Create the entity **once**
+       
         await _repository.CreateAsync(entity, cancellationToken);
         await _unitOfWork.SaveAsync(cancellationToken);
 
-        // Create inventory transaction ONLY if supplied
+        // لو الكمية المصروفة اكبر من 0 نعمل inventory transaction
         if ((entity.SuppliedQuantity ?? 0) > 0)
         {
             //var warehouse = await _warehouseRepository
@@ -113,7 +93,7 @@ public class CreateIssueRequestsItemHandler : IRequestHandler<CreateIssueRequest
 
             // Stock validation 
             var currentStock = _inventoryTransactionService.GetStock(
-                //warehouse.Id,
+               
                 entity.WarehouseId,
                 entity.ProductId
                 

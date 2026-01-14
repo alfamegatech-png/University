@@ -60,6 +60,7 @@ public class DeleteIssueRequestsItemHandler : IRequestHandler<DeleteIssueRequest
             .IssueRequestGetInvenTransList(
                 entity.IssueRequestsId,
                 nameof(IssueRequests),
+                 entity.ProductId,
                 cancellationToken
             );
 
